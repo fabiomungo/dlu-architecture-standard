@@ -1,0 +1,59 @@
+site_name: DLU Architecture Standard
+site_description: Reference architecture for the DLU AI-Native University
+site_author: DLU Architecture Board
+repo_name: dlu-architecture-standard
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - content.code.copy
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+
+nav:
+  - Home: index.md
+  - Manifesto:
+      - Overview: 00-manifesto/index.md
+      - AI-Native University Manifesto: 00-manifesto/ai-native-university-manifesto.md
+  - Academic Philosophy:
+      - Overview: 01-academic-philosophy/index.md
+      - Continuous Academic Transformation: 01-academic-philosophy/continuous-academic-transformation.md
+  - Architecture Standard:
+      - Overview: 02-architecture-standard/index.md
+      - DLU Architecture Standard: 02-architecture-standard/dlu-architecture-standard.md
+      - Academic Kernel: 02-architecture-standard/academic-kernel.md
+  - Reference Architecture:
+      - Overview: 03-reference-architecture/index.md
+      - Student Digital Twin: 03-reference-architecture/student-digital-twin.md
+      - Academic Cognitive Engine: 03-reference-architecture/academic-cognitive-engine.md
+  - Turnkey Platform:
+      - Overview: 04-turnkey-platform/index.md
+      - Platform Map: 04-turnkey-platform/platform-map.md
+  - Experiences:
+      - Overview: 05-experiences/index.md
+      - Student Experience: 05-experiences/student-experience.md
+  - Technical Architecture:
+      - Overview: 06-technical-architecture/index.md
+  - Implementation Blueprint:
+      - Overview: 07-implementation-blueprint/index.md
+      - RooCode: 07-implementation-blueprint/roocode-blueprint.md
+  - Research: 08-research/index.md
+  - ADR: architecture/adr/index.md
+  - RFC: architecture/rfc/index.md
