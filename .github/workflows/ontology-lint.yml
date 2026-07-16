@@ -1,0 +1,20 @@
+# DAS STX-05 — Ontology registry self-lint
+# Validates that dlu-core.yaml parses and that any Cypher shipped with the
+# standard (templates/examples) uses only registered vocabulary.
+name: ontology-lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint DLU-Core registry
+        run: |
+          pip install pyyaml
+          ONTOLOGY_REGISTRY=architecture/ontology/dlu-core.yaml \
+            python scripts/ci/lint_ontology.py $(find . -name "*.cypher" -not -path "./.git/*" | tr '\n' ' ')

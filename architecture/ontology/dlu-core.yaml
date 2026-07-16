@@ -1,0 +1,138 @@
+# DLU-Core Ontology Registry (L1) — DAS BOOK-05 Ch. 8 · seeded at STX-05
+# Machine-readable single source of truth for classes, graph labels and the
+# closed relationship registry (BOOK-05 §3.2, §5.3). Consumed by
+# scripts/ci/lint_ontology.py in both repos. New classes/relationships
+# require an RFC amending BOOK-05 FIRST, then this file.
+version: "2.0"
+source: "BOOK-05 v1.0 §3.2, §5.3; BOOK-13 Ch. 3"
+
+classes:
+  # Parties & structure
+  - {name: Learner, graph_label: Student, engine: twin}
+  - {name: FacultyMember, graph_label: Faculty, engine: twin}
+  - {name: Institution, graph_label: Institution, engine: institution}
+  - {name: Campus, graph_label: Campus, engine: institution}
+  - {name: College, graph_label: College, engine: institution}
+  - {name: School, graph_label: School, engine: institution}
+  - {name: Department, graph_label: Department, engine: institution}
+  - {name: Program, graph_label: Program, engine: institution}
+  - {name: AcademicTerm, graph_label: AcademicTerm, engine: institution}
+  - {name: TeachingSection, graph_label: TeachingSection, engine: learning}
+  - {name: Cohort, graph_label: Cohort, engine: learning}
+  # Curriculum & content
+  - {name: Course, graph_label: Course, engine: learning}
+  - {name: Module, graph_label: Module, engine: learning}
+  - {name: Lesson, graph_label: Lesson, engine: learning}
+  - {name: LearningActivity, graph_label: LearningActivity, engine: learning}
+  - {name: Section, graph_label: Section, engine: learning}
+  - {name: Page, graph_label: Page, engine: learning}
+  - {name: Component, graph_label: Component, engine: learning}
+  - {name: MediaAsset, graph_label: MediaAsset, engine: learning}
+  - {name: CourseResource, graph_label: CourseResource, engine: learning}
+  # Intelligence
+  - {name: Concept, graph_label: Concept, engine: knowledge}
+  - {name: Skill, graph_label: Skill, engine: competency}
+  - {name: Competency, graph_label: Competency, engine: competency}
+  - {name: CompetencyFramework, graph_label: CompetencyFramework, engine: competency}
+  - {name: Outcome, graph_label: Outcome, engine: learning,
+     notes: "5 levels; graphed today as ILO/PLO/CLO/MLO labels (v1.0 legacy, subsumed)"}
+  - {name: ILO, graph_label: ILO, engine: learning}
+  - {name: PLO, graph_label: PLO, engine: learning}
+  - {name: CLO, graph_label: CLO, engine: learning}
+  - {name: MLO, graph_label: MLO, engine: learning}
+  - {name: Assessment, graph_label: Assessment, engine: assessment}
+  - {name: EvidenceRecord, graph_label: null, engine: assessment}
+  - {name: Credential, graph_label: Credential, engine: credential}
+  - {name: Badge, graph_label: Badge, engine: credential}
+  - {name: LearningMission, graph_label: null, engine: gps}
+  - {name: Recommendation, graph_label: null, engine: reco}
+  - {name: PathScenario, graph_label: null, engine: gps}
+  - {name: DigitalTwin, graph_label: null, engine: twin}
+  - {name: Agent, graph_label: null, engine: ace}
+  # Operations
+  - {name: Tenant, graph_label: null, engine: platform}
+  - {name: Consent, graph_label: null, engine: twin}
+  - {name: DomainEvent, graph_label: null, engine: mesh}
+  - {name: Proposal, graph_label: null, engine: ace}
+  # Graph bookkeeping (not a domain class)
+  - {name: SchemaMeta, graph_label: SchemaMeta, engine: knowledge,
+     notes: "migration version stamp node"}
+
+relationships:  # BOOK-05 §5.3 — closed set, RFC to extend
+  - {name: OFFERS, domain: Institution, range: Program, properties: [], status: existing}
+  - {name: INCLUDES_COURSE, domain: Program, range: Course,
+     properties: [term, required], status: existing}
+  - {name: CONTAINS, domain: Course, range: Module, properties: [order], status: existing}
+  - {name: HAS_LESSON, domain: "Course/Module", range: Lesson,
+     properties: [order], status: existing}
+  - {name: COVERS, domain: "Lesson/Outcome", range: Concept,
+     properties: [depth], status: existing}
+  - {name: RENDERED_BY, domain: "Lesson/LearningActivity", range: "Page/Component",
+     properties: [], status: new}
+  - {name: ALIGNED_TO, domain: Outcome, range: Outcome,
+     properties: [strength], status: normalized, resolves: A9}
+  - {name: ASSESSES, domain: Assessment, range: "Outcome/Concept/Competency",
+     properties: [weight], status: existing}
+  - {name: PREREQUISITE_FOR, domain: "Concept/Course/MLO", range: same-class,
+     properties: [strength], status: canonical, resolves: A8}
+  - {name: DEPENDS_ON, domain: Competency, range: Competency, properties: [], status: new}
+  - {name: UNDERPINS, domain: Concept, range: Competency, properties: [], status: new}
+  - {name: COMPONENT_OF, domain: Skill, range: Competency, properties: [], status: new}
+  - {name: DEVELOPS, domain: "Course/Outcome", range: Competency,
+     properties: [strength], status: new}
+  - {name: EVIDENCES, domain: Learner, range: Competency,
+     properties: [confidence, status, updated_at], status: new, plane: student-overlay}
+  - {name: KNOWS, domain: Learner, range: Concept,
+     properties: [p_mastery, updated_at], status: new, plane: student-overlay}
+  - {name: AWARDS, domain: Credential, range: Competency,
+     properties: [level], status: new}
+  - {name: NEEDS_ASSET, domain: Concept, range: MediaAsset,
+     properties: [], status: renamed, resolves: A8, renamed_from: REQUIRES}
+  - {name: SUPPORTS, domain: MediaAsset, range: Outcome, properties: [], status: existing}
+  - {name: GENERATED_BY, domain: MediaAsset, range: Lesson,
+     properties: [model, fingerprint], status: existing}
+  - {name: GENERATED_FROM, domain: Course, range: ModuleBlueprint,
+     properties: [job_id], status: new, resolves: A3}
+  - {name: SAME_AS, domain: Concept, range: Concept,
+     properties: [confidence, source], status: existing}
+  # v1.0 rels still on the graph, registered for lint completeness
+  - {name: HAS_CLO, domain: Course, range: CLO, properties: [], status: legacy-v1}
+  - {name: HAS_PLO, domain: Program, range: PLO, properties: [], status: legacy-v1}
+  - {name: HAS_ILO, domain: Institution, range: ILO, properties: [], status: legacy-v1}
+
+aliases:  # live exactly ONE minor release, instances flagged alias:true
+  - {name: REQUIRES, canonical: NEEDS_ASSET, removed_in: "2.1"}
+  - {name: ALIGNS_TO, canonical: ALIGNED_TO, removed_in: "2.1"}
+  - {name: MAPS_TO, canonical: ALIGNED_TO, removed_in: "2.1"}
+
+deprecated_synonyms:
+  - {name: "Academic Brain", canonical: ACE}
+  - {name: KnowledgeGraph_pg_tables, canonical: extraction-staging,
+     notes: "A1 sunset — promotion pipeline only (BOOK-13 Ch. 10)"}
+
+# Aggregate nouns allowed as event-type prefixes in the Event Mesh taxonomy
+# (backend/services/event_taxonomy.py); linted by lint_ontology.py.
+event_nouns:
+  - student
+  - profile
+  - enrollment
+  - grade
+  - activity
+  - mastery
+  - competency
+  - evidence
+  - assessment
+  - assessment_session
+  - recommendation
+  - path
+  - badge
+  - credential
+  - risk
+  - graduation
+  - thesis
+  - committee
+  - tenant
+  - consent
+  - identity
+  - course
+  - generation
