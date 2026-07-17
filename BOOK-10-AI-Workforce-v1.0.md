@@ -277,7 +277,7 @@ internal scope).
 | Run logs | `agent_run_logs` | ✅ | cycle-trace linkage (BOOK-09 Ch. 8) 🔵 |
 | Lifecycle | `lifecycle_state`, `deployed_at/by` | ✅ | eval-gated deployment + release snapshots ⚪ (BOOK-11 harness) |
 | Governance | proposals/approvals, ai_governance service | ✅ | scorecard + misbehaviour automation ⚪ |
-| The nine agents | tutor/coach substrate (`learner_tutor_service`, GraphRAG, spaced repetition, Bloom quiz, plagiarism, credential service) | 🟡 | agent config rows + contract cards per Ch. 3 (STX-06/10/11/12/13/14) |
+| The nine agents | tutor/coach substrate (`learner_tutor_service`, GraphRAG, spaced repetition, Bloom quiz, plagiarism, credential service); **Discovery ✅ (STX-06, 2026-07-17)** — first agent config row + contract card (`ace_service.DISCOVERY_MOVE_BINDINGS`, `lifecycle_state="testing"`) | 🟡 | remaining 8 agent config rows + contract cards per Ch. 3 (STX-10/11/12/13/14) |
 
 ---
 
