@@ -275,7 +275,7 @@ internal scope).
 | Presets/providers | `ai_model_presets` (scoped), `llm_providers` (categorized, fallback, cost, is_local, health) | ✅ | escalation-ladder preset classes (BOOK-09) 🔵 |
 | Gateway | LiteLLM (Option B): DB-driven sync, virtual keys, pre-call quotas, usage callback | ✅ | per-engine cost attribution (BOOK-03) 🔵 |
 | Run logs | `agent_run_logs` | ✅ | cycle-trace linkage (BOOK-09 Ch. 8) 🔵 |
-| Lifecycle | `lifecycle_state`, `deployed_at/by` | ✅ | eval-gated deployment + release snapshots ⚪ (BOOK-11 harness) |
+| Lifecycle | `lifecycle_state`, `deployed_at/by`; eval-gated deployment ✅ (NEW-02, 2026-07-18: `AgentGateRun` release record + `ctx_hash` content-addressed snapshot, `POST /agents/{id}/deploy` 409s without a green steward-signed run matching the live config) | ✅ | — |
 | Governance | proposals/approvals, ai_governance service | ✅ | scorecard + misbehaviour automation ⚪ |
 | The nine agents | tutor/coach substrate (`learner_tutor_service`, GraphRAG, spaced repetition, Bloom quiz, plagiarism, credential service); **Discovery ✅ (STX-06, 2026-07-17)** — first agent config row + contract card (`ace_service.DISCOVERY_MOVE_BINDINGS`, `lifecycle_state="testing"`) | 🟡 | remaining 8 agent config rows + contract cards per Ch. 3 (STX-10/11/12/13/14) |
 
