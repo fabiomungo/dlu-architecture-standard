@@ -59,14 +59,15 @@ capture from Moodle (Review finding M3 → BOOK-18 Moodle driver contract).
 |-------|---------|---------------|-----------|
 | K1 Kernel Foundation | STX-01, 02, **03 (keystone)**, 04, 05 | 03/04/05/06/13 | mesh V-suite green; identity reconciliation report |
 | K2 Cognition | STX-06 ✅ (2026-07-17) · NEW-01 ✅ (2026-07-17) · NEW-02 ✅ (2026-07-18, GA gate) · **NEW-03 ✅ (2026-07-18)** | 09/10/11/12/17 | **harness gates wired to ACP lifecycle ✅ · crisis protocol zero-tolerance ✅** (`AgentGateRun` + `ctx_hash`-verified deploy gate; crisis check non-disableable, negative-tested) · **K2 Cognition pack complete — all 4 sprints delivered** |
-| K3 Navigation & Evidence | **STX-07 ✅ (2026-07-19, Academic GPS core: `AcademicGPSService` fastest_path + path-health on a v1 term-indexed closure, `path_scenarios` table, `/api/gps` routes, Navigator agent + WS01 Academic Journey UI — other 3 scenarios honestly `not_yet_available` pending NEW-04/STX-12)** · 09…12 · **STX-08 ✅ (2026-07-19, evidence pipeline: AssessmentEvidenceService, sole-writer + identity-mapper CI gates, institution-scoped trust table, triangulation, evidence timeline API)** · NEW-04, 05, 06 | 14/15/06/17 | **DAS-Core suite green** |
+| K3 Navigation & Evidence | **STX-07 ✅ (2026-07-19, Academic GPS core: `AcademicGPSService` fastest_path + path-health on a v1 term-indexed closure, `path_scenarios` table, `/api/gps` routes, Navigator agent + WS01 Academic Journey UI — other 3 scenarios honestly `not_yet_available` pending NEW-04/STX-12)** · **NEW-04 ✅ (2026-07-19, RouteGraph compiler: seven-type edge taxonomy, `route_graph_versions` persistence, real deterministic Pareto engine, full BOOK-14 Ch. 6.1 traffic table + hysteresis, G7 regulation-year tag (version-inert, test-proven), sovereignty guard enforced at construction)** · 09…12 · **STX-08 ✅ (2026-07-19, evidence pipeline: AssessmentEvidenceService, sole-writer + identity-mapper CI gates, institution-scoped trust table, triangulation, evidence timeline API)** · 05, 06 | 14/15/06/17 | **DAS-Core suite green** |
 | K4 Trust & Institution | STX-13…15 · NEW-07, 08, 09, 10 | 16/08/07/17 | **DAS-Intelligent suite green** |
 | K5 Profiles & Compliance | NEW-11…15 (incl. G12/G13/G14 ledgers) | 18/19/20 | **DAS-Certified auditable** (external audit) |
 
 Blocking dependencies: STX-03 → all kernel consumers · NEW-02 → any
 learner-facing agent GA · STX-08 ✅ (2026-07-19) → credential work (STX-13+,
-consumes `triangulation_status`) · NEW-04 → session-granular GPS (needs
-NEW-05 aggregate + ESSE3 mirror for IT profile).
+consumes `triangulation_status`) · NEW-04 ✅ (2026-07-19) → session-granular
+GPS (needs NEW-05 aggregate + ESSE3 mirror for IT profile; NEW-04's
+`SIT_EXAM`/`RETAKE` seam is ready for NEW-05 to fill).
 
 ## 4. Review Findings → Disposition (MASTERBOOK-REVIEW v1.0)
 
