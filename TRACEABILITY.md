@@ -59,7 +59,7 @@ capture from Moodle (Review finding M3 → BOOK-18 Moodle driver contract).
 |-------|---------|---------------|-----------|
 | K1 Kernel Foundation | STX-01, 02, **03 (keystone)**, 04, 05 | 03/04/05/06/13 | mesh V-suite green; identity reconciliation report |
 | K2 Cognition | STX-06 ✅ (2026-07-17) · NEW-01 ✅ (2026-07-17) · NEW-02 ✅ (2026-07-18, GA gate) · **NEW-03 ✅ (2026-07-18)** | 09/10/11/12/17 | **harness gates wired to ACP lifecycle ✅ · crisis protocol zero-tolerance ✅** (`AgentGateRun` + `ctx_hash`-verified deploy gate; crisis check non-disableable, negative-tested) · **K2 Cognition pack complete — all 4 sprints delivered** |
-| K3 Navigation & Evidence | STX-07, 09…12 · **STX-08 ✅ (2026-07-19, evidence pipeline: AssessmentEvidenceService, sole-writer + identity-mapper CI gates, institution-scoped trust table, triangulation, evidence timeline API)** · NEW-04, 05, 06 | 14/15/06/17 | **DAS-Core suite green** |
+| K3 Navigation & Evidence | **STX-07 ✅ (2026-07-19, Academic GPS core: `AcademicGPSService` fastest_path + path-health on a v1 term-indexed closure, `path_scenarios` table, `/api/gps` routes, Navigator agent + WS01 Academic Journey UI — other 3 scenarios honestly `not_yet_available` pending NEW-04/STX-12)** · 09…12 · **STX-08 ✅ (2026-07-19, evidence pipeline: AssessmentEvidenceService, sole-writer + identity-mapper CI gates, institution-scoped trust table, triangulation, evidence timeline API)** · NEW-04, 05, 06 | 14/15/06/17 | **DAS-Core suite green** |
 | K4 Trust & Institution | STX-13…15 · NEW-07, 08, 09, 10 | 16/08/07/17 | **DAS-Intelligent suite green** |
 | K5 Profiles & Compliance | NEW-11…15 (incl. G12/G13/G14 ledgers) | 18/19/20 | **DAS-Certified auditable** (external audit) |
 

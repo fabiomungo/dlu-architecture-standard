@@ -291,15 +291,15 @@ scenario history retained for audit (retention-classed).
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| Position sources | twin layers (STX-01/02), BKT ✅, ERPNext/ESSE3 mirror | 🟡/🔵 | position-potential inventory ⚪ |
-| Map inputs | AKN ✅ (v2.0 🔵), `TeachingSection`/`AcademicTerm` ✅, ExternalCourse ✅, federation core 🟡 | 🟡 | RouteGraph compiler ⚪ (STX-07 core) |
-| ETA | `eta_service` | ✅ | confidence bands 🔵 |
-| Prereq logic | `prerequisite_service`, `curriculum_graph_service` | ✅ | term-indexed closure 🔵 |
-| Scenarios engine | constitution design (STX-07 fastest+health; STX-12 full set) | 🔵 | multi-objective Pareto + hedged recognition plans ⚪ |
+| Position sources | twin layers (STX-01/02), BKT ✅, ERPNext/ESSE3 mirror — STX-07's GPS engine reads these as-is via `TwinContextService`/`StudentProgress` | 🟡/🔵 | position-potential inventory ⚪ (still open — `PathHealth.position_potential` is honestly `null` in STX-07's output, not fabricated) |
+| Map inputs | AKN ✅ (v2.0 🔵), `TeachingSection`/`AcademicTerm` ✅, ExternalCourse ✅, federation core 🟡 | 🟡 | RouteGraph compiler ⚪ (NEW-04 — STX-07 shipped a v1 term-indexed closure composed from `prerequisite_service`/`curriculum_graph_service`/KG `PREREQUISITE_FOR`, behind the same `compute_scenarios` map interface NEW-04 will swap the compiler into) |
+| ETA | **correction (STX-07, repo-verified): `eta_service.py` is a generic job-completion estimator, not an academic model** — new graduation-ETA velocity model built as its own module | ✅ (STX-07, as new work) | confidence tier capped at low/medium (no "high" — needs a real calendar compiler, NEW-04) |
+| Prereq logic | `prerequisite_service`, `curriculum_graph_service` | ✅ | term-indexed closure ✅ (STX-07 — `AcademicGPSService._prereq_adjacency`/`_expand_scope`, full transitive closure, property-tested) |
+| Scenarios engine | `fastest_path` + path-health ✅ (STX-07); other 3 constitution-designed (STX-12 full set) | 🔵→partial ✅ | multi-objective Pareto + hedged recognition plans ⚪ (STX-12/NEW-04) — meanwhile the 3 unbuilt scenarios return `not_yet_available` honestly, never fabricated numbers |
 | Recognition inputs | Recognition Agent (STX-12), plagiarism/doc processing ✅, CASE/ESCO 🔵 | 🔵 | yield estimator + adjudication-history calibration ⚪ |
 | Session-granular routing (G2) | `AssessmentSession` aggregate (BOOK-15) + ESSE3 appello mirror (BOOK-18 driver) | ⚪ | SIT_EXAM/RETAKE edges + session calendars ⚪ |
-| Traffic/invalidation | event mesh (STX-03), fingerprints (constitutional) | 🔵 | hysteresis + batch replan ⚪ |
-| Guidance surfaces | WS01/WS02 (STX-07/12), Navigator agent (STX-06) | 🔵 | scenario-comparison UX contract (BOOK-17) |
+| Traffic/invalidation | event mesh (STX-03), fingerprints (constitutional) — STX-07 traffic v1: mesh consumers re-fix position + re-score the adopted path on `grade.synced`/`assessment.completed`/`competency.updated`/`competency.mastered`, flag-only | 🔵 | full invalidation table + hysteresis thresholds ⚪ (NEW-04 — consumer seam left explicit) |
+| Guidance surfaces | WS01 Academic Journey ✅ (STX-07 — Canvas/Companion/Missions triad, `/student/journey`), WS02 (STX-12), Navigator agent ✅ (STX-06 registered, STX-07 moves bound: `replan_path`/`explain_concept`/`reframe_goal`) | 🔵→partial ✅ | scenario-comparison Pareto-column UX (BOOK-17) — renders as "coming" in WS01 until NEW-04/STX-12 |
 | Equity monitoring | BOOK-08 discipline | ⚪ | routing-equity metrics (rides scorecards) |
 
 ---
