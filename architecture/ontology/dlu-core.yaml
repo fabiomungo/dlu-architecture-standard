@@ -115,6 +115,7 @@ deprecated_synonyms:
 event_nouns:
   - student
   - profile
+  - persona
   - enrollment
   - grade
   - activity
