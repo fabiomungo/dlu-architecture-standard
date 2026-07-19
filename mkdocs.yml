@@ -29,6 +29,34 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Masterbook:
+      - Index & Reading Paths: masterbook/MASTERBOOK-INDEX.md
+      - "BOOK-00 — Vision & Manifesto (v2.0)": masterbook/BOOK-00-Executive-Vision-and-Manifesto-v2.0.md
+      - "BOOK-01 — Academic Philosophy": masterbook/BOOK-01-Academic-Philosophy-and-Pedagogical-Model-v1.0.md
+      - "BOOK-02 — AI-Native University Theory": masterbook/BOOK-02-AI-Native-University-Theory-v1.0.md
+      - "BOOK-03 — Academic Operating System": masterbook/BOOK-03-Academic-Operating-System-v1.0.md
+      - "BOOK-04 — Academic Domain Model": masterbook/BOOK-04-Academic-Domain-Model-v1.0.md
+      - "BOOK-05 — Ontology & Semantic Model": masterbook/BOOK-05-Academic-Ontology-and-Semantic-Model-v1.0.md
+      - "BOOK-06 — Student Digital Twin": masterbook/BOOK-06-Student-Digital-Twin-v1.0.md
+      - "BOOK-07 — Faculty Digital Twin": masterbook/BOOK-07-Faculty-Digital-Twin-v1.0.md
+      - "BOOK-08 — Institution Digital Twin": masterbook/BOOK-08-Institution-Digital-Twin-v1.0.md
+      - "BOOK-09 — Academic Cognitive Engine": masterbook/BOOK-09-Academic-Cognitive-Engine-v1.0.md
+      - "BOOK-10 — AI Workforce": masterbook/BOOK-10-AI-Workforce-v1.0.md
+      - "BOOK-10A — Workforce, Skills & MCP Catalog": masterbook/BOOK-10A-AI-Workforce-Skills-and-MCP-Catalog-v1.0.md
+      - "BOOK-10B — AI Execution Framework": masterbook/BOOK-10B-AI-Execution-Framework-v1.0.md
+      - "BOOK-11 — AI Cognitive Architecture": masterbook/BOOK-11-AI-Cognitive-Architecture-v1.0.md
+      - "BOOK-12 — Memory Architecture": masterbook/BOOK-12-Memory-Architecture-v1.0.md
+      - "BOOK-13 — Academic Knowledge Network": masterbook/BOOK-13-Academic-Knowledge-Network-v1.0.md
+      - "BOOK-14 — Academic Intelligence Navigator": masterbook/BOOK-14-Academic-Intelligence-Navigator-v1.0.md
+      - "BOOK-15 — Assessment & Evidence": masterbook/BOOK-15-Assessment-and-Evidence-Architecture-v1.0.md
+      - "BOOK-16 — Credential & Trust": masterbook/BOOK-16-Credential-and-Trust-Architecture-v1.0.md
+      - "BOOK-17 — Experiences": masterbook/BOOK-17-Experiences-v1.0.md
+      - "BOOK-18 — Technical Architecture & Turnkey": masterbook/BOOK-18-Technical-Architecture-and-Turnkey-Integration-v1.0.md
+      - "BOOK-19 — Governance, Security & Compliance": masterbook/BOOK-19-Governance-Security-and-Compliance-v1.0.md
+      - "BOOK-20 — Implementation Blueprint": masterbook/BOOK-20-Implementation-Blueprint-v1.0.md
+      - Traceability Matrix: masterbook/TRACEABILITY.md
+      - Unified Glossary: masterbook/GLOSSARY.md
+      - Critical Review: masterbook/MASTERBOOK-REVIEW-v1.0.md
   - Manifesto:
       - Overview: 00-manifesto/index.md
       - AI-Native University Manifesto: 00-manifesto/ai-native-university-manifesto.md

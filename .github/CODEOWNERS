@@ -1,0 +1,22 @@
+# CODEOWNERS — dlu-architecture-standard (DAS Masterbook)
+# ---------------------------------------------------------------------------
+# Repo normativo (BOOK-00…20, ontology, TRACEABILITY). Owner umano primario:
+# FABIO (architettura/backend). Il Collega (Frontend/UX) è co-owner delle
+# parti UX/esperienza (BOOK-17 Experiences) e della documentazione.
+#
+# Account GitHub condiviso (@fabiomungo) + attribuzione via Co-authored-by.
+# Vedi ../dlu_builder_tk/TEAM.md per la convenzione.
+# ---------------------------------------------------------------------------
+
+*                               @fabiomungo
+
+# Kernel / ontologia / governance → Fabio
+/architecture/                  @fabiomungo
+/schemas/                       @fabiomungo
+TRACEABILITY.md                 @fabiomungo
+GLOSSARY.md                     @fabiomungo
+MASTERBOOK-INDEX.md             @fabiomungo
+/implementation/                @fabiomungo
+
+# Esperienza / UX book → owner umano: Collega
+BOOK-17-Experiences-v1.0.md     @fabiomungo
