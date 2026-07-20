@@ -430,12 +430,12 @@ Status legend as in BOOK-00 Annex A.
 | I/R/M trajectory audit | `AlignmentStrength`, `OutcomeCoverageMatrix`, `outcome_alignment_service` | ✅ | CAT-trajectory coherence check (Ch. 5.2 rule 3) 🔵 |
 | Bloom distribution audit | Pedagogical Coach (`pedagogical_coach_service`, reports, recommendations) | ✅ | — |
 | BKT mastery (P1) | `concept_mastery` (P(L),P(T),P(G),P(S)), `mastery_tracking_service`, `MASTERY_THRESHOLD = 0.95` | ✅ | parameter versioning & calibration monitoring (Ch. 6.2) ⚪ |
-| Spaced repetition (P3) | `spaced_repetition_service` — SM-2, EF∈[1.3,2.5], intervals 1/6/EF-scaled | ✅ | review missions as first-class recommendations 🔵 (STX-09) |
+| Spaced repetition (P3) | `spaced_repetition_service` — SM-2, EF∈[1.3,2.5], intervals 1/6/EF-scaled | ✅ | **STX-09 (2026-07-21): due reviews are now a real stage-1 candidate source** in `recommendation_service_v2.py` (`asyncio.to_thread`-offloaded, sync-only service), competing on the same deterministic ranking as every other candidate — no privileged lane |
 | Feedback (P6) | quiz feedback service (FR-241) | ✅ | model-state-referencing feedback 🔵 |
 | Formative→evidence pipeline (P2, Ch. 8) | xAPI/Caliper ingestion, grading | 🟡 | assessment→CLO→competency evidence chain 🔵 (STX-08, BOOK-15) |
 | Competency confidence (Ch. 6.1) | `Competency`, `CLOCompetency` | 🟡 | `StudentCompetency` + confidence algorithm 🔵 (STX-04) |
-| Open learner model (P8) | `KnowledgeMastery`, `MasteryDashboard` components | 🟡 | contestability flow ⚪; WS03 knowledge map 🔵 |
-| Personalization guardrails (Ch. 7) | rule-based recommendation engine, `PersonalizationContext` | 🟡 | serendipity quota, consent degradation 🔵 (STX-09) |
+| Open learner model (P8) | `KnowledgeMastery`, `MasteryDashboard` components | 🟡 | **contestability flow ✅ STX-09 (2026-07-21):** `POST /api/competencies/{id}/contest` files a `move_proposal_service` HITL item, never edits `StudentCompetency` directly (BOOK-06 Ch. 8.3); **WS03 knowledge map ✅ STX-09:** `KnowledgeMapWorkspace.js` — a lighter, twin-level custom view, not yet reusing `KnowledgeMastery`/`MasteryDashboard` (those are course+legacy-student_id-scoped; reusing them would reintroduce the exact legacy-id bridging this sprint avoided — a documented follow-up, not an oversight) |
+| Personalization guardrails (Ch. 7) | rule-based recommendation engine, `PersonalizationContext` | ✅ **STX-09 (2026-07-21)** | serendipity quota (deterministic per twin+day, sha256-keyed — never `random`, which would break the idempotency invariant) and consent degradation (collapses to rule-stage-only, course-scoped) both real in `recommendation_service_v2.py`; weight defaults (w1-w4) and the 15% quota are documented v1 policy knobs |
 | Socratic tutoring (P4) | `learner_tutor_service`, GraphRAG grounding | 🟡 | struggle-zone policy & scaffolding fade ⚪ (BOOK-09/11) |
 | Social learning (P9) | cohorts, forums, pacing/cohort services | 🟡 | peer-tutoring missions & peer evidence weights ⚪ (BOOK-15/17) |
 | Dialogic verification (Ch. 8) | — | ⚪ | viva dossier + verification record (BOOK-15) |
