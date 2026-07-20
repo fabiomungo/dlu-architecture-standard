@@ -280,7 +280,7 @@ System-1 moves p95 < 1 s; every cycle traced; every trace retrievable.
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| Engine skeleton | `ace_service.py` (`AcademicCognitiveEngine`, PDDAEL `run_cycle`/`route`/`run_mission`/`get_trace`) — `agent_orchestrator_service` kept as-is (authoring-side, unrelated) | ✅ (STX-06, 2026-07-17) | consultation-mapped blackboard for the other 8 agents once seeded 🔵 |
+| Engine skeleton | `ace_service.py` (`AcademicCognitiveEngine`, PDDAEL `run_cycle`/`route`/`run_mission`/`get_trace`) — `agent_orchestrator_service` kept as-is (authoring-side, unrelated) | ✅ (STX-06, 2026-07-17) | consultation-mapped blackboard for the remaining agents once seeded 🔵 |
 | Agent/skill/preset registry | AI Management v2.0 (`ai_agent_configs`, `ai_skill_registry`, `ai_mcp_servers`, `ai_model_presets`); move-catalog binding delivered NEW-01 | ✅ | Discovery seeded (STX-06, `lifecycle_state="testing"`); remaining 8 agents as registry rows 🔵 |
 | Gateway + presets + quotas | ACP Gateway (routing, fallback, virtual keys, budgets) | ✅ | escalation-ladder presets mapping — first-cut deterministic table shipped (STX-06, `ESCALATION_PRESET`); calibration-history-driven mapping still open ⚪ |
 | Diagnose inputs | BKT, evidence (STX-08), behaviour aggregates, tutor context; `LearnerStateAssessment` (NEW-01) | ✅ | — |
@@ -289,7 +289,7 @@ System-1 moves p95 < 1 s; every cycle traced; every trace retrievable.
 | Traces | `ace_cycle_traces` (migration `20260717_1100`), schema-validated `CycleTrace` (Ch. 8) | ✅ (STX-06) | `agent_run_logs` ↔ `cycle_id` linkage still open ⚪ |
 | Missions | Celery + beat; `ace.run_mission` task (STX-06, no beat schedule registered yet — event-triggered dispatch point only) | ✅ | cognitive budget scheduler (Ch. 6 floors/caps/equity) — `TODO(budget)` marker in code, no enforcement yet ⚪ |
 | Calibration | — | ⚪ | per-move calibration store + steward alerts (BOOK-11 eval harness) |
-| One-voice composition | `synthesize_blackboard` (structural: one `response` field, attribution as metadata) | ✅ (STX-06) | exercised via test fixture only this sprint — `MOVE_CONSULTS` is empty until the other 3 consulted agents are registry rows 🔵 |
+| One-voice composition | `synthesize_blackboard` (structural: one `response` field, attribution as metadata) | ✅ (STX-06) | **MOVE_CONSULTS populated for real ✅ (STX-10, 2026-07-22)**: `{"reframe_goal": ["subject_tutor", "learning_coach"]}` — `reframe_goal` is already `plan`+`propose` in the closed catalog, so the existing L4 escalation gate needed zero changes; `_consult` (previously `NotImplementedError`) now returns a deterministic, data-derived contribution per consulted agent — NOT a nested LLM call (cost/recursion/budget-compounding has no infrastructure yet, an honest scope limit); `_tutor_consult_view`/`_coach_consult_view`/`synthesize_blackboard` are tested directly (same fixture-level precedent as STX-06 itself), but `_consult`'s own DB round-trip (`_load_agent` against a real `AiAgentConfig` row) is untested at the integration level — `AiAgentConfig`'s Postgres-only JSONB columns are the same SQLite-test limitation every prior sprint has documented |
 
 ---
 
