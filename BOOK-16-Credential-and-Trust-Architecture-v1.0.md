@@ -253,12 +253,13 @@ in BOOK-17, drivers in BOOK-18).
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| Issuance authority | **dlu-badge service**: issuers, classes, lifecycle, templates, demo suite | ✅ | unify with constitution templates 🔵 |
-| VC composition | `CredentialService` — OB 3.0 JSON-LD (`CourseAchievement`) | ✅ (unsigned) | **P3 signing**: did:web + Data Integrity ⚪ (STX-13) |
-| Learner/admin surfaces | credentials + badges routes | ✅ | wallet UX (WS07, STX-13) 🔵 |
-| Criteria engine | constitution §12 design | 🔵 STX-13 | — |
-| Verification endpoint | constitution §12.3 design | 🔵 | status-list revocation ⚪ |
-| Wallet import | — | ⚪ | OB/CLR import → recognition claims (BOOK-14 feed) |
+| Issuance authority | **dlu-badge service**: issuers, classes, lifecycle, templates, demo suite; **plus, as of STX-13 (2026-07-23), a NEW, separate `credential_templates`/`credential_issuance_service` engine** (constitution §12) — the dlu-badge/`domains/badge(s)` tracks were deliberately left unconsolidated (real, pre-existing redundancy, see `sprint_decisions_20260723_stx13.md` §1) | ✅ | unify with constitution templates 🔵 (still open — now THREE-plus parallel badge/credential tracks, not two) |
+| VC composition | `CredentialService` — OB 3.0 JSON-LD (`CourseAchievement`, unsigned) · **STX-13's `credential_issuance_service` — signed OB 3.0/VC-EDU JSON, `eddsa-jcs-2022` Data Integrity proof** | ✅ **signed (STX-13)** | KMS/HSM key custody + rotation logic (env/Fernet + versioned-key shape only, phase 1) ⚪ |
+| Learner/admin surfaces | credentials + badges routes · **STX-13 WS07 `CredentialWallet.js`** | ✅ | visual unification across the parallel badge tracks 🔵 |
+| Criteria engine | `credential_criteria_service.py` — deterministic (no LLM), competency-mastery + course-completion kinds | ✅ **STX-13** | richer criteria DSL if a real need arises |
+| Verification endpoint | `GET /api/credentials/verify/{public_id}` — public, offline-verifiable, `EXEMPT_PATHS` | ✅ **STX-13** | — |
+| Status-list revocation | `credential_revocation_service.py` — W3C Bitstring Status List, platform-schema row-locked index allocator, derived read-model | ✅ **STX-13** | 2-bit encoding (suspended vs revoked distinguishable remotely) if a real need arises |
+| Wallet import | `POST /api/wallet/import` — OB 2.0/3.0 JSON → unverified, pending `RecognitionClaim` | ✅ **STX-13 (unverified-import tier only)** | cryptographic verification of externally-issued signatures (needs an external issuer trust registry — not built) |
 | Transcript/ECTS views | ERPNext/ESSE3 mirror + outcomes | 🟡 | generators ⚪ |
 | G9 documents | — | ⚪ | self-cert native; PagoPA/seal drivers (BOOK-18) |
 | G10 Diploma Supplement | catalog + outcomes + mirror all present | ⚪ | DS generator (IT/EN) + ELM encoder |
