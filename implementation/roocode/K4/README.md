@@ -1,34 +1,35 @@
 # K4 Prompt Pack — Trust & Institution
 
-### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15 · generated from the Masterbook v1.0-draft
+### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15, NEW-08, NEW-09/10, NEW-16 · generated from the Masterbook v1.0-draft
 
 **Target repo:** `dlu_builder_tk` (the reference implementation).
 **Prerequisite:** K3 exit gate — see `../K3/K3-EXIT-REPORT.md`. Every K3
 sprint's own V1–Vn checks are green (8/8) and the navigation/evidence
 spines (GPS, RouteGraph, Recognition, Evidence Pipeline, AssessmentSession,
-Assessment/Tutor/Coach agents, Recommendations v2) are live. **Read the
-exit report's §1 and §6 before starting K4 work:** the BOOK-20 §8.1
-DAS-Core conformance-suite *infrastructure* (cross-tenant fuzz, driver
-chaos tests, NFR dashboards, a gateway-only egress CI gate) is only
-**partially** built — real where an individual K3 sprint's own scope
-required it, absent as unified K3-phase infrastructure otherwise. K4 does
-not get to assume that infrastructure exists; where a K4 verification
-below depends on it, the sprint must build the narrow slice it needs
-rather than citing K3 for something K3 didn't actually deliver.
+Assessment/Tutor/Coach agents, Recommendations v2) are live. **Read
+`K4-EXIT-REPORT.md` (STX-13/STX-14-15's own delivery audit) before
+starting the remaining K4 sprints below:** the BOOK-20 §8.1/§8.2
+conformance-suite *infrastructure* (cross-tenant fuzz, driver chaos
+tests, NFR dashboards, a gateway-only egress CI gate, erasure e2e, ACE
+trace-completeness measurement, one-voice/"why?" UX audits, scorecards)
+is only **partially** built — real where an individual sprint's own
+scope required it, absent as unified phase infrastructure otherwise. No
+sprint below gets to assume that infrastructure exists; where a
+verification depends on it, the sprint must build the narrow slice it
+needs rather than citing an earlier phase for something it didn't
+actually deliver.
 
 **Scope of this pack.** BOOK-20 Ch. 6 names six K4 items:
-`STX-13 + NEW-07` (credential engine + signing), `NEW-08` (document
-credentials — DS/self-certification/transcript, G9-11), `NEW-17` (credit
-recognition & pre-evaluation, G16, added by BOOK-14A), `NEW-16` (catalog
-edition & explorer, G15), `STX-14/15` (behaviour + Success + Career +
-WS08), and `NEW-09/10` (faculty + institution surfaces). **This pack
-authors and executes only `STX-13 + NEW-07` and `STX-14/15`** — the two
-sprints explicitly requested. `NEW-08`, `NEW-16`, `NEW-17`, and
-`NEW-09/10` are real BOOK-20 K4 deliverables, left for a future prompt
-pack pass; do not treat their absence here as an oversight, and do not
-fold their scope into STX-13/STX-14/15 opportunistically. (`NEW-17` in
-particular is documented in BOOK-20 as already in progress on a separate,
-concurrent track — do not touch its files.)
+`STX-13 + NEW-07` ✅ **delivered** (2026-07-23, credential engine +
+signing), `STX-14/15` ✅ **delivered** (2026-07-24, behaviour + Success +
+Career + WS08), `NEW-08` (document credentials — DS/self-certification/
+transcript, G9-11), `NEW-09/10` (faculty + institution surfaces), `NEW-16`
+(catalog edition & explorer, G15) — **prompt files authored, not yet
+executed** — and `NEW-17` (credit recognition & pre-evaluation, G16,
+added by BOOK-14A) — **explicitly out of this pack's scope; do not touch
+its files**, it is documented in BOOK-20 as already in progress on a
+separate, concurrent track. Do not fold NEW-17's scope into anything
+below opportunistically.
 
 **Execution rules:** BOOK-20 Ch. 12 bind every sprint — read them first.
 Digest: Turnkey `CLAUDE.md` guardrails are absolute (GUID PKs for new
@@ -46,20 +47,44 @@ steward-signed — no exceptions.**
 ## Order and dependencies
 
 ```text
-STX-13 + NEW-07 (Credential engine + signing + WS07 · seeds credential agent)
-   — depends on STX-08 (evidence/triangulation feeds criteria evaluation)
+STX-13 + NEW-07 (Credential engine + signing + WS07 · seeds credential agent) ✅
+   — depended on STX-08 (evidence/triangulation feeds criteria evaluation)
      and STX-12 (RecognitionClaim is the wallet-import landing model)
-STX-14/15 (Behaviour recompute + Success + Career agents + WS08 · hardening)
-   — depends on K1 twin core (TwinBehaviourProfile, TwinCareerGoal already
+STX-14/15 (Behaviour recompute + Success + Career agents + WS08 · hardening) ✅
+   — depended on K1 twin core (TwinBehaviourProfile, TwinCareerGoal already
      modeled), STX-12 (GPS `esco_occupation`/career scenario scaffolding,
      currently stubbed — Career Advisor is the first real consumer)
+NEW-08 (Document credentials — DS/self-cert/transcript/clearance, G9-11)
+   — depends on STX-07 (GPS path-health feeds the clearance checklist);
+     benefits from (but does not strictly require) NEW-06 (Thesis+
+     Committee) for the thesis-deposited clearance criterion — if NEW-06
+     hasn't landed, that criterion stays honestly `not_yet_available`
+NEW-09/10 (Faculty + Institution surfaces — FW2/FW3/FW5, I2/I3/I5, IW1-3)
+   — depends on nothing this pack hasn't already delivered; reads
+     STX-08's evidence pipeline (FW3), STX-12's recognition claims (IW2),
+     and STX-14/15's Success/Career agents only incidentally (no hard
+     blocking edge); if NEW-08 has already landed, IW2 additionally reads
+     its clearance-application table (an honest empty state otherwise)
+NEW-16 (Catalog Edition & Explorer, G15)
+   — depends on NEW-04 (RouteGraphVersion is the immutability pattern to
+     copy) and academic_gps_service.compute_scenarios (the engine
+     `simulate_scenarios` wraps, never duplicates); NEW-17 (separate,
+     concurrent track) depends on THIS sprint's CatalogEdition aggregate —
+     do not let that create a reverse dependency; NEW-16 must not touch
+     NEW-17's files
 ```
 
-- **No blocking edge between the two sprints** — STX-13 and STX-14/15
-  touch disjoint tables (`credential_templates`/`issued_credentials` vs
-  `twin_behaviour_profiles`) and disjoint agents; they can run in either
-  order or in parallel. This pack executes STX-13 first only because it
-  was requested first.
+- **No blocking edge between STX-13 and STX-14/15** — they touched
+  disjoint tables (`credential_templates`/`issued_credentials` vs
+  `twin_behaviour_profiles`) and disjoint agents; STX-13 ran first only
+  because it was requested first.
+- **NEW-08, NEW-09/10, and NEW-16 have no blocking edges between each
+  other either** — disjoint tables, disjoint surfaces (document
+  credentials/clearance vs. faculty-envelope+institution-composite vs.
+  catalog-edition+explorer). They can run in any order or in parallel;
+  the user's own stated priority (after STX-13/STX-14-15) was "1 and 2"
+  — items 1 (author these three prompt files) and 2 (residual-debt
+  hardening) — with no stated order among the three sprints themselves.
 - **STX-13 does not extend the three pre-existing, overlapping badge
   implementations** (`backend/services/credential_service.py` +
   `CourseAchievement`; `backend/domains/badge/` unregistered dead code;
@@ -89,37 +114,41 @@ STX-14/15 (Behaviour recompute + Success + Career agents + WS08 · hardening)
 
 ## K3 residual debt — assigned intake
 
-From `../K3/K3-EXIT-REPORT.md` §6; items this pack can reasonably close or
-must explicitly re-defer:
+From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
+§6 after STX-13/STX-14-15); items the user has asked to prioritize next
+("item 2," after authoring NEW-08/09-10/16):
 
-| Debt item | Disposition in K4 |
-|-----------|-------------------|
-| Gateway-only egress CI gate (repo-wide grep) — cheap, flagged "should be prioritized early in K4" | Out of scope for STX-13/STX-14-15 specifically (neither sprint's own V-checks name it); still open, still worth doing before the K4 exit report is written |
-| None of the six K3 agents has run `/agents/{id}/gate` + been steward-signed | Ops/steward action, not a sprint deliverable — unchanged, re-carried |
-| `MOVE_CONSULTS` has exactly one entry (`reframe_goal`) | STX-14/15 does **not** need a new consult pair (Success/Career's moves — `flag_risk`, `encourage`, `refer_to_human`, `reframe_goal`, `recommend_next`, `explain_concept` — don't require blackboard consultation to reach L4 by this pack's own design); remains open only if a future sprint finds a real need |
-| Cross-tenant leakage fuzz / driver bulkhead chaos / NFR dashboards (unified suites) | Out of scope for individual K4 sprints; carried to the K4 exit report's own residual-debt table unless a dedicated hardening pass is requested |
-| Calibration seeding beyond `recommend_next`/readiness/recognition | Unrelated to STX-13/STX-14-15's own predictive surfaces (Credential Agent doesn't predict; Success/Career's risk-scoring and gap-analysis are model-scored, not agent-predicted moves in the STX-11 calibration sense) — not this pack's debt to retire |
+| Debt item | Disposition |
+|-----------|-------------|
+| Gateway-only egress CI gate (repo-wide grep) — cheap, flagged "should be prioritized early in K4" | Still open after STX-13/STX-14-15 (neither sprint's own V-checks named it) — the cheapest residual-debt item, do this first |
+| Cross-tenant leakage fuzz (API + graph + streams + cache) | Still open — a dedicated hardening pass, larger than the egress gate |
+| Driver bulkhead chaos tests | Still open — same scope class as the fuzz suite |
+| NFR budget dashboards | Still open — not explicitly named in the user's "item 2" ask; lower priority unless redirected |
+| None of the nine agents (all delivered as of STX-14/15) has run `/agents/{id}/gate` + been steward-signed | Ops/steward action, not a sprint deliverable — unchanged, re-carried |
+| `MOVE_CONSULTS` has exactly one entry (`reframe_goal`) | Remains open only if a future sprint finds a real need — not touched by NEW-08/09-10/16 |
+| Erasure e2e chain (credential PII purge → twin data purge, end-to-end) | New gap found at STX-13's own exit audit — `revoke_or_suspend(purge_pii=True)` is a real primitive with no erasure-subsystem caller; still open |
 
 ## Phase exit gate
 
-**DAS-Intelligent suite green (BOOK-20 Ch. 8.2):** Core (Ch. 8.1) plus —
-twin seven layers live with consent/erasure e2e (L6 already has a
-consent flag, `CONSENT_LAYER_FLAGS[L6_BEHAVIOUR]`; STX-14/15 must respect
-it, not merely inherit it) · ACE trace completeness (100% sampled
-cycles) · harness gates enforced in ACP lifecycle · GPS sovereignty audit
-(weights inspectable — unaffected by this pack) · **credential survival
-suite** (STX-13's own V3: suspension/erasure leave issued credentials
-verifiable) · one-voice + "why?" UX checks · scorecards live. This pack
-covers only the credential-survival and (partially) the L6-consent
-strands of Ch. 8.2 — the rest (ACE trace completeness at 100% sampling,
-one-voice/"why?" UX audits, scorecards) are cross-cutting and not owned
-by either sprint here; note them as still-open in the K4 exit report
-rather than claiming this pack alone satisfies Ch. 8.2.
+**DAS-Intelligent suite green (BOOK-20 Ch. 8.2):** see `K4-EXIT-REPORT.md`
+for the full, honest audit against STX-13/STX-14-15's delivery — credential
+survival suite ✅ real; twin-layer consent (not full erasure e2e) 🟡;
+ACE trace-completeness measurement, one-voice/"why?" UX audits, and
+scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16 do not change this
+picture on their own** — none of them targets the still-open Ch. 8.2
+cross-cutting gaps directly; closing those is tracked separately under
+"K3 residual debt" above, per the user's own stated priority order.
 
-Produce `K4-EXIT-REPORT.md` (same template as K2/K3) before requesting
-further K4 items (`NEW-08`, `NEW-16`, `NEW-09/10`) or K5.
+`K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
+audit) — it does not declare the K4 phase itself closed; NEW-08/
+NEW-09-10/NEW-16 remain to be executed, and a fuller K4 exit assessment
+should be revisited once they (and the prioritized residual-debt items)
+land.
 
-| Sprint | File | Model rec. (CLAUDE.md §14) |
-|--------|------|---------------------------|
-| STX-13 + NEW-07 | STX-13-credential-agent-signing.md | opus for the signing/DID/status-list scope + proof-format design review, sonnet impl |
-| STX-14/15 | STX-14-15-behaviour-success-career.md | opus for the cognitive-budget-scope + ESCO-scope design review, sonnet impl |
+| Sprint | File | Status | Model rec. (CLAUDE.md §14) |
+|--------|------|--------|---------------------------|
+| STX-13 + NEW-07 | STX-13-credential-agent-signing.md | ✅ delivered 2026-07-23 | opus for the signing/DID/status-list scope + proof-format design review, sonnet impl |
+| STX-14/15 | STX-14-15-behaviour-success-career.md | ✅ delivered 2026-07-24 | opus for the cognitive-budget-scope + ESCO-scope design review, sonnet impl |
+| NEW-08 | NEW-08-document-credentials.md | prompt authored, opus design-reviewed (clearance `waived` state + live-resolver design) — not yet executed | opus for the clearance-checklist scope + ELM-lite schema design review, sonnet impl |
+| NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | prompt authored, opus design-reviewed (envelope precedence/wiring + shape fix) — not yet executed | opus for the faculty-envelope precedence/wiring design review, sonnet impl |
+| NEW-16 | NEW-16-catalog-edition-explorer.md | prompt authored, opus design-reviewed (snapshot shape + sole-reader gate) — not yet executed | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |
