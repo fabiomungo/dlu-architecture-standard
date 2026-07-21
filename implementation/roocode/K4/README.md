@@ -120,7 +120,7 @@ From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
 
 | Debt item | Disposition |
 |-----------|-------------|
-| Gateway-only egress CI gate (repo-wide grep) — cheap, flagged "should be prioritized early in K4" | Still open after STX-13/STX-14-15 (neither sprint's own V-checks named it) — the cheapest residual-debt item, do this first |
+| Gateway-only egress CI gate (repo-wide grep) — cheap, flagged "should be prioritized early in K4" | **✅ closed (2026-07-24)** — `scripts/ci/check_gateway_only_egress.sh` (+ `tests/test_ci_gateway_only_egress_gate.py`, pass + self-test). Confirmed 8 genuine pre-existing direct-provider call sites predating the ACP gateway cutover (`rag_agent.py`, `content_variation_service.py`, `episodic_vector_service.py`, `kg_nlp_extractor.py`, `kg_service.py`, `media_generation_service.py`, `transcription_service.py`, `academic_embedding_worker.py`) — allowlisted with reasons, NOT migrated (a materially larger task, some may need gateway/LiteLLM config changes for non-chat endpoints like Whisper/DALL-E/embeddings); the gate locks in the current state and catches any NEW direct-construction call site, it does not retroactively fix the eight |
 | Cross-tenant leakage fuzz (API + graph + streams + cache) | Still open — a dedicated hardening pass, larger than the egress gate |
 | Driver bulkhead chaos tests | Still open — same scope class as the fuzz suite |
 | NFR budget dashboards | Still open — not explicitly named in the user's "item 2" ask; lower priority unless redirected |
