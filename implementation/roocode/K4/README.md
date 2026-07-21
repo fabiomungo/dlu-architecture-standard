@@ -22,9 +22,10 @@ actually deliver.
 **Scope of this pack.** BOOK-20 Ch. 6 names six K4 items:
 `STX-13 + NEW-07` ✅ **delivered** (2026-07-23, credential engine +
 signing), `STX-14/15` ✅ **delivered** (2026-07-24, behaviour + Success +
-Career + WS08), `NEW-08` (document credentials — DS/self-certification/
-transcript, G9-11), `NEW-09/10` (faculty + institution surfaces), `NEW-16`
-(catalog edition & explorer, G15) — **prompt files authored, not yet
+Career + WS08), `NEW-08` ✅ **delivered** (2026-07-25, document
+credentials — DS/self-certification/transcript/clearance, G9-11),
+`NEW-09/10` (faculty + institution surfaces) and `NEW-16` (catalog
+edition & explorer, G15) — **prompt files authored, not yet
 executed** — and `NEW-17` (credit recognition & pre-evaluation, G16,
 added by BOOK-14A) — **explicitly out of this pack's scope; do not touch
 its files**, it is documented in BOOK-20 as already in progress on a
@@ -54,11 +55,12 @@ STX-14/15 (Behaviour recompute + Success + Career agents + WS08 · hardening) �
    — depended on K1 twin core (TwinBehaviourProfile, TwinCareerGoal already
      modeled), STX-12 (GPS `esco_occupation`/career scenario scaffolding,
      currently stubbed — Career Advisor is the first real consumer)
-NEW-08 (Document credentials — DS/self-cert/transcript/clearance, G9-11)
-   — depends on STX-07 (GPS path-health feeds the clearance checklist);
-     benefits from (but does not strictly require) NEW-06 (Thesis+
-     Committee) for the thesis-deposited clearance criterion — if NEW-06
-     hasn't landed, that criterion stays honestly `not_yet_available`
+NEW-08 (Document credentials — DS/self-cert/transcript/clearance, G9-11) ✅
+   — depended on STX-07 (GPS path-health feeds the clearance checklist);
+     NEW-06 (Thesis+Committee) had not landed in this worktree at NEW-08's
+     execution time, so `thesis_deposited`/`surveys_done` stay honestly
+     `not_yet_available` in v1 — resolver swaps, not schema migrations,
+     if/when NEW-06 or a Survey model land later
 NEW-09/10 (Faculty + Institution surfaces — FW2/FW3/FW5, I2/I3/I5, IW1-3)
    — depends on nothing this pack hasn't already delivered; reads
      STX-08's evidence pipeline (FW3), STX-12's recognition claims (IW2),
@@ -134,21 +136,22 @@ From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
 for the full, honest audit against STX-13/STX-14-15's delivery — credential
 survival suite ✅ real; twin-layer consent (not full erasure e2e) 🟡;
 ACE trace-completeness measurement, one-voice/"why?" UX audits, and
-scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16 do not change this
-picture on their own** — none of them targets the still-open Ch. 8.2
-cross-cutting gaps directly; closing those is tracked separately under
-"K3 residual debt" above, per the user's own stated priority order.
+scorecards ⚪ not built. **NEW-08 does not change this picture on its
+own** (delivered, but does not target the still-open Ch. 8.2
+cross-cutting gaps) — **NEW-09-10/NEW-16 remain to be executed**;
+closing the Ch. 8.2 gaps is tracked separately under "K3 residual debt"
+above, per the user's own stated priority order.
 
 `K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
-audit) — it does not declare the K4 phase itself closed; NEW-08/
-NEW-09-10/NEW-16 remain to be executed, and a fuller K4 exit assessment
-should be revisited once they (and the prioritized residual-debt items)
-land.
+audit) — it does not declare the K4 phase itself closed; NEW-08 is now
+✅ delivered (2026-07-25) but NEW-09-10/NEW-16 remain to be executed, and
+a fuller K4 exit assessment should be revisited once they (and the
+prioritized residual-debt items) land.
 
 | Sprint | File | Status | Model rec. (CLAUDE.md §14) |
 |--------|------|--------|---------------------------|
 | STX-13 + NEW-07 | STX-13-credential-agent-signing.md | ✅ delivered 2026-07-23 | opus for the signing/DID/status-list scope + proof-format design review, sonnet impl |
 | STX-14/15 | STX-14-15-behaviour-success-career.md | ✅ delivered 2026-07-24 | opus for the cognitive-budget-scope + ESCO-scope design review, sonnet impl |
-| NEW-08 | NEW-08-document-credentials.md | prompt authored, opus design-reviewed (clearance `waived` state + live-resolver design) — not yet executed | opus for the clearance-checklist scope + ELM-lite schema design review, sonnet impl |
+| NEW-08 | NEW-08-document-credentials.md | ✅ delivered 2026-07-25 (`sprint_decisions_20260725_new08.md`) | opus for the clearance-checklist scope + ELM-lite schema design review, sonnet impl |
 | NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | prompt authored, opus design-reviewed (envelope precedence/wiring + shape fix) — not yet executed | opus for the faculty-envelope precedence/wiring design review, sonnet impl |
 | NEW-16 | NEW-16-catalog-edition-explorer.md | prompt authored, opus design-reviewed (snapshot shape + sole-reader gate) — not yet executed | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |
