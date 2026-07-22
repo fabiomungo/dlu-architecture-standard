@@ -24,9 +24,10 @@ actually deliver.
 signing), `STX-14/15` ✅ **delivered** (2026-07-24, behaviour + Success +
 Career + WS08), `NEW-08` ✅ **delivered** (2026-07-25, document
 credentials — DS/self-certification/transcript/clearance, G9-11),
-`NEW-09/10` (faculty + institution surfaces) and `NEW-16` (catalog
-edition & explorer, G15) — **prompt files authored, not yet
-executed** — and `NEW-17` (credit recognition & pre-evaluation, G16,
+`NEW-09/10` ✅ **delivered** (2026-07-26, faculty + institution surfaces
+— FW2/FW3/FW5 + I2/I3/I5 + IW1-3, G1/G4) and `NEW-16` ✅ **delivered**
+(2026-07-27, catalog edition & explorer, G15) — and `NEW-17` (credit
+recognition & pre-evaluation, G16,
 added by BOOK-14A) — **explicitly out of this pack's scope; do not touch
 its files**, it is documented in BOOK-20 as already in progress on a
 separate, concurrent track. Do not fold NEW-17's scope into anything
@@ -136,22 +137,25 @@ From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
 for the full, honest audit against STX-13/STX-14-15's delivery — credential
 survival suite ✅ real; twin-layer consent (not full erasure e2e) 🟡;
 ACE trace-completeness measurement, one-voice/"why?" UX audits, and
-scorecards ⚪ not built. **NEW-08 does not change this picture on its
-own** (delivered, but does not target the still-open Ch. 8.2
-cross-cutting gaps) — **NEW-09-10/NEW-16 remain to be executed**;
-closing the Ch. 8.2 gaps is tracked separately under "K3 residual debt"
-above, per the user's own stated priority order.
+scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16 do not change this
+picture on their own** (all delivered, but none targets the still-open
+Ch. 8.2 cross-cutting gaps directly) — closing those gaps is tracked
+separately under "K3 residual debt" above, per the user's own stated
+priority order.
 
 `K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
-audit) — it does not declare the K4 phase itself closed; NEW-08 is now
-✅ delivered (2026-07-25) but NEW-09-10/NEW-16 remain to be executed, and
-a fuller K4 exit assessment should be revisited once they (and the
-prioritized residual-debt items) land.
+audit) — it does not declare the K4 phase itself closed; NEW-08,
+NEW-09/10, and NEW-16 are now ALL ✅ delivered (2026-07-25 through
+2026-07-27) — every BOOK-20 Ch. 6 K4 sprint item is complete except the
+still-open Ch. 8.2 cross-cutting infrastructure (erasure e2e, ACE
+trace-completeness, one-voice/"why?" UX audits, scorecards) named above.
+A fuller K4 exit assessment should be revisited against that remaining
+list.
 
 | Sprint | File | Status | Model rec. (CLAUDE.md §14) |
 |--------|------|--------|---------------------------|
 | STX-13 + NEW-07 | STX-13-credential-agent-signing.md | ✅ delivered 2026-07-23 | opus for the signing/DID/status-list scope + proof-format design review, sonnet impl |
 | STX-14/15 | STX-14-15-behaviour-success-career.md | ✅ delivered 2026-07-24 | opus for the cognitive-budget-scope + ESCO-scope design review, sonnet impl |
 | NEW-08 | NEW-08-document-credentials.md | ✅ delivered 2026-07-25 (`sprint_decisions_20260725_new08.md`) | opus for the clearance-checklist scope + ELM-lite schema design review, sonnet impl |
-| NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | prompt authored, opus design-reviewed (envelope precedence/wiring + shape fix) — not yet executed | opus for the faculty-envelope precedence/wiring design review, sonnet impl |
-| NEW-16 | NEW-16-catalog-edition-explorer.md | prompt authored, opus design-reviewed (snapshot shape + sole-reader gate) — not yet executed | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |
+| NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | ✅ delivered 2026-07-26 (`sprint_decisions_20260726_new09_10.md`) | opus for the faculty-envelope precedence/wiring design review (confirmed: no course-scoping concept existed anywhere in the live Decide-step call chain — additive `course_id` threading + `_run_phases`-only lookup design followed exactly), sonnet impl |
+| NEW-16 | NEW-16-catalog-edition-explorer.md | ✅ delivered 2026-07-27 (`sprint_decisions_20260721_new16.md`) | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |

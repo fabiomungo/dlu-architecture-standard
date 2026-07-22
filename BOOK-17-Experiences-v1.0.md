@@ -254,8 +254,8 @@ lands in BOOK-18 (drivers) and BOOK-20 (sprints).
 | F2 UX patterns | empty-state, AI-latency, undo/redo, propose/accept, error, breadcrumb sprints | ✅ | elevate to conformance checks 🔵 |
 | Student canvases | `StudentCoursePlayer`, `KnowledgeMastery`, `MasteryDashboard`, `StudentProgress`, notification center | 🟡 | WS composition per Ch. 3 (STX-06…14 UI halves) |
 | Companion | — | 🔵 STX-06 | one-voice UI + "why?" affordance ⚪ |
-| Faculty surfaces | Builder/FEX ✅, gates ✅, sections ✅ | 🟡 | FW2 (G1/G4) ⚪, FW3/FW5 🔵 |
-| Institution surfaces | dashboards (institution, analytics, LLM usage, AI governance) | 🟡 | IW1–IW6 composition ⚪ |
+| Faculty surfaces | Builder/FEX ✅, gates ✅, sections ✅ — **as of NEW-09 (2026-07-26): FW2 (G1 office-hours booking + G4 generated register) ✅ delivered; FW3 (Verification Desk, single-twin viva scope, honest committee-duties gap) ✅ delivered; FW5 (Envelope Console, wired into the real Decide-step runtime) ✅ delivered** | ✅ **FW2/FW3/FW5 delivered (NEW-09)** | FW4 (not in this sprint's scope) |
+| Institution surfaces | dashboards (institution, analytics, LLM usage, AI governance) — **as of NEW-10 (2026-07-26): IW1 Rector's Bridge, IW2 Registrar Desk, IW3 QA Console ✅ delivered as 3 NEW, separate, role-scoped pages** (`institution_workspaces.py`) rather than an extension of the existing `InstitutionDashboard.js` | ✅ **IW1/IW2/IW3 delivered (NEW-10)** | IW4–IW6 composition ⚪ (out of this sprint's scope) |
 | Accessibility | `accessibility_service`, AccessibilityDashboard, media QA | ✅ | WCAG 2.2 AA audit cadence 🟡 |
 | i18n | i18n infra + t() convention | ✅ | full key coverage 🟡 |
 | Experience telemetry | xAPI substrate | ✅ | UX event vocabulary ⚪ |

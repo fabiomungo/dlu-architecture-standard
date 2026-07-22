@@ -243,13 +243,13 @@ requires, as a Track-A view. → BOOK-18 (ESSE3 driver contract), BOOK-19
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
 | I1 Structure | `models_institution.py` hierarchy, programs, terms, sections; InstitutionDashboard | ✅ | regulation-year binding (G7) ⚪ |
-| I2 Academic health inputs | Pedagogical Coach, `OutcomeCoverageMatrix`, analytics dashboards, BKT aggregates | ✅ inputs | composite + drill-down links 🔵 |
-| I3 Knowledge indicators | coverage ✅, `ContentRefreshJob` ✅, ontology service ✅ | 🟡 | grounding-provenance metric ⚪ |
-| I3 Trust indicators | credential service, audit logs | 🟡 | verification SLA + evidence-balance instrumentation ⚪ (rides STX-08/13) |
-| I3 Attention indicators | cohorts/forums ✅ | ⚪ | F5 rollups + belonging index (BOOK-07 F5 first) |
+| I2 Academic health composite | **as of NEW-10 (2026-07-26)**: `program_health_service.py` — design (real, read-time rollup of course-level `OutcomeCoverageMatrix` rows — no code path anywhere writes a genuine `entity_type='program'` row, confirmed, so this is a rollup not a fabricated write), learning (completion real, learning-gain/durability not tracked anywhere), equity (real, n≥`min_n` suppression reusing STX-11's exact floor + `StudentTwin.persona` cohort dimension), demand/delivery (real, via `TeachingSection`), economics (`not_yet_available`, no cost model exists) — every real element carries a drill-down reference; never mutates `Program.active`/`sunset_date` | ✅ **I2 delivered (NEW-10)** | economics dimension; learning-gain/durability tracking |
+| I3 Knowledge indicators | coverage ✅, `ContentRefreshJob` ✅, ontology service ✅ — **as of NEW-10, composed into `three_economies_service.py`'s real `knowledge` key** | ✅ **NEW-10** | grounding-provenance metric ⚪ |
+| I3 Trust indicators | credential service, audit logs — **as of NEW-10, composed into the real `trust` key** (evidence_balance/integrity_incidents/credential_reliability, each caveated as approximate) | ✅ **NEW-10 (approximate)** | verification SLA instrumentation ⚪ (no `verified_at` timestamp exists anywhere to measure against) |
+| I3 Attention indicators | cohorts/forums ✅ — **as of NEW-10, `faculty_load_balance` is real** (via `FacultyAssignment` counts) | 🟡 **NEW-10 (thinnest of the three, honestly)** | mentorship-hours/belonging-index ⚪ (F5 rollups still don't exist); HITL-queue-health ⚪ (deliberately NOT built on `move_proposal_service.list_for_twin`, which reads a test-only fake-client attribute in production — building on it would fabricate a signal, not surface a real one) |
 | I4 AI economics | gateway usage accounting, quota budgets ✅ | ✅ | per-engine attribution 🔵 (BOOK-03) |
 | I4 Ops | Grafana/OTel stack ✅ | ✅ | consumer-lag + driver-health panels 🟡 |
-| I5 Compliance | compliance/multiregion docs, audit service | 🟡 | AI Act register ⚪ (BOOK-19); generated dossier ⚪ |
+| I5 Compliance | compliance/multiregion docs, audit service — **as of NEW-10, `compliance_posture_service.py` generates the real "living self-study" dossier**: 7 of 10 QA claims real/verified (coverage tracking, evidence sole-writer, credential status-list, CLO→PLO→ILO chain, item-calibration governance, clearance live-resolution, staff-only recognition adjudication), each with a kernel-evidence reference + freshness stamp | ✅ **I5 dossier delivered (NEW-10)** | AI Act register ⚪ (BOOK-19, no `AIActRegister` model exists anywhere); G8 ANS/SUA-CdS ⚪; G14 DE/DI ledger ⚪ (all explicitly NEW-13/K5 scope) |
 | I6 Transformation | PI status reports, release gates | 🟡 | maturity evidence model ⚪ (BOOK-20) |
 | G8 completeness monitor | ERPNext/ESSE3 mirrors | ⚪ | driver contract (BOOK-18) |
 
