@@ -14,11 +14,13 @@ below, and do not touch its files.
 (ESSE3 driver + Italian profile), `NEW-12` (PagoPA + QES adapters),
 `NEW-13` (compliance registers + calendar, G12/G13/G14), `NEW-14` (cost
 attribution + economies), `NEW-15` (conformance suites + DR automation).
-**Only NEW-11 is authored as of this pack's current state** — see the
-status table below. NEW-12 through NEW-15 are planned but not yet
-written; author them in the order below, each with its own opus design
-review where the decision is hard to reverse (driver/ledger/suite
-architecture), before executing any of them.
+**All five are now authored** — see the status table below. None has
+been executed yet; execute in the order below (NEW-11 first is a real
+dependency, not just a suggestion — NEW-12 imports its code). This is
+the last prompt pack in the entire DAS Masterbook implementation
+blueprint (BOOK-00 through BOOK-20) — once these five sprints are
+executed and NEW-15's own `K5-EXIT-REPORT.md` is produced, the blueprint
+is complete through K5.
 
 **Execution rules:** BOOK-20 Ch. 12 bind every sprint — read them first.
 Digest: Turnkey `CLAUDE.md` guardrails are absolute (GUID PKs for new
@@ -87,14 +89,15 @@ none of it has been closed either:
 
 | Debt item | Status |
 |-----------|--------|
-| NFR budget dashboards / alert wiring | Still open |
-| Cross-tenant leakage fuzz | API dimension closed (2026-07-24); graph/streams dimensions still open |
-| Driver bulkhead chaos tests | Partially closed (2026-07-24); most drivers + a real circuit breaker still open — **NEW-11 finally builds the circuit breaker**, closing part of this |
-| Erasure e2e chain | `revoke_or_suspend(purge_pii=True)` exists; no caller anywhere calls it — still open |
-| ACE trace-completeness measurement | Asserted-by-construction only, never actually measured against the 100%-sampled-cycles requirement — still open |
-| One-voice / "why?" UX audit | Never performed — still open |
-| Agent GA gating | All 9 seeded agents remain `lifecycle_state="testing"`; zero have run `/agents/{id}/gate` + steward sign-off — still open |
-| `MOVE_CONSULTS` has exactly one entry (`reframe_goal`) | Open only if a future sprint finds a real need |
+| NFR budget dashboards / alert wiring | Still open — **NEW-15 Deliverable 7** adds the DAS-specific budget panels to the existing Grafana dashboards |
+| Cross-tenant leakage fuzz | API dimension closed (2026-07-24); graph/streams dimensions — **NEW-15 Deliverable 6** closes both (Neo4j integration test + Redis streams unit+integration split) |
+| Driver bulkhead chaos tests | Partially closed (2026-07-24); most drivers + a real circuit breaker still open — **NEW-11 builds the circuit breaker** (closes part); ESSE3/PagoPA/QES driver coverage lands with NEW-11/12 themselves; Moodle/Frappe/Stripe/Keycloak/n8n chaos coverage remains open, not claimed by any authored K5 sprint |
+| Erasure e2e chain | `revoke_or_suspend(purge_pii=True)` exists; no caller anywhere calls it — **still open, not claimed by any authored K5 sprint** — a genuine gap for a future pass |
+| ACE trace-completeness measurement | Asserted-by-construction only, never actually measured — **NEW-15 Deliverable 4** closes this (a durable `AceCycleAttempt` table + daily reconciliation job) |
+| One-voice / "why?" UX audit | Never performed — **NEW-15 Deliverable 3** builds a structural proxy (explicitly documented as a proxy, not the human audit itself, which stays open) |
+| Agent GA gating | All 9 seeded agents remain `lifecycle_state="testing"`; zero have run `/agents/{id}/gate` + steward sign-off — **still open, explicitly out of every authored K5 sprint's scope** (an ops/steward action, not a code deliverable — confirmed by NEW-15's own research) |
+| `MOVE_CONSULTS` has exactly one entry (`reframe_goal`) | Open only if a future sprint finds a real need — not touched by any K5 sprint |
+| Audit fabric — two disconnected `AuditService` implementations coexist | **NEW-15 Deliverable 1** wires four DAS event types into the real, hash-chained `backend/domains/audit/` system; the second, non-hash-chained `audit_service.py` (auth/admin logging) is left running, cross-referenced, not consolidated — a documented, not silent, residual redundancy |
 
 ## Phase exit gate
 
@@ -117,4 +120,14 @@ conflated).
 | NEW-12 | NEW-12-pagopa-qes-adapters.md | ✅ prompt authored (opus design review complete) — not yet executed; depends on NEW-11 being EXECUTED first (reuses its `CircuitBreaker` + driver-package pattern as real code, not just spec) | opus for the QES-provider signature-round-trip/ESSE3-vs-QES routing design review (already done — see the prompt's own header), sonnet impl |
 | NEW-13 | NEW-13-compliance-registers-calendar.md | ✅ prompt authored (opus design review complete) — not yet executed; soft-depends on NEW-11 for G8's ESSE3 boundary-table read (degrades honestly to `not_yet_available` if NEW-11 hasn't run yet) | opus for the RSI/DE-DI ledger data-source strategy + AI Act register shape design review (already done — see the prompt's own header), sonnet impl |
 | NEW-14 | NEW-14-cost-attribution-economies.md | ✅ prompt authored — not yet executed; depends on NEW-10 (extends `three_economies_service.py`/`program_health_service.py`, no G-register item | sonnet (cost-attribution is Book-specified, lower design risk — confirmed by research; no opus pass needed, only scope-honesty guardrails for the largely-un-instrumented `C_learner` formula) |
-| NEW-15 | — | not yet authored | opus for the conformance-suite/DR-automation design review, sonnet impl |
+| NEW-15 | NEW-15-conformance-suites-dr-automation.md | ✅ prompt authored (opus design review complete) — not yet executed; last sprint in the entire Masterbook blueprint, produces `K5-EXIT-REPORT.md` on completion | opus for the audit-fabric-consolidation/DR-automation/UX-audit-proxy/trace-completeness/maturity-collector design review (already done — see the prompt's own header), sonnet impl |
+
+**All five K5 sprints are now authored.** None has been executed. Execute
+in dependency order (NEW-11 → NEW-12; NEW-13/NEW-14 in either order or in
+parallel; NEW-15 last). Once executed, `NEW-15`'s own DoD produces
+`K5-EXIT-REPORT.md` — at that point the DAS Masterbook's BOOK-00 through
+BOOK-20 implementation blueprint is complete through K5, and any further
+work is either genuine new scope (a BOOK-21+ or an RFC) or closing
+whatever that exit report honestly still lists as open (the erasure e2e
+chain and most drivers' chaos coverage are already known, in-advance,
+NOT to be closed by this pack — see the residual-debt table above).
