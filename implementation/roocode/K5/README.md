@@ -114,7 +114,7 @@ conflated).
 | Sprint | File | Status | Model rec. (CLAUDE.md §14) |
 |--------|------|--------|---------------------------|
 | NEW-11 | NEW-11-esse3-driver-italian-profile.md | ✅ prompt authored (opus design review complete) — not yet executed | opus for the circuit-breaker/adapter-layout/SPID-brokering-scope design review (already done — see the prompt's own header), sonnet impl |
-| NEW-12 | — | not yet authored | opus for the QES-provider signature-round-trip design review, sonnet impl |
+| NEW-12 | NEW-12-pagopa-qes-adapters.md | ✅ prompt authored (opus design review complete) — not yet executed; depends on NEW-11 being EXECUTED first (reuses its `CircuitBreaker` + driver-package pattern as real code, not just spec) | opus for the QES-provider signature-round-trip/ESSE3-vs-QES routing design review (already done — see the prompt's own header), sonnet impl |
 | NEW-13 | — | not yet authored | opus for the RSI/DE-DI ledger + AI Act register design review (regulatory-conformance surfaces, hard to reverse), sonnet impl |
 | NEW-14 | — | not yet authored | sonnet (cost-attribution is Book-specified, lower design risk) |
 | NEW-15 | — | not yet authored | opus for the conformance-suite/DR-automation design review, sonnet impl |
