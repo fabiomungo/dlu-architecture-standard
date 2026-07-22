@@ -200,7 +200,7 @@ running `/skills/{id}/test`, bilingual template variants where learner-facing
 | `dlu-evidence` | get_evidence_timeline, get_competency_state, submit_evidence_proposal | assessor, credentialer, viva-preparer, recognition | 🔵 STX-08 |
 | `dlu-assessment-runtime` | list_sessions, get_readiness, create_formative, get_attempt_stats | assessor, coach, WS06 | 🔵 STX-11/NEW-05 |
 | `dlu-credential-wallet` | evaluate_criteria, get_wallet, prepare_issuance, verify_external | credentialer, registrar-assistant | 🔵 STX-13 |
-| `dlu-catalog` | search_programs, get_offerings(term), get_regulation_year_rules | discovery, navigator, funnel-assistant | 🔵 K3 |
+| `dlu-catalog` | search_programs, get_offerings(term), get_regulation_year_rules, **get_edition, simulate_path** (2 new tools, G15) | discovery, navigator, funnel-assistant | ✅ **delivered (NEW-16, 2026-07-27)** — `services/dlu_catalog_mcp/`, copying `dlu_badge_mcp`'s FastMCP structure (HTTP-only to the public REST surface, no direct DB access); all 5 tools genuinely new, including the 3 "base" ones this row had marked 🔵 since K3 despite never being built |
 | `dlu-scheduler-notify` | book_office_hours, schedule_mission, send_notification (etiquette-enforced) | coach, success, registrar-assistant | 🔵 NEW-09 |
 | `dlu-memory` | recall(query), propose_memory — **twin-keyed, ACE-mediated writes** | all (via ACE Perceive/Learn) | 🔵 NEW-03 |
 | `dlu-document-gen` | render_ds, render_certificate, render_register | registrar-assistant, register-drafter | 🔵 NEW-08/09 |

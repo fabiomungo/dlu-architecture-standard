@@ -268,7 +268,8 @@ ERPNext via n8n). ETA honesty: bands, not points; assumptions listed
 Service contract per constitution §9.1 (`compute_scenarios`,
 `evaluate_current_path`), extended with `estimate_recognition(twin, documents) →
 ClaimInventory`, `compile_map(tenant, horizon) → RouteGraphVersion`, and
-**`simulate_scenarios(hypothetical_fix, target) → list[PathScenario]` (G15)**:
+**`simulate_scenarios(hypothetical_fix, target) → list[PathScenario]` (G15)
+— ✅ implemented (NEW-16, 2026-07-27)**:
 the what-if engine for prospects and enrolled students alike — a
 **hypothetical fix** (self-declared background, sandbox recognition estimates,
 candidate program/edition) runs through the same deterministic engine against
@@ -278,7 +279,19 @@ is how the catalog becomes *evaluable autonomously*: a prospect simulates
 "me + my experience + program X" before ever applying; a student simulates a
 minor change or a transfer before committing. Simulations are rate-limited,
 anonymous-capable (pre-account) and never persisted beyond the session unless
-the user saves them into a Discovery dialogue.
+the user saves them into a Discovery dialogue. **Implementation note**: a NEW
+function, never a modification of `compute_scenarios` — reuses the REAL
+engine internals (`RouteGraphCompiler.compile()` + the existing ordering
+helpers), NOT `route_graph_compiler.py`'s `pareto_frontier`/`rank_candidates`,
+which remain fully defined but never called anywhere in the codebase
+(confirmed by repo-wide grep) — making the pre-auth simulation surface the
+first-ever caller of previously-dead code would have been an unacceptable
+risk. Zero-write/zero-event verified by AST-walking the entire reused call
+graph for `db.add`/`db.commit`/`emit_async`/`emit_sync` (zero hits) and
+regression-locked by a row-count-snapshot test. G7's regulation-year
+inertness (NEW-04) is carried forward honestly, not resolved: the pinned
+edition is cited/visible on every simulation, but requirement computation
+does not yet differ per edition.
 Persistence: `path_scenarios` (constitutional) + `route_graph_versions` +
 `recognition_claims` (C7/C8 per BOOK-04). Non-functionals: recompute budgets
 (Ch. 5.5); path-health read p95 < 300 ms (cached); degradation = stale plan

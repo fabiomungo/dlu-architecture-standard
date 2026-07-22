@@ -104,7 +104,8 @@ the learner *feels* the differentiator).
 | WS07 | Credential Wallet (Achieve) | credentials, document credentials, DS, sharing controls, verify links | Credential | claim; export; share; import external | *"my degree explains itself — and employers can verify it in one click"* |
 | WS08 | Engagement & Success (Grow) | community, cohorts, belonging, wellbeing-respectful progress | Success/Coach | join groups; peer-teach (CAT-7); re-engage | *"someone noticed — and it was a person"* (BOOK-02 Ch. 6: the intervention is human) |
 
-**Catalog Explorer (G15 — pre-auth + WS00/WS01 surface):** the published
+**Catalog Explorer (G15 — pre-auth + WS00/WS01 surface) — ✅ implemented
+(NEW-16, 2026-07-27):** the published
 CatalogEdition renders as an explorable space — programs, courses (codes,
 credits, prerequisites as navigable chains, designations, knowledge/competency
 contributions), recognition policies — with **what-if simulation** powered by
@@ -127,7 +128,7 @@ compassionate-recalculating (BOOK-14 §6.2).
 
 | FW | Name | Canvas | Companion bias | Signature missions |
 |----|------|--------|----------------|--------------------|
-| FW1 | Design Studio | Builder/FEX wizard, Factory pipeline, gate status (3-gate flow), Coach reports | Course Architect | author; respond to Gate 1/3; review AI output (Gate 2) |
+| FW1 | Design Studio | Builder/FEX wizard, Factory pipeline, gate status (3-gate flow), Coach reports — **as of NEW-16 (2026-07-27), extended with DEVELOPS/COVERS contribution declarations + recognition-policy/equivalency declarations** (feeding the NEXT `CatalogEdition` snapshot only, never retroactive) | Course Architect | author; respond to Gate 1/3; review AI output (Gate 2); declare catalog contributions/recognition policies (NEW-16) |
 | FW2 | Teaching Operations | sections, calendars, **office hours (G1)**: publishable slots + student booking; **teaching register (G4)**: auto-generated from delivery events, per-session topics editable, submit for department approval | Coach (faculty-side) | confirm register entries; publish appelli (G2, BOOK-15); communications |
 | FW3 | Verification Desk | HITL queues (evidence verification, summative sign-off, recognition dossiers), viva dossiers, committee duties (G6) | Assessment | verify; examine; sign |
 | FW4 | Mentorship | advisee twins (`purpose=staff_view`, audited), risk flags, intervention proposals | Success | meet; respond to proposals; log outcomes |

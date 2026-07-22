@@ -150,7 +150,7 @@ DLU MUST generate the DS as a first-class document credential (IT/EN), ELM-
 encoded for Europass — turning a bureaucratic burden into a richer, verifiable
 artifact no legacy SIS can match.
 
-## 6.4a Catalog Edition document (G15)
+## 6.4a Catalog Edition document (G15) — ✅ implemented (NEW-16, 2026-07-27)
 
 The **course catalog is a legal artifact and a contract**: the published
 edition binds what the university promises a cohort (courses, credits,
@@ -168,6 +168,15 @@ regulation-year semantics). Treatment mirrors every other Track-A view:
   Ch. 9 `simulate_scenarios`, BOOK-17 catalog explorer), and the **faculty
   authoring view** (course knowledge/competency contributions and
   recognition-policy declarations — FW1).
+
+**Implementation note (NEW-16)**: the legal document is rendered
+hash-stamped and reproducible via `catalog_edition_service
+.generate_catalog_legal_document` — a real reportlab non-determinism bug
+was found and fixed here (`SimpleDocTemplate` stamps a wall-clock
+`/CreationDate` by default, breaking "same input → same hash" even
+though the document's own content-building code never reads the live
+clock; fixed via reportlab's own `invariant=True` flag, applied to
+NEW-08's document generator too for consistency).
 
 ## 6.4 Degree application & clearance (G11)
 
