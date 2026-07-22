@@ -137,3 +137,5 @@ event_nouns:
   - identity
   - course
   - generation
+  # DAS NEW-11 (BOOK-18 Ch. 4.2 event map: "conseguimento titolo" -> degree.recorded)
+  - degree

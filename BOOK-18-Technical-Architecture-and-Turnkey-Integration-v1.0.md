@@ -68,7 +68,7 @@ into DLU) · outbound (from DLU) · mirror tables · failure mode · status*.
 |--------|-----------|------|---------|----------|--------------|--------|
 | **Keycloak** | credentials, SSO sessions | OIDC | tokens/claims | user provisioning (n8n) | auth degraded → read-only public surfaces | ✅ |
 | **ERPNext Education/Finance** | official records, enrollment, grades, invoices (non-Italian profile) | API keys via n8n | `enrollment.synced`, `grade.synced`, financial status | institution/program/outcomes push, credential records | mirror staleness surfaced (`synced_at`) | ✅ arch |
-| **ESSE3** (Italian profile) | official records, appelli, verbali, ANS | REST WS (API keys, technical-user groups) + Gateway notifications + replica/boundary tables | Ch. 4 event map | Ch. 4 | as ERPNext + `pending_verbalization` semantics | ⚪ **this Book specifies** |
+| **ESSE3** (Italian profile) | official records, appelli, verbali, ANS | REST WS (API keys, technical-user groups) + Gateway notifications (HMAC-SHA256) + replica/boundary tables | Ch. 4 event map | Ch. 4 | breaker (real `CircuitBreaker`, first landing) + `pending_verbalization` semantics; health panel `GET /health/esse3` | ✅ **NEW-11, 2026-07-29** |
 | **Frappe CRM** | prospects, applications, campaigns | webhooks (tenant-resolved from payload — EXEMPT path exists) | lead/application events | engagement reads | funnel-only impact | ✅ |
 | **Moodle** | delivery experience, forums | LTI 1.3, SCORM, webhooks | xAPI/Caliper, completion | content sync (Mode A/B) | delivery continues; sync queues | ✅ |
 | **n8n** | (broker, not SoR) | internal | workflow-mediated events | same | per-workflow retry queues | ✅ |
