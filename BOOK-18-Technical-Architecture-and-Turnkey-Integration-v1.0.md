@@ -73,8 +73,8 @@ into DLU) · outbound (from DLU) · mirror tables · failure mode · status*.
 | **Moodle** | delivery experience, forums | LTI 1.3, SCORM, webhooks | xAPI/Caliper, completion | content sync (Mode A/B) | delivery continues; sync queues | ✅ |
 | **n8n** | (broker, not SoR) | internal | workflow-mediated events | same | per-workflow retry queues | ✅ |
 | **Stripe** | money movement | signed webhooks | payment/refund status | checkout sessions | financial-status cache holds last-known | ✅ |
-| **PagoPA** (G9, Italian) | public-sector payments (stamp duty, fees) | per national spec | payment outcomes | payment positions | document issuance blocks on unpaid bollo, visibly | ⚪ |
-| **QES provider** (G3, where not ESSE3) | qualified signatures, legal preservation | provider API | signature completion events | signature requests (verbali, certificates) | acts queue; nothing unsigned ships | ⚪ |
+| **PagoPA** (G9, Italian) | public-sector payments (stamp duty, fees) | OAuth2 client-credentials + HMAC-SHA256 webhook | payment-outcome notifications | payment-position creation | cache-only status read (never live); document issuance blocks on unpaid bollo, visibly | ✅ **NEW-12, 2026-07-30** |
+| **QES provider** (G3, where not ESSE3) | qualified signatures, legal preservation | OAuth2 client-credentials + HMAC-SHA256 webhook | signature-completion notifications | signature requests (verbali, Diploma Supplement seal) | breaker (shared `CircuitBreaker`) + best-effort submission — a provider outage degrades visibly, never blocks the DS/verdict it seals | ✅ **NEW-12, 2026-07-30** |
 | **HeyGen / media** | generated media artifacts | HMAC webhooks | render completion | render jobs | enrichment degrades, courses ship | ✅ |
 | **Kong** | edge routing/limits | — | — | — | platform-down class | ✅ |
 

@@ -140,6 +140,13 @@ annex — the DLU extra); ECTS/credit-hour projections per program rules.
   Italy): DLU generates content; **stamp duty, payment and signature/seal are
   driver acts** (PagoPA driver, ESSE3/registrar seal — BOOK-18). The G3
   doctrine again: content native, legal act at the driver.
+  **✅ implemented (NEW-12, 2026-07-30):** `pagopa_payment_position` is a
+  cache-only status read (never live — the frozen `BolloPaymentStatus`
+  contract NEW-08's stub established is preserved exactly), the
+  payment-initiation route is the write side; the seal itself follows
+  Ch. 8's now-resolved trigger condition — ESSE3/registrar seals
+  out-of-band for `esse3`-slot institutions, the QES driver seals for
+  `qes_provider`-slot institutions with no ESSE3 of their own.
 
 ## 6.3 Diploma Supplement (G10) — a DLU strength opportunity
 
@@ -224,6 +231,19 @@ The full boundary specification (what BOOK-18's drivers must implement):
 4. **Native mode** (greenfield/corporate, unregulated credentials): DLU's
    signed VC *is* the act; no external dependency.
 
+**Trigger condition (resolved, NEW-12, 2026-07-30 — this Book left it
+undecided until this sprint):** a single per-tenant slot,
+`Institution.config["legal_act_driver"] ∈ {"esse3", "qes_provider",
+"native_vc"}`, resolved through the ONE function
+`legal_act_routing.resolve_legal_act_driver` (structurally verified: no
+other call site reads the config key directly). `esse3` routes step
+2/3 through NEW-11's driver; `qes_provider` routes the identical step
+2/3 through NEW-12's QES driver instead (`qes_signature_ref` is the
+attach point, mirroring `Esse3VerbaleRef`'s references-only shape); an
+institution with neither configured defaults to `native_vc` (step 4) —
+the safe default, since assuming an external integration exists where
+none was configured would be worse than assuming none.
+
 ---
 
 # Chapter 9 — Trust Governance
@@ -244,12 +264,12 @@ survival rules (Ch. 1) tested in the conformance suite.
 |-----|------------|
 | G1 office hours | n/a (BOOK-17) ✅ |
 | G2 appelli | consumed: session results feed evidence; refusal semantics honored (BOOK-15) ✅ |
-| **G3 verbalizzazione** | **owned & resolved as boundary spec** (Ch. 8): prepare native, execute at driver, cross-reference acts |
+| **G3 verbalizzazione** | **✅ fully closed** (Ch. 8): prepare native, execute at driver, cross-reference acts — ESSE3 path real (NEW-11, 2026-07-29), QES-provider path real (NEW-12, 2026-07-30), native-VC path real since STX-13 |
 | G4 registro | n/a (BOOK-17) ✅ |
 | G5 tesi / G6 commissioni | consumed: defense/committee verdicts are degree-criteria inputs (Ch. 4.4) ✅ |
 | G7 regulation-year | honored: degree criteria evaluate against the learner's regulation year ✅ |
 | G8 ANS/SUA-CdS | degree/credential events feed the completeness monitor (BOOK-08 §6.3) ✅ |
-| **G9 certificati/autocertificazioni** (new) | **resolved**: self-certifications native; official certificates = content native + stamp/payment/seal at driver (Ch. 6.2) |
+| **G9 certificati/autocertificazioni** (new) | **✅ fully closed**: self-certifications native; official certificates = content native (NEW-08) + stamp/payment/seal at driver, real PagoPA + QES adapters (NEW-12, 2026-07-30) (Ch. 6.2) |
 | **G10 Diploma Supplement** (new) | **resolved**: first-class generated document credential, bilingual, ELM-encoded (Ch. 6.3) |
 | **G11 conseguimento titolo** (new) | **resolved**: clearance-as-checklist from GPS path-health; application + committee + legal act chain (Ch. 6.4) |
 
