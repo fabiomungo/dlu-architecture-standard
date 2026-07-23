@@ -369,7 +369,9 @@ BOOK-01 P8 made visibility normative; this chapter makes it concrete:
 | L2 mirror | ERPNext + n8n bridge (architecture ✅) | 🔵 | `TwinAcademicMirror` + sync consumers |
 | L3 | `Competency`/`CLOCompetency` ✅; `StudentCompetency`+evidence + Competency Engine (recompute §5.3, HITL verify, CASE import, decay checkpoint) — **delivered STX-04 (2026-07-15)** | ✅ | evidence pipeline intake (STX-08) remains the only missing writer |
 | L4 | `concept_mastery` BKT ✅ + SM-2 ✅; `KNOWS` overlay 🔵 STX-05 | 🟡 | — |
-| L5, L6, L7 | designed (constitution §4.3) | 🔵 STX-01 | behaviour recompute job STX-14 |
+| L5 | anchor table + manual goal-setting (`PATCH /me/career-goals`, STX-02); Career Advisor gap analysis reads it (STX-14/15) but writes nothing back | 🔵 | no dedicated L5 recompute/write pipeline exists yet |
+| L6 | `TwinBehaviourProfile` + `behaviour_recompute_service.py` — first-ever writer, **delivered STX-14/15 (2026-07-24)**: deterministic weighted heuristic over `AceCycleTrace`/`Recommendation`/`TutorDialogueState` signals, L6-consent-gated, threshold-crossing emits `risk.detected` | ✅ | recalibration of the heuristic's weights against real usage data (BOOK-20 residual debt) |
+| L7 | `TwinAIMemory` + `memory_write_service.py` — **delivered NEW-03 (2026-07-18)**: consolidation pipeline, consent-gated retrieval, cross-learner isolation (fuzz-tested) | ✅ | the pre-existing STX-06 `/api/brain/memory/{id}` route still has no ownership check (`DELETE /api/twin/me/memory/{id}` does) |
 | Lifecycle events | P01 processes ✅; `student.lifecycle.changed` 🔵 STX-03 | 🟡 | — |
 | Personas | — | ⚪ | anchor field + Discovery assignment flow (STX-06) |
 | Open learner model | `KnowledgeMastery`/`MasteryDashboard` ✅ (partial) | 🟡 | contestability flow ⚪; WS03 map 🔵 |

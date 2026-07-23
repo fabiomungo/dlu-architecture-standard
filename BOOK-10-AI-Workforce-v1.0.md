@@ -273,7 +273,7 @@ internal scope).
 | Skills | `ai_skill_registry` (typed I/O schemas, prompts, MCP binding, test endpoint, bulk import) | ✅ | ontology-vocabulary lint in skill tests 🔵 |
 | Tools | `ai_mcp_servers` (transport, manifest, credentials, health tests) | ✅ | per-agent tool-grant granularity audit 🟡 |
 | Presets/providers | `ai_model_presets` (scoped), `llm_providers` (categorized, fallback, cost, is_local, health) | ✅ | escalation-ladder preset classes (BOOK-09) 🔵 |
-| Gateway | LiteLLM (Option B): DB-driven sync, virtual keys, pre-call quotas, usage callback | ✅ | per-engine cost attribution (BOOK-03) 🔵 |
+| Gateway | LiteLLM (Option B): DB-driven sync, virtual keys, pre-call quotas, usage callback; per-engine/process-area cost attribution **✅ (NEW-14, 2026-08-01)** — `cost_attribution_service.py` (BOOK-03 §Annex A) | ✅ | `C_learner` unit economics (BOOK-02 Ch. 8.1) is an honest 1-of-5 partial sum, not fully instrumented |
 | Run logs | `agent_run_logs` | ✅ | cycle-trace linkage (BOOK-09 Ch. 8) 🔵 |
 | Lifecycle | `lifecycle_state`, `deployed_at/by`; eval-gated deployment ✅ (NEW-02, 2026-07-18: `AgentGateRun` release record + `ctx_hash` content-addressed snapshot, `POST /agents/{id}/deploy` 409s without a green steward-signed run matching the live config) | ✅ | — |
 | Governance | proposals/approvals, ai_governance service | ✅ | scorecard + misbehaviour automation ⚪ |

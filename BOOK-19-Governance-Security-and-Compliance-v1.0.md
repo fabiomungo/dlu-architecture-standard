@@ -357,15 +357,15 @@ Register now **G1–G16**.
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
 | Governance bodies & proposals | ai_governance service, approval routes | ✅ | RACI codification + board tooling 🟡 |
-| Identity & MFA | Keycloak, SAML/OIDC services | ✅ | SPID/CIE brokering (IT profile) ⚪ |
+| Identity & MFA | Keycloak, SAML/OIDC services; SPID/CIE brokering **✅ (NEW-11, 2026-07-29)** — entirely via Keycloak (`dlu-it` realm), no new SPID SAML SP built in DLU; `oidc_service.provision_user` reads OIDC claims + enforces a minimum assurance level | ✅ | — |
 | Secrets | env conventions, encrypted tokens | ✅ | KMS + DID key ceremony ⚪ (rides NEW-07) |
-| Audit fabric | audit logs, purpose-tagged twin reads (STX-02), run logs | 🟡 | hash chaining, unified query ⚪ |
-| AI Act register | governance dashboards | 🟡 | obligation register + FRIA templates ⚪ (NEW-13) |
-| GDPR/FERPA | compliance/multiregion architecture, dual-region compose | ✅ arch | executable erasure job ⚪ (BOOK-06) |
-| RSI ledger (G12) | xAPI + faculty events (Gate-2, feedback, bookings, vivas) all present/planned | ⚪ | ledger aggregation + alerts |
-| Identity verification (G13) | MFA + BOOK-15 integrity layers | 🟡 | policy artifact + disclosure flow |
+| Audit fabric | `backend/domains/audit/` — hash-chained (`AuditEvent.event_hash`/`.previous_event_hash`, `AuditIntegrityHash` daily checkpoints) **✅ (NEW-15, 2026-08-02)**: 7 DAS event types wired into 6 real service call sites, best-effort/post-commit; unified query via `AuditService` | ✅ | a second, non-hash-chained `backend/services/audit_service.py` (auth/admin logging) remains a documented, deliberately-not-consolidated redundancy |
+| AI Act register | `ai_agent_configs`-extending deployer-obligation register + FRIA templates **✅ (NEW-13, 2026-07-31)** — seeded at the real `deploy_agent` trigger point; a single non-verified obligation anywhere keeps the WHOLE register non-green | ✅ | — |
+| GDPR/FERPA | compliance/multiregion architecture, dual-region compose | ✅ arch | executable erasure job ⚪ — `revoke_or_suspend(purge_pii=True)` exists and is tested in isolation, but has zero real callers anywhere in the codebase; no erasure-request subsystem exists at all (BOOK-06) |
+| RSI ledger (G12) | `interaction_ledger_service.py` — roster-anchored, active `CohortEnrollment` LEFT JOINed against `StudentExamAttempt` human sign-offs **✅ (NEW-13, 2026-07-31)**; every row discloses the confirmed Moodle instructor-event capture gap via a `data_completeness` block, never a silent under-count | ✅ | Moodle instructor-event capture itself remains open (Review finding M3) |
+| Identity verification (G13) | `identity_verification_policies` live-resolved per tenant + versioned disclosure in the twin's `consent_flags` **✅ (NEW-13, 2026-07-31)** | ✅ | — |
 | Engagement/attendance | xAPI classes | ✅ | Title IV engagement mapping doc 🔵 |
-| Compliance calendar | I5 design (08) | 🔵 | register implementations (NEW-13) |
+| Compliance calendar | compute-on-read, never materialized **✅ (NEW-13, 2026-07-31)** — surfaced in I5; DR-exercise row also populated **✅ (NEW-15, 2026-08-02)** via `compliance_calendar_service`'s `dr_exercise` schedule entry | ✅ | — |
 
 ---
 

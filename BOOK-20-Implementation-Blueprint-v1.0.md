@@ -495,7 +495,7 @@ The operational contract for every Claude/RooCode sprint execution:
 # Closing — the Masterbook is Complete
 
 Twenty Books. A standard that is descriptive where the system runs and
-prescriptive where it doesn't; a register (G1–G14) that faced ESSE3, ANVUR
+prescriptive where it doesn't; a register (G1–G16) that faced ESSE3, ANVUR
 and US accreditation honestly; a kernel with contracts, a cognition with humility, an
 experience with a soul, and a blueprint that turns it all into sprints an AI
 workforce can execute under human governance — which is, fittingly, exactly
