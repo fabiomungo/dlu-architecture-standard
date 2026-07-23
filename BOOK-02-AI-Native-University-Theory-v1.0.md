@@ -245,6 +245,26 @@ C_learner = C_inference + C_content_maint + C_human_attention + C_platform + C_c
   chains (multi-provider, local-model fallback) — an economic control, not merely
   a technical one.
 
+**✅ implemented (NEW-14, 2026-08-01) — honest 1-of-5:** `backend/services/
+cost_attribution_service.py::compute_program_economics` computes `C_learner`
+per program × term. Confirmed via grep before building: only `C_inference`
+has real backing data anywhere in this codebase today (`llm_usage_logs
+.cost_usd`, populated by the live ACP Gateway usage callback) —
+`C_content_maint`/`C_human_attention`/`C_platform`/`C_compliance` have ZERO
+instrumentation (no loaded-rate/salary table, no infra-cost allocation, no
+compliance-cost tracking anywhere) and render as explicit `not_yet_available`
+sub-fields, never fabricated as zero or presented as an estimate. Per-engine/
+per-process-area attribution is a static, versioned mapping over
+`LlmUsageLog.service_type` (`SERVICE_TYPE_ATTRIBUTION`) — a `service_type`
+with no mapping entry is an explicit, alertable **unattributed** case (never
+silently bucketed as "other"), surfaced via `GET /api/llm-usage/breakdown?
+group_by=engine|process_area` and as a board-visible I5 dossier claim
+(BOOK-08 Ch. 6.1). Contribution margin / AI-cost-share (BOOK-08 Ch. 4.1)
+joins this cost against `InvoiceRecord.related_entity_type == 'program'`
+revenue — a real, generic, currently-unwritten column in this codebase — and
+degrades to an explicit gap per program/term when no such revenue exists,
+never a margin computed against a silently-assumed-zero baseline.
+
 ## 8.2 Revenue models
 
 Tuition (term or program), **subscription learning** (lifelong tier — aligns

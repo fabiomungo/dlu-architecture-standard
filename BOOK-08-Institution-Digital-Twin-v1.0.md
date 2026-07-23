@@ -124,6 +124,23 @@ ProgramHealth:
 
 Every element links to its kernel evidence (drill-down, not dashboard folklore).
 
+**✅ `economics` implemented (NEW-14, 2026-08-01):** `cost_attribution_
+service.compute_program_economics` (program × term scoped). `C_learner`
+is an honest 1-of-5 partial sum — BOOK-02 8.1's formula has five terms
+(`C_inference + C_content_maint + C_human_attention + C_platform +
+C_compliance`); only `C_inference` has real backing data anywhere in
+this codebase (the ACP Gateway's own `llm_usage_logs.cost_usd`), so the
+other four render as explicit `not_yet_available` sub-fields, never a
+fabricated zero or estimate presented as measured — the same honesty
+convention Chapter 3's Attention economy already established. Revenue
+for `contribution margin`/`AI cost share` comes from `InvoiceRecord
+.related_entity_type == 'program'` — a real, generic column with no
+current writer in this codebase (confirmed via grep), structurally the
+same shape as the `design` dimension's own `OutcomeCoverageMatrix
+.entity_type == 'program'` gap (a real, usable column with zero current
+writers) — degrades to an explicit gap per program/term rather than
+assuming zero or complete revenue.
+
 ## 4.2 Program lifecycle decisions
 
 `design → approved → active → under_revision → teach_out → retired`
@@ -158,6 +175,18 @@ ordinamento/OFF.F data is a **driver mirror** (BOOK-07 §6.3 pattern). → BOOK-
 - **AI capacity & economics:** budget burn per engine and process area (BOOK-02
   8.1 attribution), quota exhaustion events (MUST degrade visibly), provider
   fallback activations, cost-per-learner trend.
+
+  **✅ per-engine/process-area attribution implemented (NEW-14, 2026-08-01):**
+  `GET /api/llm-usage/breakdown?group_by=engine|process_area`
+  (`cost_attribution_service.py`'s static, versioned mapping over
+  `LlmUsageLog.service_type` — the ten BOOK-00 6.1 kernel engines ×
+  BOOK-02 Ch. 2's eight process areas). An unattributed `service_type`
+  is a governance defect, not a silent default — surfaced both as its
+  own `unattributed` breakdown bucket here and as a 13th I5 dossier
+  claim (Chapter 6.1's living self-study, alongside the twelve NEW-13
+  claims). Quota exhaustion/provider-fallback/
+  cost-per-learner-trend remain sourced from the observability stack, as
+  written above — not touched by this sprint.
 - **Platform operations:** driver health (per-driver circuit-breaker state —
   BOOK-03 Ch. 6), event-mesh consumer lag, non-functional budget compliance
   (BOOK-03 Ch. 8) — sourced from the running observability stack.
