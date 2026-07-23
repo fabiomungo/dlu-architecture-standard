@@ -328,15 +328,23 @@ C_learner reconciles with usage snapshots.
 
 ## 8.1 DAS-Core (exit K3) — per BOOK-03 Ch. 10
 
-| # | Criterion | Executable checks |
-|---|-----------|-------------------|
-| 1 | Layering | grep/CI gates: no experience-owned tables; no layer skipping imports |
-| 2 | Engine contracts | contract test per engine invariant (evidence append-only, GPS determinism, twin single-door, KG fire-and-forget…) |
-| 3 | Mesh | STX-03 V1–V5 as permanent suite |
-| 4 | Tenancy | cross-tenant leakage fuzz (API + graph + streams + cache) |
-| 5 | Drivers | bulkhead chaos tests (driver down ⇒ scoped degradation) |
-| 6 | Gateway-only | egress network policy test + code grep gate |
-| 7 | NFR | budget dashboards + alert wiring proof |
+**Annex A status (NEW-15, 2026-08-02)** — every criterion below now has
+≥1 named, discoverable executable check, meta-verified by
+`tests/conformance/test_ch8_criteria_have_executable_checks.py`
+(`dlu_builder_tk`). ✅ = fully closed this Masterbook pass; 🟡 = closed
+for the dimensions this pass actually covered, a named sub-dimension
+still open; ⚪ = registry entry exists, underlying suite not built this
+pass.
+
+| # | Criterion | Executable checks | Status |
+|---|-----------|-------------------|--------|
+| 1 | Layering | grep/CI gates: no experience-owned tables; no layer skipping imports | ✅ pre-existing (`scripts/ci/check_kg_staging_reads.sh` + siblings) |
+| 2 | Engine contracts | contract test per engine invariant (evidence append-only, GPS determinism, twin single-door, KG fire-and-forget…) | ✅ pre-existing (`scripts/ci/check_evidence_sole_writer.sh` + siblings) |
+| 3 | Mesh | STX-03 V1–V5 as permanent suite | ✅ pre-existing (`tests/test_stx03_event_mesh_integration.py`) |
+| 4 | Tenancy | cross-tenant leakage fuzz (API + graph + streams + cache) | 🟡 API dimension pre-existing; **graph + streams closed this sprint** (`test_kg_cross_tenant_fuzz.py`, `test_stream_cross_tenant_fuzz.py` — the graph closure also fixed a real, previously-undiscovered Course/Lesson/Concept node-identity vulnerability, see `sprint_decisions_20260802_new15.md`); **cache dimension still open** |
+| 5 | Drivers | bulkhead chaos tests (driver down ⇒ scoped degradation) | 🟡 pre-existing (`tests/chaos/test_pi2_disaster_recovery.py`, 27 tests) — most drivers covered, a real circuit breaker only landed at NEW-11; not extended this sprint |
+| 6 | Gateway-only | egress network policy test + code grep gate | ✅ pre-existing (`scripts/ci/check_gateway_only_egress.sh`) |
+| 7 | NFR | budget dashboards + alert wiring proof | ✅ this sprint — 4 DAS-specific budget panels added to `grafana/dashboards/api-performance-overview.json` (kernel-read P95, verification-endpoint availability, event-propagation P95, GPS-recompute latency), plus `test_nfr_budget_panels.py` pinning them |
 
 ## 8.2 DAS-Intelligent (exit K4)
 
@@ -345,12 +353,64 @@ completeness (100% sampled cycles); harness gates enforced in ACP lifecycle;
 GPS sovereignty audit (weights inspectable); credential survival suite;
 one-voice + "why?" UX checks; scorecards live.
 
+**Annex A status (NEW-15, 2026-08-02):**
+- Twin seven layers + consent: ✅ (K4). Erasure e2e: ⚪ **still not
+  proven end-to-end** — `revoke_or_suspend(purge_pii=True)` exists,
+  tested in isolation, no caller anywhere in this codebase performs a
+  real erasure-request → purge chain. Not addressed this sprint (out of
+  this sprint's own declared scope — see Context point 8).
+- ACE trace completeness: 🟡→✅ **now genuinely measured**, not just
+  asserted by construction (this sprint's own core deliverable — see
+  §10 below and `AceCycleAttempt`/`reconcile_ace_trace_completeness`).
+- Harness gates enforced in ACP lifecycle: ✅ unchanged since K2/K3. Agent
+  GA gating itself remains ⚪ — all 9 seeded agents still
+  `lifecycle_state="testing"`, zero `/agents/{id}/gate` runs — an
+  ops/steward action, explicitly out of this sprint's scope (Context
+  point 8), unchanged from K4's own exit report.
+- GPS sovereignty audit: ✅ unaffected, still true from K3.
+- Credential survival suite: ✅ unaffected, still true from K4 (STX-13).
+- One-voice + "why?" UX checks: 🟡 **a structural proxy now exists**
+  (`test_explanation_trace_coverage.py` + `explanation_registry.py`) —
+  explicitly documented, in the test's own docstring and the
+  maturity-collector's output, as never a substitute for the actual
+  human UX audit, which remains ⚪ not performed.
+- Scorecards: ⚪ still not built — the same gap K3/K4's own exit reports
+  already flagged, carried forward again, not addressed this sprint.
+
 ## 8.3 DAS-Certified (K5 + audit)
 
 Intelligent + : AI Act register complete with FRIA; audit fabric hash-chained;
 regulatory profile suites (Italian: SPID/eIDAS/ANS; US: RSI ledger + G13
 policy + engagement mapping); DR exercise on record; **external audit** of a
 sampled evidence→credential chain and a sampled cycle trace.
+
+**Annex A status (NEW-15, 2026-08-02):**
+- AI Act register + FRIA: ✅ NEW-13.
+- Audit fabric hash-chained: ✅ **this sprint** — `backend/domains/
+  audit/` extended with 7 DAS-specific event types, wired into 6 real
+  service call sites (best-effort, post-commit); three real,
+  previously-undiscovered bugs that silently broke this system against
+  any real Postgres deployment (never SQLite) were found and fixed —
+  see `sprint_decisions_20260802_new15.md` §"three real audit bugs."
+- Regulatory profile suites (Italian SPID/eIDAS/ANS; US RSI/G13):
+  ✅ NEW-11/NEW-13.
+- DR exercise on record: ✅ **this sprint** — `scripts/dr/
+  run_dr_exercise.sh` automates a restore-mechanics drill (kg-rebuild +
+  pg_restore + audit hash-chain integrity check), verified end-to-end
+  against an isolated throwaway Postgres. Explicitly NOT a production
+  WAL-archived PITR claim — that remains a documented ops task.
+- External audit: ⚪ **cannot be code-complete by definition** — needs an
+  actual human auditor, no methodology specified anywhere in the
+  Masterbook. This sprint prepared the sampling/export tooling (the
+  audit-fabric wiring above) an auditor would use; it did not, and
+  could not, simulate being the auditor.
+
+**Verdict, stated as plainly as K3/K4's own exit reports state theirs:
+DAS-Certified is NOT being declared achieved by this Annex update.**
+Erasure e2e, scorecards, agent GA gating, the cache-dimension tenancy
+fuzz, and the external audit itself all remain genuinely open — see
+`implementation/roocode/K5/K5-EXIT-REPORT.md` for the full, itemized
+residual-debt table.
 
 ---
 
@@ -379,6 +439,18 @@ Promotion evidence per level, per process area — collected automatically
 | M2 | dashboards live with ≥ 1 term of data; alert wiring |
 | M3 | agent(s) at propose-tier with HITL queue metrics; harness green; incident count in bounds |
 | M4 | event-driven execution proof (no manual step in happy path); economics attributed; human accountability points exercised (sampled) |
+
+**Implementation (NEW-15, 2026-08-02):**
+`backend/services/maturity_evidence_service.py::compute_maturity_evidence`
+(`dlu_builder_tk`) — one cell per (BOOK-02 Ch. 2's 8 process areas × the
+4 M-levels above) + 2 cross-cutting cells, mirroring
+`compliance_posture_service.py`'s `_claim()`/`_gap()` pattern. M1 is a
+static design-time fact; M2/M3 query real `LlmUsageLog`/`AiAgentConfig`
+signals; M4 composes NEW-15's own ACE trace-completeness reconciliation
+with NEW-14's unattributed-spend detector. No cell defaults to
+`"verified"` without real evidence (V6). Exposed at `GET
+/api/institution-workspaces/maturity-evidence` and folded into the QA
+Console (IW3).
 
 ---
 
