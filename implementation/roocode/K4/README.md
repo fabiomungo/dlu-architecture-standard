@@ -1,6 +1,6 @@
 # K4 Prompt Pack — Trust & Institution
 
-### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15, NEW-08, NEW-09/10, NEW-16, NEW-17 · generated from the Masterbook v1.0-draft
+### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15, NEW-08, NEW-09/10, NEW-16, NEW-17, NEW-18 · generated from the Masterbook v1.0-draft
 
 **Target repo:** `dlu_builder_tk` (the reference implementation).
 **Prerequisite:** K3 exit gate — see `../K3/K3-EXIT-REPORT.md`. Every K3
@@ -20,7 +20,7 @@ needs rather than citing an earlier phase for something it didn't
 actually deliver.
 
 **Scope of this pack.** BOOK-20 Ch. 6 names six K4 items, plus NEW-17
-added by BOOK-14A — **all seven now delivered**: `STX-13 + NEW-07` ✅
+added by BOOK-14A — **all seven delivered**: `STX-13 + NEW-07` ✅
 **delivered** (2026-07-23, credential engine + signing), `STX-14/15` ✅
 **delivered** (2026-07-24, behaviour + Success + Career + WS08), `NEW-08`
 ✅ **delivered** (2026-07-25, document credentials —
@@ -33,6 +33,14 @@ closing G1–G16). NEW-17 was picked up as this pack's own explicitly-
 reserved "separate, concurrent track" once the other six sprints closed;
 see `NEW-17-credit-recognition-pre-evaluation.md` and `dlu_builder_tk`'s
 `docs/sprint_decisions_20260803_new17.md` for the full record.
+An eighth sprint, `NEW-18` ✅ **delivered** (2026-08-04, credit recognition
+hardening — no new G-register item), closes the three gaps NEW-17's own
+delivery note honestly carried forward: the Tier-2/registrar and
+badge-rule-authoring frontends (neither existed), the Tier-1 frontend
+having never been runtime-tested in a live browser, and NEW-11's ESSE3
+driver not yet consuming `credential.recognized` (that event didn't exist
+when NEW-11 shipped). See `NEW-18-recognition-hardening.md` and
+`dlu_builder_tk`'s `docs/sprint_decisions_20260804_new18.md`.
 
 **Execution rules:** BOOK-20 Ch. 12 bind every sprint — read them first.
 Digest: Turnkey `CLAUDE.md` guardrails are absolute (GUID PKs for new
@@ -80,6 +88,12 @@ NEW-17 (Credit Recognition & Pre-Evaluation, G16) ✅
      `CommitteeVerdict`), STX-12 (RecognitionClaim/recognition_yield_
      service — extended, not forked), STX-13 (credential_issuance_
      service._sign_and_persist — reused directly for the statement)
+NEW-18 (Credit Recognition Hardening — closes NEW-17's carried debt) ✅
+   — depended on NEW-17 (the registrar-queue/committee-list routes and
+     both new frontends are read/UI layers over NEW-17's own backend,
+     zero changes to its routes' behavior), NEW-11 (ESSE3 driver — the
+     new `push_recognized_credit` method and `n8n-bridge` consumer are
+     additive to it, not a rewrite)
 ```
 
 - **No blocking edge between STX-13 and STX-14/15** — they touched
@@ -142,20 +156,27 @@ From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
 for the full, honest audit against STX-13/STX-14-15's delivery — credential
 survival suite ✅ real; twin-layer consent (not full erasure e2e) 🟡;
 ACE trace-completeness measurement, one-voice/"why?" UX audits, and
-scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16/NEW-17 do not change
-this picture on their own** (all delivered, but none targets the
+scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16/NEW-17/NEW-18 do not
+change this picture on their own** (all delivered, but none targets the
 still-open Ch. 8.2 cross-cutting gaps directly) — closing those gaps is
 tracked separately under "K3 residual debt" above, per the user's own
-stated priority order.
+stated priority order. NEW-18 did surface one new item worth carrying
+into that list: a pre-existing CORS bug (a custom middleware intercepts
+the OPTIONS preflight before `CORSMiddleware` can attach headers, so any
+cross-origin dev split of frontend/API silently fails browser-side)
+found while finally running the Tier-1 frontend against a live browser —
+worked around for that one test pass via the CRA dev-proxy, not fixed in
+the app itself.
 
 `K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
 audit) — it does not declare the K4 phase itself closed; NEW-08,
-NEW-09/10, NEW-16, and NEW-17 are now ALL ✅ delivered (2026-07-25 through
-2026-08-03) — every BOOK-20 Ch. 6 K4 sprint item PLUS BOOK-14A's NEW-17
-addition is complete except the still-open Ch. 8.2 cross-cutting
-infrastructure (erasure e2e, ACE trace-completeness, one-voice/"why?" UX
-audits, scorecards) named above. A fuller K4 exit assessment should be
-revisited against that remaining list.
+NEW-09/10, NEW-16, NEW-17, and NEW-18 are now ALL ✅ delivered
+(2026-07-25 through 2026-08-04) — every BOOK-20 Ch. 6 K4 sprint item PLUS
+BOOK-14A's NEW-17 addition and NEW-17's own carried-gaps closure sprint
+are complete except the still-open Ch. 8.2 cross-cutting infrastructure
+(erasure e2e, ACE trace-completeness, one-voice/"why?" UX audits,
+scorecards) named above. A fuller K4 exit assessment should be revisited
+against that remaining list.
 
 | Sprint | File | Status | Model rec. (CLAUDE.md §14) |
 |--------|------|--------|---------------------------|
@@ -165,3 +186,4 @@ revisited against that remaining list.
 | NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | ✅ delivered 2026-07-26 (`sprint_decisions_20260726_new09_10.md`) | opus for the faculty-envelope precedence/wiring design review (confirmed: no course-scoping concept existed anywhere in the live Decide-step call chain — additive `course_id` threading + `_run_phases`-only lookup design followed exactly), sonnet impl |
 | NEW-16 | NEW-16-catalog-edition-explorer.md | ✅ delivered 2026-07-27 (`sprint_decisions_20260721_new16.md`) | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |
 | NEW-17 | NEW-17-credit-recognition-pre-evaluation.md | ✅ delivered 2026-08-03 (`sprint_decisions_20260803_new17.md`) | opus for the rule-pack schema + Tier-1/Tier-2 boundary design review, sonnet impl |
+| NEW-18 | NEW-18-recognition-hardening.md | ✅ delivered 2026-08-04 (`sprint_decisions_20260804_new18.md`) | sonnet impl throughout — pure UI/consumer-wiring over an already-reviewed backend, no new schema-design decision warranting an opus pass |

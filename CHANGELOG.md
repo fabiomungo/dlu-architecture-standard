@@ -12,6 +12,27 @@
   (Bestr→ESSE3 pattern on the running OB 3.0 Badge Service), equivalence-
   precedent memory, curricular-drift answer (historic-syllabus endpoint on
   immutable CatalogEditions). Sprint **NEW-17** (K4). Register G1–G16.
+- **NEW-18 executed — closes NEW-17's own carried-gaps note** (2026-08-04,
+  `dlu_builder_tk`): Tier-2/registrar (`RecognitionCouncilDesk.js`) and
+  badge-rule-authoring (`BadgeCreditRuleAdmin.js`) frontends — neither
+  existed, both mirror the established `RegistrarDesk.js`/
+  `LLMQuotaRules.js` Table+Modal+Form shape; two new read routes
+  (`GET /api/pre-evaluations/registrar-queue`,
+  `GET /api/committees?kind=`) the UIs needed; NEW-11's ESSE3 driver now
+  consumes `credential.recognized` via a new `push_recognized_credit`
+  method + `Esse3CredentialSyncLog` + an `n8n-bridge` consumer
+  (`synced`/`no_mapping`/`failed`, the last never raised into the mesh);
+  the Tier-1 frontend (`PreEvaluationWorkspace.js`) actually
+  runtime-tested in a live browser for the first time — found a
+  pre-existing CORS bug in the process (a custom middleware swallows the
+  OPTIONS preflight before `CORSMiddleware` runs), worked around via the
+  CRA dev-proxy rather than fixed, flagged for K5; full Tier-1→Tier-2
+  queue→create/deactivate lifecycle exercised live end-to-end. 8 new
+  tests, full regression clean. Anti-gaming rate-limit integration,
+  `EquivalenceRule` consortium sharing, and the outbound
+  historic-syllabus endpoint remain open (NEW-17's own carried debt,
+  untouched by this sprint). See
+  `docs/sprint_decisions_20260804_new18.md`.
 - **NEW-17 executed — G16 resolved, register complete at G1–G16**
   (2026-08-03, `dlu_builder_tk`): `RecognitionRulePack`/
   `CreditPreEvaluation`/`EquivalenceRule`/`ExternalSyllabusRecord`/
