@@ -2,6 +2,35 @@
 
 ## Unreleased
 
+- **BOOK-14A** — Credit Recognition & Pre-Evaluation Framework (Italy & USA),
+  from the comparative regulatory analysis: jurisdiction **RulePacks**
+  (IT-CFU with DM 931/2024 caps 48/24, SSD matching, fraction tolerances,
+  obsolescence, ITS/master rules, fees; US-SCH with PLA/CAEL, ACE/NCCRS,
+  residency, exclusions), **G16** three-tier pre-evaluation for registered
+  non-enrolled prospects (instant AI estimate + council HITL + Validated
+  Pre-Evaluation Statement as signed credential), badge-to-credit automation
+  (Bestr→ESSE3 pattern on the running OB 3.0 Badge Service), equivalence-
+  precedent memory, curricular-drift answer (historic-syllabus endpoint on
+  immutable CatalogEditions). Sprint **NEW-17** (K4). Register G1–G16.
+- **NEW-17 executed — G16 resolved, register complete at G1–G16**
+  (2026-08-03, `dlu_builder_tk`): `RecognitionRulePack`/
+  `CreditPreEvaluation`/`EquivalenceRule`/`ExternalSyllabusRecord`/
+  `BadgeCreditRule`. Tier 2 uses a dedicated `RecognitionCommitteeVerdict`
+  (NEW-06's `CommitteeVerdict.thesis_id` is `NOT NULL` — concretely
+  thesis-coupled despite its forward-looking docstring); reuses NEW-06's
+  generic `Committee`/`CommitteeMember` formation only. Validated
+  Pre-Evaluation Statement issued via STX-13's `_sign_and_persist`
+  directly. Conversion executes the already-decided verdict at
+  enrollment — no re-evaluation. Badge auto-convalida matches STX-13's
+  live `credential_templates`, not the two dead badge implementations.
+  25 tests green; migration verified up/down/up; full regression clean
+  (`pytest -m phase1` stable at 104/3; combined NEW-17+STX-12+NEW-06+
+  STX-13+NEW-16+STX-14/15: 108 passed). K4 pack now fully delivered
+  (7/7 items — see `implementation/roocode/K4/README.md`).
+- **K1 phase completed** in `dlu_builder_tk` (STX-01…05 ✅ per sprint status
+  notes): twin core + identity_map, TwinContextService, Event Mesh,
+  Competency Engine, KG v2.0 + `dlu-core.yaml`.
+
 - **K2 prompt pack generated** (2026-07-16, post K1 exit gate):
   `implementation/roocode/K2/` — README (order: NEW-01 → STX-06 → NEW-03,
   NEW-02 in parallel as the GA gate; exit gate per TRACEABILITY K2 row) +

@@ -12,6 +12,7 @@ for f in BOOK-0[1-9]-*-v1.0.md BOOK-1[0-9]-*-v1.0.md BOOK-20-*-v1.0.md; do
 done
 cp -f BOOK-10A-AI-Workforce-Skills-and-MCP-Catalog-v1.0.md "$DEST/"
 cp -f BOOK-10B-AI-Execution-Framework-v1.0.md "$DEST/"
+cp -f BOOK-14A-Credit-Recognition-and-Pre-Evaluation-v1.0.md "$DEST/"
 cp -f MASTERBOOK-INDEX.md TRACEABILITY.md GLOSSARY.md MASTERBOOK-REVIEW-v1.0.md "$DEST/"
 cat > "$DEST/README.md" <<'EOF'
 # Generated copies — do not edit here

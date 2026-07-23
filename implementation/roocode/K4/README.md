@@ -1,6 +1,6 @@
 # K4 Prompt Pack — Trust & Institution
 
-### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15, NEW-08, NEW-09/10, NEW-16 · generated from the Masterbook v1.0-draft
+### DAS BOOK-20 Phase K4 · sprints STX-13 + NEW-07, STX-14/15, NEW-08, NEW-09/10, NEW-16, NEW-17 · generated from the Masterbook v1.0-draft
 
 **Target repo:** `dlu_builder_tk` (the reference implementation).
 **Prerequisite:** K3 exit gate — see `../K3/K3-EXIT-REPORT.md`. Every K3
@@ -19,19 +19,20 @@ verification depends on it, the sprint must build the narrow slice it
 needs rather than citing an earlier phase for something it didn't
 actually deliver.
 
-**Scope of this pack.** BOOK-20 Ch. 6 names six K4 items:
-`STX-13 + NEW-07` ✅ **delivered** (2026-07-23, credential engine +
-signing), `STX-14/15` ✅ **delivered** (2026-07-24, behaviour + Success +
-Career + WS08), `NEW-08` ✅ **delivered** (2026-07-25, document
-credentials — DS/self-certification/transcript/clearance, G9-11),
-`NEW-09/10` ✅ **delivered** (2026-07-26, faculty + institution surfaces
-— FW2/FW3/FW5 + I2/I3/I5 + IW1-3, G1/G4) and `NEW-16` ✅ **delivered**
-(2026-07-27, catalog edition & explorer, G15) — and `NEW-17` (credit
-recognition & pre-evaluation, G16,
-added by BOOK-14A) — **explicitly out of this pack's scope; do not touch
-its files**, it is documented in BOOK-20 as already in progress on a
-separate, concurrent track. Do not fold NEW-17's scope into anything
-below opportunistically.
+**Scope of this pack.** BOOK-20 Ch. 6 names six K4 items, plus NEW-17
+added by BOOK-14A — **all seven now delivered**: `STX-13 + NEW-07` ✅
+**delivered** (2026-07-23, credential engine + signing), `STX-14/15` ✅
+**delivered** (2026-07-24, behaviour + Success + Career + WS08), `NEW-08`
+✅ **delivered** (2026-07-25, document credentials —
+DS/self-certification/transcript/clearance, G9-11), `NEW-09/10` ✅
+**delivered** (2026-07-26, faculty + institution surfaces — FW2/FW3/FW5 +
+I2/I3/I5 + IW1-3, G1/G4), `NEW-16` ✅ **delivered** (2026-07-27, catalog
+edition & explorer, G15), and `NEW-17` ✅ **delivered** (2026-08-03,
+credit recognition & pre-evaluation, G16 — the register's last item,
+closing G1–G16). NEW-17 was picked up as this pack's own explicitly-
+reserved "separate, concurrent track" once the other six sprints closed;
+see `NEW-17-credit-recognition-pre-evaluation.md` and `dlu_builder_tk`'s
+`docs/sprint_decisions_20260803_new17.md` for the full record.
 
 **Execution rules:** BOOK-20 Ch. 12 bind every sprint — read them first.
 Digest: Turnkey `CLAUDE.md` guardrails are absolute (GUID PKs for new
@@ -71,10 +72,14 @@ NEW-09/10 (Faculty + Institution surfaces — FW2/FW3/FW5, I2/I3/I5, IW1-3)
 NEW-16 (Catalog Edition & Explorer, G15)
    — depends on NEW-04 (RouteGraphVersion is the immutability pattern to
      copy) and academic_gps_service.compute_scenarios (the engine
-     `simulate_scenarios` wraps, never duplicates); NEW-17 (separate,
-     concurrent track) depends on THIS sprint's CatalogEdition aggregate —
-     do not let that create a reverse dependency; NEW-16 must not touch
-     NEW-17's files
+     `simulate_scenarios` wraps, never duplicates)
+NEW-17 (Credit Recognition & Pre-Evaluation, G16) ✅
+   — depended on NEW-16 (CatalogEdition — `CreditPreEvaluation` pins one),
+     NEW-06 (Committee formation primitives — Tier-2 needed its own
+     `RecognitionCommitteeVerdict` table, NOT NEW-06's thesis-coupled
+     `CommitteeVerdict`), STX-12 (RecognitionClaim/recognition_yield_
+     service — extended, not forked), STX-13 (credential_issuance_
+     service._sign_and_persist — reused directly for the statement)
 ```
 
 - **No blocking edge between STX-13 and STX-14/15** — they touched
@@ -137,20 +142,20 @@ From `../K3/K3-EXIT-REPORT.md` §6 (and re-carried by `K4-EXIT-REPORT.md`
 for the full, honest audit against STX-13/STX-14-15's delivery — credential
 survival suite ✅ real; twin-layer consent (not full erasure e2e) 🟡;
 ACE trace-completeness measurement, one-voice/"why?" UX audits, and
-scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16 do not change this
-picture on their own** (all delivered, but none targets the still-open
-Ch. 8.2 cross-cutting gaps directly) — closing those gaps is tracked
-separately under "K3 residual debt" above, per the user's own stated
-priority order.
+scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16/NEW-17 do not change
+this picture on their own** (all delivered, but none targets the
+still-open Ch. 8.2 cross-cutting gaps directly) — closing those gaps is
+tracked separately under "K3 residual debt" above, per the user's own
+stated priority order.
 
 `K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
 audit) — it does not declare the K4 phase itself closed; NEW-08,
-NEW-09/10, and NEW-16 are now ALL ✅ delivered (2026-07-25 through
-2026-07-27) — every BOOK-20 Ch. 6 K4 sprint item is complete except the
-still-open Ch. 8.2 cross-cutting infrastructure (erasure e2e, ACE
-trace-completeness, one-voice/"why?" UX audits, scorecards) named above.
-A fuller K4 exit assessment should be revisited against that remaining
-list.
+NEW-09/10, NEW-16, and NEW-17 are now ALL ✅ delivered (2026-07-25 through
+2026-08-03) — every BOOK-20 Ch. 6 K4 sprint item PLUS BOOK-14A's NEW-17
+addition is complete except the still-open Ch. 8.2 cross-cutting
+infrastructure (erasure e2e, ACE trace-completeness, one-voice/"why?" UX
+audits, scorecards) named above. A fuller K4 exit assessment should be
+revisited against that remaining list.
 
 | Sprint | File | Status | Model rec. (CLAUDE.md §14) |
 |--------|------|--------|---------------------------|
@@ -159,3 +164,4 @@ list.
 | NEW-08 | NEW-08-document-credentials.md | ✅ delivered 2026-07-25 (`sprint_decisions_20260725_new08.md`) | opus for the clearance-checklist scope + ELM-lite schema design review, sonnet impl |
 | NEW-09/10 | NEW-09-10-faculty-institution-surfaces.md | ✅ delivered 2026-07-26 (`sprint_decisions_20260726_new09_10.md`) | opus for the faculty-envelope precedence/wiring design review (confirmed: no course-scoping concept existed anywhere in the live Decide-step call chain — additive `course_id` threading + `_run_phases`-only lookup design followed exactly), sonnet impl |
 | NEW-16 | NEW-16-catalog-edition-explorer.md | ✅ delivered 2026-07-27 (`sprint_decisions_20260721_new16.md`) | opus for the CatalogEdition snapshot-modeling design review, sonnet impl |
+| NEW-17 | NEW-17-credit-recognition-pre-evaluation.md | ✅ delivered 2026-08-03 (`sprint_decisions_20260803_new17.md`) | opus for the rule-pack schema + Tier-1/Tier-2 boundary design review, sonnet impl |

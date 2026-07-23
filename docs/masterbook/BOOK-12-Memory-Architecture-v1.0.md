@@ -191,14 +191,14 @@ BOOK-11 Ch. 8) are Review-Board items. The scenario bank includes memory cases
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| M1 working | Redis + cycle runtime (STX-06) | 🔵 | blackboard keying per BOOK-09 §5.3 |
-| M2 traces | AI generation audit tables, `agent_run_logs` ✅; cycle trace schema 🔵 | 🟡 | session summaries + twin-scoped vector index (chroma substrate present ✅) |
-| M3 semantic | `TwinAIMemory` design (constitution §4.3, STX-01) | 🔵 | episode citations + supersession lineage (additive columns) |
-| M4 procedural | — (calibration ⚪ per BOOK-09) | ⚪ | calibration store + L1 cache policy |
-| Consolidation | — | ⚪ | R8 missions (rides STX-06 Brain layer) |
-| Retrieval scoping | tutor context (running) reads profile, not memory | 🟡 | Perceive-phase memory assembly + budget |
-| Deletion/inspection UX | — | ⚪ | "AI memory" panel (BOOK-17, WS00) |
-| Cross-learner isolation | tenant isolation ✅ | 🟡 | twin-level key prefixing + harness scenarios |
+| M1 working | Redis + cycle runtime (STX-06) | ✅ | blackboard keying per BOOK-09 §5.3 already satisfied by STX-06's `synthesize_blackboard` — no NEW-03 work needed |
+| M2 episodic | `ace_session_summaries` (NEW-03 ✅ 2026-07-18) — pgvector-indexed, **not Chroma**: no Chroma substrate exists anywhere in Turnkey (a prior version of this row's "chroma substrate present" was incorrect — the actual, established RAG convention is pgvector, `academic_embedding_service.py`); session-close + nightly consolidation missions | ✅ | rubric-quality drift on M2 content is a separate NEW-02-documented gap (trace doesn't persist response text) |
+| M3 semantic | `TwinAIMemory` (constitution §4.3, STX-01) + `memory_write_service.py` (NEW-03 ✅ 2026-07-18) — episode citations required on every write, supersession lineage wired, rejection list (protected attributes, third-party facts) | ✅ | protected-attribute categories are this sprint's own policy list (GDPR + US classes) — the Book itself names only the generic category |
+| M4 procedural | `ProceduralCalibrationState` (NEW-03 ✅ 2026-07-18) rolling up NEW-02's `CalibrationBaseline`; inherited-but-flagged on new releases | ✅ | outcome tracking (prediction vs. eventual result) is still the open BOOK-09 Ch. 7 gap NEW-02 already documented — this sprint only builds the inheritance/flagging mechanics |
+| Consolidation | `consolidation_service.py` (NEW-03 ✅ 2026-07-18) — R8 extractive-first, salience scoring, volume-budget compression | ✅ | salience weights/coefficients are this sprint's policy choice (no formula given in the Book) |
+| Retrieval scoping | Perceive-phase assembly (NEW-03 ✅ 2026-07-18) — salience × purpose relevance, M2 vector hits on history cues, per-agent budget + truncation marker, trace citation | ✅ | a genuine pre-existing gap found and fixed in this sprint: `TwinContextService._fetch_ai` never filtered by `agent_key` at all before NEW-03 — closed in the same change set |
+| Deletion/inspection UX | `DELETE /api/twin/me/memory/{id}` (NEW-03 ✅ 2026-07-18, ownership-checked) + `/api/brain/memory` (STX-06, WS00 panel) | ✅ | the STX-06 `/api/brain/memory/{id}` route still has no ownership check — flagged as a follow-up hardening item, not fixed as a drive-by change in NEW-03 |
+| Cross-learner isolation | tenant isolation ✅; twin-level key prefixing + entitlement check (NEW-03 ✅ 2026-07-18, fuzz-tested at the storage layer) | ✅ | — |
 
 ---
 

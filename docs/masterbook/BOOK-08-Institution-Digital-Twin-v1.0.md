@@ -124,6 +124,23 @@ ProgramHealth:
 
 Every element links to its kernel evidence (drill-down, not dashboard folklore).
 
+**✅ `economics` implemented (NEW-14, 2026-08-01):** `cost_attribution_
+service.compute_program_economics` (program × term scoped). `C_learner`
+is an honest 1-of-5 partial sum — BOOK-02 8.1's formula has five terms
+(`C_inference + C_content_maint + C_human_attention + C_platform +
+C_compliance`); only `C_inference` has real backing data anywhere in
+this codebase (the ACP Gateway's own `llm_usage_logs.cost_usd`), so the
+other four render as explicit `not_yet_available` sub-fields, never a
+fabricated zero or estimate presented as measured — the same honesty
+convention Chapter 3's Attention economy already established. Revenue
+for `contribution margin`/`AI cost share` comes from `InvoiceRecord
+.related_entity_type == 'program'` — a real, generic column with no
+current writer in this codebase (confirmed via grep), structurally the
+same shape as the `design` dimension's own `OutcomeCoverageMatrix
+.entity_type == 'program'` gap (a real, usable column with zero current
+writers) — degrades to an explicit gap per program/term rather than
+assuming zero or complete revenue.
+
 ## 4.2 Program lifecycle decisions
 
 `design → approved → active → under_revision → teach_out → retired`
@@ -158,6 +175,18 @@ ordinamento/OFF.F data is a **driver mirror** (BOOK-07 §6.3 pattern). → BOOK-
 - **AI capacity & economics:** budget burn per engine and process area (BOOK-02
   8.1 attribution), quota exhaustion events (MUST degrade visibly), provider
   fallback activations, cost-per-learner trend.
+
+  **✅ per-engine/process-area attribution implemented (NEW-14, 2026-08-01):**
+  `GET /api/llm-usage/breakdown?group_by=engine|process_area`
+  (`cost_attribution_service.py`'s static, versioned mapping over
+  `LlmUsageLog.service_type` — the ten BOOK-00 6.1 kernel engines ×
+  BOOK-02 Ch. 2's eight process areas). An unattributed `service_type`
+  is a governance defect, not a silent default — surfaced both as its
+  own `unattributed` breakdown bucket here and as a 13th I5 dossier
+  claim (Chapter 6.1's living self-study, alongside the twelve NEW-13
+  claims). Quota exhaustion/provider-fallback/
+  cost-per-learner-trend remain sourced from the observability stack, as
+  written above — not touched by this sprint.
 - **Platform operations:** driver health (per-driver circuit-breaker state —
   BOOK-03 Ch. 6), event-mesh consumer lag, non-functional budget compliance
   (BOOK-03 Ch. 8) — sourced from the running observability stack.
@@ -206,6 +235,17 @@ requires, as a Track-A view. → BOOK-18 (ESSE3 driver contract), BOOK-19
 > BOOK-19 §5.1): per-CFU Didattica Erogativa/Interattiva ledger health and
 > CEV-evidence freshness, alongside the ANS completeness monitor.
 
+**✅ implemented (NEW-13, 2026-07-31):** the completeness monitor reads
+NEW-11's own `esse3_boundary_career.ans_completeness_ok`/
+`.ans_missing_fields` — the boundary-table row NEW-11 already keeps
+fresh IS the completeness signal, never a new computation this Book's
+own driver doctrine would otherwise forbid. The SUA-CdS evidence feed is
+a Track-A view (`compliance_posture_service.export_g8_dossier_view`)
+over the SAME dossier `compute_compliance_posture` already assembles —
+not a second document-generation pipeline. Degrades honestly to
+`not_yet_available` if NEW-11 has not been executed in a given
+deployment (this Book's driver contract is a soft, not hard, dependency).
+
 ---
 
 # Chapter 7 — Twin Mechanics Deltas (vs BOOK-06)
@@ -243,15 +283,15 @@ requires, as a Track-A view. → BOOK-18 (ESSE3 driver contract), BOOK-19
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
 | I1 Structure | `models_institution.py` hierarchy, programs, terms, sections; InstitutionDashboard | ✅ | regulation-year binding (G7) ⚪ |
-| I2 Academic health inputs | Pedagogical Coach, `OutcomeCoverageMatrix`, analytics dashboards, BKT aggregates | ✅ inputs | composite + drill-down links 🔵 |
-| I3 Knowledge indicators | coverage ✅, `ContentRefreshJob` ✅, ontology service ✅ | 🟡 | grounding-provenance metric ⚪ |
-| I3 Trust indicators | credential service, audit logs | 🟡 | verification SLA + evidence-balance instrumentation ⚪ (rides STX-08/13) |
-| I3 Attention indicators | cohorts/forums ✅ | ⚪ | F5 rollups + belonging index (BOOK-07 F5 first) |
-| I4 AI economics | gateway usage accounting, quota budgets ✅ | ✅ | per-engine attribution 🔵 (BOOK-03) |
+| I2 Academic health composite | **as of NEW-10 (2026-07-26)**: `program_health_service.py` — design (real, read-time rollup of course-level `OutcomeCoverageMatrix` rows — no code path anywhere writes a genuine `entity_type='program'` row, confirmed, so this is a rollup not a fabricated write), learning (completion real, learning-gain/durability not tracked anywhere), equity (real, n≥`min_n` suppression reusing STX-11's exact floor + `StudentTwin.persona` cohort dimension), demand/delivery (real, via `TeachingSection`), economics (`not_yet_available`, no cost model exists) — every real element carries a drill-down reference; never mutates `Program.active`/`sunset_date` | ✅ **I2 delivered (NEW-10)** | economics dimension; learning-gain/durability tracking |
+| I3 Knowledge indicators | coverage ✅, `ContentRefreshJob` ✅, ontology service ✅ — **as of NEW-10, composed into `three_economies_service.py`'s real `knowledge` key** | ✅ **NEW-10** | grounding-provenance metric ⚪ |
+| I3 Trust indicators | credential service, audit logs — **as of NEW-10, composed into the real `trust` key** (evidence_balance/integrity_incidents/credential_reliability, each caveated as approximate) | ✅ **NEW-10 (approximate)** | verification SLA instrumentation ⚪ (no `verified_at` timestamp exists anywhere to measure against) |
+| I3 Attention indicators | cohorts/forums ✅ — **as of NEW-10, `faculty_load_balance` is real** (via `FacultyAssignment` counts) | 🟡 **NEW-10 (thinnest of the three, honestly)** | mentorship-hours/belonging-index ⚪ (F5 rollups still don't exist); HITL-queue-health ⚪ (deliberately NOT built on `move_proposal_service.list_for_twin`, which reads a test-only fake-client attribute in production — building on it would fabricate a signal, not surface a real one) |
+| I4 AI economics | gateway usage accounting, quota budgets ✅; per-engine/process-area attribution **✅ (NEW-14, 2026-08-01)** — `cost_attribution_service.py`, surfaced via `GET /api/llm-usage/breakdown?group_by=engine\|process_area` and a 13th I5 dossier claim | ✅ | `C_learner` (BOOK-02 Ch. 8.1) is an honest 1-of-5 partial sum — only `C_inference` has real backing data, the other four terms render `not_yet_available` |
 | I4 Ops | Grafana/OTel stack ✅ | ✅ | consumer-lag + driver-health panels 🟡 |
-| I5 Compliance | compliance/multiregion docs, audit service | 🟡 | AI Act register ⚪ (BOOK-19); generated dossier ⚪ |
+| I5 Compliance | compliance/multiregion docs, audit service — **as of NEW-13 (2026-07-31), `compliance_posture_service.py` generates the real "living self-study" dossier with all 12 claims real/verified or an honest, data-backed gap**: the original 7 (coverage tracking, evidence sole-writer, credential status-list, CLO→PLO→ILO chain, item-calibration governance, clearance live-resolution, staff-only recognition adjudication) plus 5 NEW-13 fills — AI Act deployer-obligation register (extends the live `ai_agent_configs` registry, never resurrects either dead-code AI-governance attempt), G8 ANS/SUA-CdS completeness monitor (reads NEW-11's own `ans_completeness_ok` signal), G12 RSI ledger, G14 DE/DI ledger (one roster-anchored function, two regimes), G13 Identity Verification Policy (live-resolved, versioned disclosure) — plus a compute-on-read compliance calendar as a new response section | ✅ **I5 dossier fully delivered (NEW-10 + NEW-13)** | none outstanding at I5 posture level — residual gaps are named honestly INSIDE each claim (Moodle instructor-event under-count for G12/G14; FEX v1.4/tutor-mapping/CEV evidence for G14) |
 | I6 Transformation | PI status reports, release gates | 🟡 | maturity evidence model ⚪ (BOOK-20) |
-| G8 completeness monitor | ERPNext/ESSE3 mirrors | ⚪ | driver contract (BOOK-18) |
+| G8 completeness monitor | ERPNext/ESSE3 mirrors | ✅ **NEW-13 (2026-07-31)** | — |
 
 ---
 

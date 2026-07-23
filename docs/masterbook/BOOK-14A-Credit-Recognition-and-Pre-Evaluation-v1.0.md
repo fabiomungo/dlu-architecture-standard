@@ -263,7 +263,7 @@ packs (grep gate).
 | G9/G10/G11 | fees via PagoPA (IT pack); validated statement joins the document-credential family ✅ |
 | G12/G13/G14 | pre-evaluation is pre-enrollment: RSI/DE-DI not applicable; identity verification applies from Tier-2 (document authenticity + G13 methods) ✅ |
 | G15 | consumed: Tier 0 = catalog explorer; estimates bind to editions ✅ |
-| **G16 credit pre-evaluation service** (new — this Book) | **owned here**: three-tier flow, rule packs, precedent memory, badge automation, historic-syllabus answer; sprint NEW-17 |
+| **G16 credit pre-evaluation service** (new — this Book) | **resolved** (NEW-17 ✅ 2026-08-03): three-tier flow, rule packs, precedent memory, badge automation; the outbound historic-syllabus answer is honestly carried forward as NEW-16's own extension, not built by NEW-17 |
 
 Register now **G1–G16**.
 
@@ -285,6 +285,6 @@ Register now **G1–G16**.
 
 ---
 
-*BOOK-14A v1.0 — awaiting review. G16 registered; sprint NEW-17 defined.
-The K2 pack generation (post-K1 exit report) will sequence NEW-17 into K4 as
-noted.*
+*BOOK-14A v1.0 — awaiting review. G16 resolved — NEW-17 delivered
+2026-08-03 (`dlu_builder_tk`, `docs/sprint_decisions_20260803_new17.md`).
+The Masterbook's standing G-register is now complete at G1–G16.*

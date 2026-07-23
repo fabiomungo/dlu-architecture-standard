@@ -108,6 +108,24 @@ commits to:
 Register status renders in I5 (BOOK-08); red items are board-visible by
 construction.
 
+**✅ implemented (NEW-13, 2026-07-31):** `ai_act_risk_class`/`ai_act_role`
+are two new nullable columns on the existing, live `platform
+.ai_agent_configs` registry (9 seeded rows) — extending it rather than
+resurrecting either dead-code AI-governance attempt already in the
+codebase. `ai_act_obligations` (one row per `(ai_agent_config_id,
+obligation_key)`, the nine obligations above) is seeded — never
+overwriting an already-attested row — at the agent's `testing ->
+deployed` lifecycle transition, which also opens a `fria_assessments`
+row (`trigger_kind="new_deployment"`; `trigger_kind="new_cohort_class"`
+is a valid, CHECK-constrained value with no automatic trigger wired yet
+— this codebase's `Cohort` model is a course-pacing construct, not the
+"new deployment context" this chapter means, and its service is legacy
+sync code incompatible with an async trigger without a larger refactor).
+FRIA reports are structured JSON (`template_json`), never a rendered
+PDF — no such requirement exists anywhere in this Masterbook. A single
+non-`verified` obligation anywhere renders the WHOLE register posture
+`partial` in I5, never rolled up green.
+
 ---
 
 # Chapter 4 — GDPR / FERPA Core
@@ -169,6 +187,22 @@ instrument:
 4. **CEV procedures.** The living self-study (BOOK-08 §6.1) gains a
    telematic-profile section aligned to the dedicated CEV indicator set.
 
+**✅ implemented in part (NEW-13, 2026-07-31):** items 1–2 (declaration +
+ledger + AI-boundary + under-quota alerting) are real —
+`de_di_classification` is a new nullable JSON column declared per
+module (colocated beside `media_mix` on `ModuleBlueprint`, per-course
+via the SAME roster-anchored ledger function G12 uses,
+`regime="de_di"`); Italian telematic courses are selected via
+`Program.credit_system=='ects'` + `delivery_mode=='online'` (the
+closest existing proxy for "telematic" — no dedicated boolean column
+exists yet); the under-quota floor is a documented, institution-
+overridable placeholder (`DEFAULT_DI_HOURS_PER_CFU_FLOOR`), never
+presented as an ANVUR-sourced figure, since no concrete number is
+specified anywhere in this Masterbook. Items 3–4 (tutor-figure role
+mapping, FEX v1.4 formal item, CEV-indicator-aligned living-self-study
+section) are **NOT built this sprint** — an honest carry-forward, not
+claimed done.
+
 ---
 
 # Chapter 6 — US Distance-Education Profile (verified — strategic findings)
@@ -203,6 +237,24 @@ however excellent — is NOT instructor interaction. Therefore:
    compliance strategy. AI absorbs routine load precisely so instructor
    interaction is abundant and documentable.
 
+**✅ implemented (NEW-13, 2026-07-31):** `rsi_plan` is a new nullable
+JSON column declared per module (colocated beside `media_mix`); the
+ledger is roster-anchored — active `CohortEnrollment` rows LEFT JOINed
+against `StudentExamAttempt` human sign-offs (`grader_id`/`graded_at`
+both set — the only real, course-attributed source), which is what
+makes a *zero*-touchpoint provable at all. Office-hours bookings,
+thesis-milestone approvals, and viva completions are tallied as a
+student-attributed, course-agnostic supplement, reported alongside
+rather than merged into the course-level rows. **The gap this chapter's
+own "already emitted" phrase assumed away turned out to be real and is
+now explicitly disclosed, not hidden:** forum facilitation and web-
+conference attendance are NOT captured anywhere as role-attributed
+events today (`XAPIStatement.actor_id` has no role field, confirmed by
+this sprint's own fact-check) — every ledger row carries a
+`data_completeness` block naming exactly this gap. Extending the Moodle
+driver contract to close it is explicitly out of this sprint's scope, a
+future fix.
+
 ## 6.2 Student identity verification — G13 (new)
 
 34 CFR 602.17(g)/(h): institutions must establish that the registered student
@@ -217,6 +269,18 @@ check in existence) · session-based checks for high-stakes (proctoring last
 resort, consented, DPIA'd). **G13 deliverables:** a per-tenant Identity
 Verification Policy artifact (methods per assessment class), registration-time
 disclosure (charges), and privacy documentation — surfaced in I5.
+
+**✅ implemented (NEW-13, 2026-07-31):** `identity_verification_policies`
+(per-tenant, versioned) resolves LIVE via `resolve_identity_verification
+_policy` — never written by the resolver itself, same never-write
+discipline as `clearance_service.resolve_clearance_checklist`.
+Registration-time disclosure is recorded as a new versioned key in the
+twin's EXISTING `consent_flags` JSON, idempotent per policy version — a
+re-registration at an unchanged version never duplicates the record.
+`tenant_id` is a required, validated parameter on the write path (a
+real cross-tenant IDOR was found and fixed here by independent security
+review before this sprint landed — see
+docs/sprint_decisions_20260731_new13.md).
 
 ## 6.3 Title IV mechanics
 
@@ -250,6 +314,24 @@ I5-rendered (BOOK-08), owned by compliance, fed by kernel events:
 | DR exercises (quarterly) | kg-rebuild, restore drills (18) |
 | Board reviews | Review Board minutes, incident trends, equity reports |
 
+**✅ implemented (NEW-13, 2026-07-31):**
+`compliance_calendar_service.py::compute_compliance_calendar` is ONE
+compute-on-read function serving both row kinds — no materialized
+calendar table (the durable evidence already lives in the registers/
+ledgers above; materializing occurrences would add a reconciliation
+burden for zero audit benefit). Schedule-only rows (AI Act register,
+DPIA register, consent/disclosure versions, ANS spedizioni,
+accreditation cycles, key ceremonies, DR exercises, board reviews) come
+from a small static cadence catalog plus one row per
+`program_state_disclosures` entry (the Masterbook Review M7 licensure-
+disclosure item, structurally distinct from G13 though textually
+adjacent). Evidence-driven rows (RSI ledger review, DE/DI ledger
+review) call Ch. 6.1/§5.1's ledger function live against the
+institution's current `AcademicTerm`; no current term configured
+degrades honestly to `not_yet_available`. Surfaced as a new section of
+the EXISTING I5 `compute_compliance_posture` response — no standalone
+calendar route or workspace.
+
 ---
 
 # Chapter 8 — G-Register Check (standing verification)
@@ -260,12 +342,13 @@ I5-rendered (BOOK-08), owned by compliance, fed by kernel events:
 | G7 | regulation-year rules enter as versioned policy objects; change control here ✅ |
 | G8 | ANS calendar + completeness monitor governance (Ch. 7) ✅ |
 | G9/G10/G11 | document credentials legal boundaries (bollo/PagoPA, DS issuance, clearance acts) mapped to Italian profile ✅ |
-| **G12 RSI instrumentation** (new) | **owned here**: RSI plan requirement + ledger + alerts (Ch. 6.1); engineering lands K5 (NEW-13 extension) |
-| **G13 identity-verification policy** (new) | **owned here**: layered verification + policy artifact + registration disclosure (Ch. 6.2); lands K5 |
-| **G14 DE/DI telematic regime** (Masterbook Review R2) | **owned here**: DE/DI classification + ledger + tutor mapping + CEV evidence (Ch. 5.1); FEX classification in BOOK-05 §4.4; lands K5 (NEW-13 extension) |
+| **G12 RSI instrumentation** (new) | **owned here, ✅ engineered NEW-13 (2026-07-31)**: RSI plan requirement + roster-anchored ledger + zero-touchpoint alerts (Ch. 6.1) — Moodle instructor-event under-count disclosed via `data_completeness`, not silently closed |
+| **G13 identity-verification policy** (new) | **owned here, ✅ engineered NEW-13 (2026-07-31)**: layered verification + live-resolved versioned policy artifact + registration disclosure (Ch. 6.2) |
+| **G14 DE/DI telematic regime** (Masterbook Review R2) | **owned here, ✅ engineered in part NEW-13 (2026-07-31)**: DE/DI classification + ledger + under-quota alerting (Ch. 5.1) — tutor mapping, FEX v1.4 formal item, and CEV evidence NOT yet built, an honest carry-forward |
 | **G15 catalog as legal contract + explorer** (stakeholder review) | governance hook here: edition publication is a governed act (Senate/board approval → effective); consumer-protection reading — the pinned edition is the enforceable promise (misrepresentation guard applies to explorer content); resolution in 04/14/16/17, sprint NEW-16 |
+| **G16 credit pre-evaluation + rule packs** (stakeholder review) | governance hooks here: rule-pack changes are governed acts (DM 931/2024 caps, PLA/residency parameters — versioned, effective-dated, G7-aware); Tier-1 estimates carry the non-binding marker (misrepresentation guard); Tier-2 adjudication is council HITL (Committee, G6); prospect-document retention limits + `career_processing` consent; PLA-fee and portability disclosures (G13 discipline); resolution in BOOK-14A, sprint NEW-17 |
 
-Register now **G1–G15**.
+Register now **G1–G16**.
 
 ---
 
@@ -274,15 +357,15 @@ Register now **G1–G15**.
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
 | Governance bodies & proposals | ai_governance service, approval routes | ✅ | RACI codification + board tooling 🟡 |
-| Identity & MFA | Keycloak, SAML/OIDC services | ✅ | SPID/CIE brokering (IT profile) ⚪ |
+| Identity & MFA | Keycloak, SAML/OIDC services; SPID/CIE brokering **✅ (NEW-11, 2026-07-29)** — entirely via Keycloak (`dlu-it` realm), no new SPID SAML SP built in DLU; `oidc_service.provision_user` reads OIDC claims + enforces a minimum assurance level | ✅ | — |
 | Secrets | env conventions, encrypted tokens | ✅ | KMS + DID key ceremony ⚪ (rides NEW-07) |
-| Audit fabric | audit logs, purpose-tagged twin reads (STX-02), run logs | 🟡 | hash chaining, unified query ⚪ |
-| AI Act register | governance dashboards | 🟡 | obligation register + FRIA templates ⚪ (NEW-13) |
-| GDPR/FERPA | compliance/multiregion architecture, dual-region compose | ✅ arch | executable erasure job ⚪ (BOOK-06) |
-| RSI ledger (G12) | xAPI + faculty events (Gate-2, feedback, bookings, vivas) all present/planned | ⚪ | ledger aggregation + alerts |
-| Identity verification (G13) | MFA + BOOK-15 integrity layers | 🟡 | policy artifact + disclosure flow |
+| Audit fabric | `backend/domains/audit/` — hash-chained (`AuditEvent.event_hash`/`.previous_event_hash`, `AuditIntegrityHash` daily checkpoints) **✅ (NEW-15, 2026-08-02)**: 7 DAS event types wired into 6 real service call sites, best-effort/post-commit; unified query via `AuditService` | ✅ | a second, non-hash-chained `backend/services/audit_service.py` (auth/admin logging) remains a documented, deliberately-not-consolidated redundancy |
+| AI Act register | `ai_agent_configs`-extending deployer-obligation register + FRIA templates **✅ (NEW-13, 2026-07-31)** — seeded at the real `deploy_agent` trigger point; a single non-verified obligation anywhere keeps the WHOLE register non-green | ✅ | — |
+| GDPR/FERPA | compliance/multiregion architecture, dual-region compose | ✅ arch | executable erasure job ⚪ — `revoke_or_suspend(purge_pii=True)` exists and is tested in isolation, but has zero real callers anywhere in the codebase; no erasure-request subsystem exists at all (BOOK-06) |
+| RSI ledger (G12) | `interaction_ledger_service.py` — roster-anchored, active `CohortEnrollment` LEFT JOINed against `StudentExamAttempt` human sign-offs **✅ (NEW-13, 2026-07-31)**; every row discloses the confirmed Moodle instructor-event capture gap via a `data_completeness` block, never a silent under-count | ✅ | Moodle instructor-event capture itself remains open (Review finding M3) |
+| Identity verification (G13) | `identity_verification_policies` live-resolved per tenant + versioned disclosure in the twin's `consent_flags` **✅ (NEW-13, 2026-07-31)** | ✅ | — |
 | Engagement/attendance | xAPI classes | ✅ | Title IV engagement mapping doc 🔵 |
-| Compliance calendar | I5 design (08) | 🔵 | register implementations (NEW-13) |
+| Compliance calendar | compute-on-read, never materialized **✅ (NEW-13, 2026-07-31)** — surfaced in I5; DR-exercise row also populated **✅ (NEW-15, 2026-08-02)** via `compliance_calendar_service`'s `dr_exercise` schedule entry | ✅ | — |
 
 ---
 

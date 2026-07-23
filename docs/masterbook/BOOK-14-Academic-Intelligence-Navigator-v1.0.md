@@ -268,7 +268,8 @@ ERPNext via n8n). ETA honesty: bands, not points; assumptions listed
 Service contract per constitution §9.1 (`compute_scenarios`,
 `evaluate_current_path`), extended with `estimate_recognition(twin, documents) →
 ClaimInventory`, `compile_map(tenant, horizon) → RouteGraphVersion`, and
-**`simulate_scenarios(hypothetical_fix, target) → list[PathScenario]` (G15)**:
+**`simulate_scenarios(hypothetical_fix, target) → list[PathScenario]` (G15)
+— ✅ implemented (NEW-16, 2026-07-27)**:
 the what-if engine for prospects and enrolled students alike — a
 **hypothetical fix** (self-declared background, sandbox recognition estimates,
 candidate program/edition) runs through the same deterministic engine against
@@ -278,7 +279,19 @@ is how the catalog becomes *evaluable autonomously*: a prospect simulates
 "me + my experience + program X" before ever applying; a student simulates a
 minor change or a transfer before committing. Simulations are rate-limited,
 anonymous-capable (pre-account) and never persisted beyond the session unless
-the user saves them into a Discovery dialogue.
+the user saves them into a Discovery dialogue. **Implementation note**: a NEW
+function, never a modification of `compute_scenarios` — reuses the REAL
+engine internals (`RouteGraphCompiler.compile()` + the existing ordering
+helpers), NOT `route_graph_compiler.py`'s `pareto_frontier`/`rank_candidates`,
+which remain fully defined but never called anywhere in the codebase
+(confirmed by repo-wide grep) — making the pre-auth simulation surface the
+first-ever caller of previously-dead code would have been an unacceptable
+risk. Zero-write/zero-event verified by AST-walking the entire reused call
+graph for `db.add`/`db.commit`/`emit_async`/`emit_sync` (zero hits) and
+regression-locked by a row-count-snapshot test. G7's regulation-year
+inertness (NEW-04) is carried forward honestly, not resolved: the pinned
+edition is cited/visible on every simulation, but requirement computation
+does not yet differ per edition.
 Persistence: `path_scenarios` (constitutional) + `route_graph_versions` +
 `recognition_claims` (C7/C8 per BOOK-04). Non-functionals: recompute budgets
 (Ch. 5.5); path-health read p95 < 300 ms (cached); degradation = stale plan
@@ -291,15 +304,15 @@ scenario history retained for audit (retention-classed).
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| Position sources | twin layers (STX-01/02), BKT ✅, ERPNext/ESSE3 mirror | 🟡/🔵 | position-potential inventory ⚪ |
-| Map inputs | AKN ✅ (v2.0 🔵), `TeachingSection`/`AcademicTerm` ✅, ExternalCourse ✅, federation core 🟡 | 🟡 | RouteGraph compiler ⚪ (STX-07 core) |
-| ETA | `eta_service` | ✅ | confidence bands 🔵 |
-| Prereq logic | `prerequisite_service`, `curriculum_graph_service` | ✅ | term-indexed closure 🔵 |
-| Scenarios engine | constitution design (STX-07 fastest+health; STX-12 full set) | 🔵 | multi-objective Pareto + hedged recognition plans ⚪ |
-| Recognition inputs | Recognition Agent (STX-12), plagiarism/doc processing ✅, CASE/ESCO 🔵 | 🔵 | yield estimator + adjudication-history calibration ⚪ |
-| Session-granular routing (G2) | `AssessmentSession` aggregate (BOOK-15) + ESSE3 appello mirror (BOOK-18 driver) | ⚪ | SIT_EXAM/RETAKE edges + session calendars ⚪ |
-| Traffic/invalidation | event mesh (STX-03), fingerprints (constitutional) | 🔵 | hysteresis + batch replan ⚪ |
-| Guidance surfaces | WS01/WS02 (STX-07/12), Navigator agent (STX-06) | 🔵 | scenario-comparison UX contract (BOOK-17) |
+| Position sources | twin layers (STX-01/02), BKT ✅, ERPNext/ESSE3 mirror — STX-07's GPS engine reads these as-is via `TwinContextService`/`StudentProgress` | 🟡/🔵 | position-potential inventory ⚪ (still open — `PathHealth.position_potential` is honestly `null` in STX-07's output, not fabricated) |
+| Map inputs | AKN ✅ (v2.0 🔵), `TeachingSection`/`AcademicTerm` ✅, ExternalCourse ✅, federation core 🟡, RouteGraph compiler ✅ (NEW-04 — `route_graph_compiler.py`: full seven-type edge taxonomy; `ENROLL`, `RECOGNIZE` ✅ (STX-12 — `recognize_edges_for_twin`, a position effect not a weight, deliberately query-time not baked into the cached compile), `SIT_EXAM` ✅ (NEW-05 — compile()-time, learner-agnostic), `RETAKE` ✅ (NEW-05 — `retake_edges_for_twin`, query-time, twin-specific) all live in production; `CHALLENGE`/`MILESTONE` typed stubs, `FEDERATED` modeled+inactive; `route_graph_versions` persisted, every scenario cites its map version) | 🟡→🔵 | full learner-conditioned map still ⚪ pending K4 (federation policy); `CHALLENGE`/`MILESTONE` await their owning aggregates |
+| ETA | **correction (STX-07, repo-verified): `eta_service.py` is a generic job-completion estimator, not an academic model** — new graduation-ETA velocity model built as its own module | ✅ (STX-07, as new work) | confidence tier capped at low/medium (no "high" — needs a real calendar compiler; still ⚪) |
+| Prereq logic | `prerequisite_service`, `curriculum_graph_service` | ✅ | term-indexed closure ✅ (STX-07 — `AcademicGPSService._prereq_adjacency`/`_expand_scope`, full transitive closure, property-tested); regulation-year (G7) binding ⚪ — version-TAGGED in the fingerprint (NEW-04) but honestly version-INERT on real data (`program_courses` has no per-version link yet; test-proven inert, not silently claimed as enforced) |
+| Scenarios engine | `fastest_path` + path-health ✅ (STX-07); real multi-objective Pareto engine ✅ (NEW-04); `highest_competency_growth` ✅ (STX-12, when a real enroll-vs-recognize choice exists — RECOGNIZE's evidenced-level `competency_gain` vs ENROLL's mastery-level is the honest differentiator NEW-04 found missing) | 🔵→partial ✅ (3/4 scenarios) | `best_career_path`/`lowest_cost` ⚪ — **premise-corrected (STX-12, repo-verified, not a "hasn't landed" placeholder)**: no course-side ESCO crosswalk or per-course cost field exists anywhere in this codebase; both are governed data imports, not sprint-seedable |
+| Recognition inputs | Recognition Agent ✅ (STX-12, `lifecycle_state="testing"`, propose-only), plagiarism/doc processing ✅, CASE/ESCO 🔵, yield estimator ✅ (STX-12 — similarity/eligibility-band/credit-band/probability kept as three separate honest numbers, never collapsed; claim-class calibration excludes source institution/country by design — equity guardrail), adjudication-history calibration ✅ (`recognition_calibration_stats`, ≥5 decisions before any numeric probability renders, confidence capped at `medium`) | 🔵→partial ✅ | full ESCO/CASE crosswalk import still 🔵; aggregate "max recognized credits" hard cap ⚪ (named seam, no institution has configured one yet) |
+| Session-granular routing (G2) | `AssessmentSession` aggregate ✅ (BOOK-15, NEW-05 — `assessment_session_service.py`, native + mirror-mode contract); `SIT_EXAM` ✅ live (NEW-05 — `_sit_exam_edges`, compile()-time, learner-agnostic calendar existence, `probability=1.0` sovereignty-corrected against Ch. 3's literal "mastery + readiness" wording — no learner-conditioned or capacity-derived signal enters `EdgeWeight`); `RETAKE` ✅ live (NEW-05 — `retake_edges_for_twin`, query-time, twin-specific attempt-cap eligibility, same "internal routing proxy" honesty RECOGNIZE established); traffic wiring ✅ (`gps_traffic_consumers._maybe_rescore_for_session_change` resolves every program offering the changed course via `ProgramCourse`, tenant-scoped through `Institution`, batch-replans each — corrected from a single-twin resolution that was the wrong shape for course-scoped calendar traffic) | ⚪→✅ | ESSE3 appello mirror driver remains NEW-11/BOOK-18 (this sprint ships contract + fixture ingestion only); real mastery-trend RETAKE probability is STX-11's readiness model, not this sprint's |
+| Traffic/invalidation | event mesh (STX-03), fingerprints (constitutional) — full BOOK-14 Ch. 6.1 traffic table ✅ (NEW-04): grade/assessment/competency/goal/risk wired + hysteresis (`PathHealth.replan_recommended`, >5% on the adopted scenario's own objective, or infeasibility) + `pending_verbalization` (G3) overlay; "recognition decision" ✅ resolved WITHOUT an event (STX-12 — `AcademicGPSService._denied_hedge`, purely derived from live claim status vs. the adopted scenario's own `hedge_plans`) | 🔵→✅ (7/8 rows) | 1 row has NO mesh event and stays deferred by design: "policy/regulation change" (G7) — closing it needs a cross-repo taxonomy RFC, not attempted here. "Offering/term change → batch replan" is answered WITHOUT an event: `trigger_batch_replan()`, called directly by whatever recompiles a program's map |
+| Guidance surfaces | WS01 Academic Journey ✅ (STX-07 — Canvas/Companion/Missions triad, `/student/journey`), Navigator agent ✅ (STX-06 registered, STX-07 moves bound), Recognition agent ✅ (STX-12 registered, propose-only moves bound) — WS02 Credit Recognition backend contract ready (`/api/recognition/claims`, `hedge_plans` on scenarios) | 🔵→partial ✅ | WS02 frontend ⚪ (STX-12 backend delivered; UI is a follow-up pass, same sequencing STX-07 used); scenario-comparison Pareto-column UX (BOOK-17) still renders `best_career_path`/`lowest_cost` as "coming" — honestly, per their corrected premise |
 | Equity monitoring | BOOK-08 discipline | ⚪ | routing-equity metrics (rides scorecards) |
 
 ---

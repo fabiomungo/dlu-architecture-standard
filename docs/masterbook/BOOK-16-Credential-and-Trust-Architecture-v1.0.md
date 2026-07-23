@@ -140,6 +140,13 @@ annex — the DLU extra); ECTS/credit-hour projections per program rules.
   Italy): DLU generates content; **stamp duty, payment and signature/seal are
   driver acts** (PagoPA driver, ESSE3/registrar seal — BOOK-18). The G3
   doctrine again: content native, legal act at the driver.
+  **✅ implemented (NEW-12, 2026-07-30):** `pagopa_payment_position` is a
+  cache-only status read (never live — the frozen `BolloPaymentStatus`
+  contract NEW-08's stub established is preserved exactly), the
+  payment-initiation route is the write side; the seal itself follows
+  Ch. 8's now-resolved trigger condition — ESSE3/registrar seals
+  out-of-band for `esse3`-slot institutions, the QES driver seals for
+  `qes_provider`-slot institutions with no ESSE3 of their own.
 
 ## 6.3 Diploma Supplement (G10) — a DLU strength opportunity
 
@@ -150,7 +157,7 @@ DLU MUST generate the DS as a first-class document credential (IT/EN), ELM-
 encoded for Europass — turning a bureaucratic burden into a richer, verifiable
 artifact no legacy SIS can match.
 
-## 6.4a Catalog Edition document (G15)
+## 6.4a Catalog Edition document (G15) — ✅ implemented (NEW-16, 2026-07-27)
 
 The **course catalog is a legal artifact and a contract**: the published
 edition binds what the university promises a cohort (courses, credits,
@@ -168,6 +175,15 @@ regulation-year semantics). Treatment mirrors every other Track-A view:
   Ch. 9 `simulate_scenarios`, BOOK-17 catalog explorer), and the **faculty
   authoring view** (course knowledge/competency contributions and
   recognition-policy declarations — FW1).
+
+**Implementation note (NEW-16)**: the legal document is rendered
+hash-stamped and reproducible via `catalog_edition_service
+.generate_catalog_legal_document` — a real reportlab non-determinism bug
+was found and fixed here (`SimpleDocTemplate` stamps a wall-clock
+`/CreationDate` by default, breaking "same input → same hash" even
+though the document's own content-building code never reads the live
+clock; fixed via reportlab's own `invariant=True` flag, applied to
+NEW-08's document generator too for consistency).
 
 ## 6.4 Degree application & clearance (G11)
 
@@ -215,6 +231,19 @@ The full boundary specification (what BOOK-18's drivers must implement):
 4. **Native mode** (greenfield/corporate, unregulated credentials): DLU's
    signed VC *is* the act; no external dependency.
 
+**Trigger condition (resolved, NEW-12, 2026-07-30 — this Book left it
+undecided until this sprint):** a single per-tenant slot,
+`Institution.config["legal_act_driver"] ∈ {"esse3", "qes_provider",
+"native_vc"}`, resolved through the ONE function
+`legal_act_routing.resolve_legal_act_driver` (structurally verified: no
+other call site reads the config key directly). `esse3` routes step
+2/3 through NEW-11's driver; `qes_provider` routes the identical step
+2/3 through NEW-12's QES driver instead (`qes_signature_ref` is the
+attach point, mirroring `Esse3VerbaleRef`'s references-only shape); an
+institution with neither configured defaults to `native_vc` (step 4) —
+the safe default, since assuming an external integration exists where
+none was configured would be worse than assuming none.
+
 ---
 
 # Chapter 9 — Trust Governance
@@ -235,12 +264,12 @@ survival rules (Ch. 1) tested in the conformance suite.
 |-----|------------|
 | G1 office hours | n/a (BOOK-17) ✅ |
 | G2 appelli | consumed: session results feed evidence; refusal semantics honored (BOOK-15) ✅ |
-| **G3 verbalizzazione** | **owned & resolved as boundary spec** (Ch. 8): prepare native, execute at driver, cross-reference acts |
+| **G3 verbalizzazione** | **✅ fully closed** (Ch. 8): prepare native, execute at driver, cross-reference acts — ESSE3 path real (NEW-11, 2026-07-29), QES-provider path real (NEW-12, 2026-07-30), native-VC path real since STX-13 |
 | G4 registro | n/a (BOOK-17) ✅ |
 | G5 tesi / G6 commissioni | consumed: defense/committee verdicts are degree-criteria inputs (Ch. 4.4) ✅ |
 | G7 regulation-year | honored: degree criteria evaluate against the learner's regulation year ✅ |
 | G8 ANS/SUA-CdS | degree/credential events feed the completeness monitor (BOOK-08 §6.3) ✅ |
-| **G9 certificati/autocertificazioni** (new) | **resolved**: self-certifications native; official certificates = content native + stamp/payment/seal at driver (Ch. 6.2) |
+| **G9 certificati/autocertificazioni** (new) | **✅ fully closed**: self-certifications native; official certificates = content native (NEW-08) + stamp/payment/seal at driver, real PagoPA + QES adapters (NEW-12, 2026-07-30) (Ch. 6.2) |
 | **G10 Diploma Supplement** (new) | **resolved**: first-class generated document credential, bilingual, ELM-encoded (Ch. 6.3) |
 | **G11 conseguimento titolo** (new) | **resolved**: clearance-as-checklist from GPS path-health; application + committee + legal act chain (Ch. 6.4) |
 
@@ -253,16 +282,17 @@ in BOOK-17, drivers in BOOK-18).
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| Issuance authority | **dlu-badge service**: issuers, classes, lifecycle, templates, demo suite | ✅ | unify with constitution templates 🔵 |
-| VC composition | `CredentialService` — OB 3.0 JSON-LD (`CourseAchievement`) | ✅ (unsigned) | **P3 signing**: did:web + Data Integrity ⚪ (STX-13) |
-| Learner/admin surfaces | credentials + badges routes | ✅ | wallet UX (WS07, STX-13) 🔵 |
-| Criteria engine | constitution §12 design | 🔵 STX-13 | — |
-| Verification endpoint | constitution §12.3 design | 🔵 | status-list revocation ⚪ |
-| Wallet import | — | ⚪ | OB/CLR import → recognition claims (BOOK-14 feed) |
-| Transcript/ECTS views | ERPNext/ESSE3 mirror + outcomes | 🟡 | generators ⚪ |
-| G9 documents | — | ⚪ | self-cert native; PagoPA/seal drivers (BOOK-18) |
-| G10 Diploma Supplement | catalog + outcomes + mirror all present | ⚪ | DS generator (IT/EN) + ELM encoder |
-| G11 clearance | GPS path-health (STX-07) | 🔵 | clearance checklist + application flow |
+| Issuance authority | **dlu-badge service**: issuers, classes, lifecycle, templates, demo suite; **plus, as of STX-13 (2026-07-23), a NEW, separate `credential_templates`/`credential_issuance_service` engine** (constitution §12) — the dlu-badge/`domains/badge(s)` tracks were deliberately left unconsolidated (real, pre-existing redundancy, see `sprint_decisions_20260723_stx13.md` §1) | ✅ | unify with constitution templates 🔵 (still open — now THREE-plus parallel badge/credential tracks, not two) |
+| VC composition | `CredentialService` — OB 3.0 JSON-LD (`CourseAchievement`, unsigned) · **STX-13's `credential_issuance_service` — signed OB 3.0/VC-EDU JSON, `eddsa-jcs-2022` Data Integrity proof** | ✅ **signed (STX-13)** | KMS/HSM key custody + rotation logic (env/Fernet + versioned-key shape only, phase 1) ⚪ |
+| Learner/admin surfaces | credentials + badges routes · **STX-13 WS07 `CredentialWallet.js`** | ✅ | visual unification across the parallel badge tracks 🔵 |
+| Criteria engine | `credential_criteria_service.py` — deterministic (no LLM), competency-mastery + course-completion kinds | ✅ **STX-13** | richer criteria DSL if a real need arises |
+| Verification endpoint | `GET /api/credentials/verify/{public_id}` — public, offline-verifiable, `EXEMPT_PATHS` | ✅ **STX-13** | — |
+| Status-list revocation | `credential_revocation_service.py` — W3C Bitstring Status List, platform-schema row-locked index allocator, derived read-model | ✅ **STX-13** | 2-bit encoding (suspended vs revoked distinguishable remotely) if a real need arises |
+| Wallet import | `POST /api/wallet/import` — OB 2.0/3.0 JSON → unverified, pending `RecognitionClaim` | ✅ **STX-13 (unverified-import tier only)** | cryptographic verification of externally-issued signatures (needs an external issuer trust registry — not built) |
+| Transcript/ECTS views | ERPNext/ESSE3 mirror + outcomes — **as of NEW-08 (2026-07-25), a real generator: `document_credential_service.generate_transcript`, reusing the evidence-timeline aggregation** | ✅ **NEW-08** | letter-grade/GPA model (v1 uses an honestly-documented evidence-weighted score proxy — no such model exists anywhere yet) |
+| G9 documents | **NEW-08 (2026-07-25)**: `document_credential_service.generate_self_certification` — learner-triggered, no institutional attestation, PDF via reportlab (not weasyprint — no native cairo/pango deps in this environment, see sprint decisions note) | ✅ **NEW-08 (self-cert only)** | official-certificate stamp/seal/payment drivers — PagoPA is a local always-unpaid STUB (`backend/drivers/pagopa_stub.py`); the real adapter is NEW-12/K5 |
+| G10 Diploma Supplement | catalog + outcomes + mirror all present — **as of NEW-08, a real generator + a bounded ELM-lite JSON Schema (`elm_lite_schema.py`, v1)** | ✅ **NEW-08 (ELM-lite, NOT full Europass ELM conformance)** | full Europass ELM interop certification (explicitly out of scope, documented as such in the schema's own `$comment`) |
+| G11 clearance | GPS path-health (STX-07) — **as of NEW-08, a real checklist + application + waiver flow**: 5 named criteria (`requirement_completion`/`verbalization` from live `PathHealth`, `fees_settled` from live `FinancialHold.blocks_credentials`, `thesis_deposited`/`surveys_done` honestly `not_yet_available` — no Thesis/Committee/Survey model exists yet), a 4th `waived` state (registrar-set, reason-required, audited) alongside `green`/`not_yet_available`/`red`, reachable iff every criterion is `{green, waived}`, resolved LIVE on every read (never frozen at filing — only frozen into `source_snapshot` at registrar confirmation) | ✅ **NEW-08** | `thesis_deposited`/`surveys_done` resolvers are stubs pending NEW-06 (Thesis+Committee) and a future Survey model — both are resolver swaps, not schema migrations, by design; the physical parchment/committee legal-act chain stays institution-side, out of scope |
 | Engagement badges | `UserBadge` | ✅ | wallet visual separation 🔵 |
 
 ---

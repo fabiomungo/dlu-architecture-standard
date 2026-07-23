@@ -99,7 +99,7 @@ Key families: **G** = GUID, **I** = legacy Integer, **B** = tenant BigInteger
 | **Institution** [G, platform] | Campus, College → School → Department | 1:1 Tenant; hierarchy soft-deleted only, children checked (409 on active children) |
 | **Program** [G, platform] | ProgramVersion, ProgramCourse, CourseCatalogItem | versioned; catalog items project programs to offerings |
 | **AcademicTerm** [G, platform] | — | terms bound scheduling and GPS planning |
-| **CatalogEdition** [G, platform] *(G15)* | CourseCatalogItem set + numbering system, credit rules, designations (e.g. G/W), prerequisites, per-course knowledge/competency contributions (`DEVELOPS`/`COVERS` declarations), recognition policies | **the legal/contractual catalog**: versioned, published, immutable once effective; enrollment binds a cohort to an edition (regulation-year semantics, G7); the formal catalog document is a generated view over it (BOOK-16 §6.5) |
+| **CatalogEdition** [G, platform] *(G15)* — **✅ implemented (NEW-16, 2026-07-27)** | CourseCatalogItem set + numbering system, credit rules, designations (e.g. G/W), prerequisites, per-course knowledge/competency contributions (`DEVELOPS`/`COVERS` declarations, `CourseContributionDeclaration`), recognition policies (`CatalogRecognitionPolicyDeclaration`) | **the legal/contractual catalog**: versioned, published, immutable once effective; enrollment binds a cohort to an edition (regulation-year semantics, G7 — cited/visible per edition, requirement computation still version-inert, unchanged by this sprint); the formal catalog document is a generated view over it (BOOK-16 §6.5). Modeled as a `RouteGraphVersion`-style compiled SNAPSHOT (header row + canonical-JSON blob, insert-only, `publish_edition` the sole sanctioned reader of the live `Program`/`ProgramVersion`/`CourseCatalogItem` rows — enforced by `check_catalog_sole_reader.sh`), not a retrofit of immutability onto those live, actively-CRUD'd tables |
 | **TeachingSection** [G, platform] | FacultyAssignment | links program courses to faculty and terms |
 | **FacultyProfile** [G, platform] | — | seed of the Faculty Twin (BOOK-07) |
 
@@ -265,7 +265,7 @@ adds the consolidation duty for the remaining domains, currently scattered in
 |---------------------|------------------|
 | Tenant (C2) | `tenant.provisioned/suspended/deleted` |
 | User/Consent (C1) | `student.created`, `profile.updated`, `consent.changed`, `identity.merged` |
-| Twin (C7) | `student.lifecycle.changed`, layer-update events |
+| Twin (C7) | `student.lifecycle.changed`, layer-update events, `persona.proposed/confirmed` (BOOK-06 Ch. 4.3 — proposed by Discovery Agent intake, confirmed by ACE only on learner acceptance) |
 | Course (C5) | `course.created/updated/published/archived`, QA-gate events |
 | GenerationJob (C5) | `generation.completed`, review/approval gate events |
 | Enrollment (C6) | `enrollment.synced`, `grade.synced` (driver-sourced) |
@@ -348,7 +348,7 @@ declared, owned and scheduled — not hidden:
 | `models_agent.py`, `models_ai.py`, `models_llm.py` | C9 | workforce + substrate |
 | `models_federation.py`, `models_moodle.py`, `models_frappe*.py`, `models_interop_bridge.py`, `models_ccp_standards.py` | C10 | driver mirrors |
 | `models_pedagogical.py`, `models_review.py`, `models_collaboration.py` | C5 | quality & collaboration |
-| *(designed)* `models_student_twin.py`, `models_competency_graph.py`, `models_student_experience.py` | C7, C4, C8 | constitution §13.1, STX sprints |
+| `models_student_twin.py`, `models_competency_graph.py`, `models_student_experience.py` | C7, C4, C8 | **delivered STX-01/02/03/04** (2026-07-14/15): twin anchor+layers+snapshots; frameworks/StudentCompetency/EvidenceRecord + versioned `competency_engine_params` (C4 engine service ✅, BOOK-15 §4.1 trust config); `domain_events` outbox |
 
 ---
 

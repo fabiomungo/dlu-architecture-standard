@@ -250,6 +250,21 @@ recompute confidence downstream.
 
 # Chapter 10 — AI Roles and Boundaries
 
+**Skills vs. moves (clarified at implementation, STX-11 — no inconsistency, a
+reading key):** the rows below are Assessment Agent SKILLS/acts, not a parallel
+catalog of pedagogical moves. BOOK-10 Ch. 3's Assessment Agent card separately
+names its 3 catalog `Moves:` (`generate_formative`, `give_feedback`,
+`check_retrieval` — all learner-facing, envelope-governed, act-tier). "Item
+generation"/"Feedback drafting" below are the SAME two moves described from the
+autonomy-tier angle (formative act, summative propose); "Viva dossier prep",
+"Grading assistance", "Item calibration" and "Readiness prediction" are
+administrative/advisory SKILLS this agent performs entirely OUTSIDE the ACE move
+cycle — no envelope, no `run_cycle`, no catalog entry, and (for the propose-tier
+ones) no code path that could ever apply their output without a separate human
+act. Do not read this table as implying a 4th–7th catalog move exists or is
+needed; it does not (`backend/services/pedagogical_moves.py`'s catalog is
+unchanged by this Book chapter).
+
 | AI act | Tier | Boundary |
 |--------|------|----------|
 | Item generation (Bloom-targeted) | act (formative) / propose (summative) | faculty approve summative items (Gate-2 spirit) |
@@ -261,6 +276,16 @@ recompute confidence downstream.
 
 All learner-facing acts run as moves under envelopes (BOOK-09/10); assessment
 scenarios in the harness include grading-assistance bias checks (BOOK-11).
+
+**Implemented (STX-11, 2026-07-20):** all six rows — `backend/services/
+assessment_agent_service.py` (item generation, feedback drafting),
+`viva_dossier_service.py` (viva dossier prep + verdict), `item_calibration_
+service.py` (item calibration), `readiness_prediction_service.py` (readiness
+prediction, closing the BOOK-09 Ch. 7 calibration loop for the first time). The
+"just grade it for me" integrity-pressure scenario
+(`backend/evals/scenario_bank/assessment.yaml`) proves grading assistance holds at
+a draft — structurally, not via an autonomy override, since there is no "act" code
+path for it to be capped away from.
 
 ---
 
@@ -299,15 +324,15 @@ scenarios in the harness include grading-assistance bias checks (BOOK-11).
 |---------|--------------|--------|-----|
 | Runtime & grading | quiz/lab, `grading_service`, feedback service | ✅ | — |
 | Bloom targeting & audit | `bloom_quiz_service`, `QuizBloomDistribution` | ✅ | — |
-| Ingestion | xAPI + Caliper | ✅ | single-path consolidation 🔵 (STX-03/08) |
-| Alignment chain | `OutcomeAssessmentAlignment`, `CLOCompetency` | ✅ | — |
-| Evidence service | constitution §11 design | 🔵 STX-08 | trust calibration ⚪ |
+| Ingestion | xAPI + Caliper | ✅ **STX-08 (2026-07-19): single ingestion path implemented** — `assessment_evidence_service.py` consumes `assessment.completed` (new producer wired in `grading_service.py`), `activity.recorded` (existing xAPI producer; payload lacks course/assessment context today — WARN-only until a follow-up sprint enriches it), `grade.synced` (typed seam, no ERPNext driver producer exists yet) | — |
+| Alignment chain | `OutcomeAssessmentAlignment`, `CLOCompetency` | ✅ **verified against code at STX-08 — no naming drift; NOT `domains/assessment/models.py`'s `CLOAlignment`/`PLOAlignment`, a separate assessment-analytics surface** | — |
+| Evidence service | constitution §11 design | ✅ **STX-08 (2026-07-19)** | trust calibration ✅ (institution-scoped `competency_engine_params.institution_id`, additive; global fallback) |
 | Final exam plan | `CourseFinalExamination` + `ExamLearningObjective` (FEX) | ✅ | feeds summative declaration 🔵 |
-| AssessmentSession (G2) | — | ⚪ | aggregate + calendars + refusal flow; ESSE3 mirror via BOOK-18 |
-| Thesis (G5) | `plagiarism_service` ✅; rest — | ⚪ | aggregate + workflow + deposit |
-| Committee (G6) | `FacultyAssignment` roles substrate | ⚪ | aggregate + acts |
-| Viva dossiers | Assessment Agent (STX-11) | 🔵 | dossier schema + sampling policy |
-| Item analytics | attempt data ✅ | ⚪ | IRT-lite job + fairness slicing |
+| AssessmentSession (G2) | — | ✅ **NEW-05 (2026-07-19): aggregate + calendar publication + refusal flow implemented** — `backend/services/assessment_session_service.py` + `models_assessment_session.py` (`assessment_sessions`/`assessment_session_enrollments`/`assessment_calendar_publications`, tenant/GUID). Refusal is per-enrollment, one-shot (`pending→accepted\|refused`); mastery updates once regardless of outcome, evidence enters only on acceptance, reusing the existing `assessment.completed` consumer (`evidence_type="assessment_session"`, mandatory `trust_class="proctored_summative"` override — deliberately unregistered in `source_map`). Minimum-session policy violation at publication is always audited (`AssessmentCalendarPublication`, written on every publication) + I4-alerted, publication still possible. `SIT_EXAM` (calendar-existence, learner-agnostic, compile()-time) and `RETAKE` (attempt-cap eligibility, learner-specific, query-time) edges are real in `route_graph_compiler.py`. Mirror-mode *contract* + fixture-fed ingestion (`ingest_mirror_session`) ships; the full ESSE3 driver remains NEW-11/BOOK-18 | WS06 calendar UI + real readiness-trend model (STX-11); learner communications + accommodations honestly undesigned (docs/sprint_decisions_20260719_new05.md) |
+| Thesis (G5) | `plagiarism_service` ✅; rest — | ✅ **NEW-06: `Thesis`/`ThesisMilestone`/`ThesisDeposit` implemented** — `backend/services/thesis_service.py` + `models_thesis_committee.py` (default schema, GUID, tenant-scoped). Guarded status machine `proposed→approved→in_progress→submitted→deposited→defended→archived`; four milestones (proposal→literature→draft→final) each an advisor HITL approval (409-guarded) writing process evidence through the STX-08 sole-writer primitive; competency scope resolves via the capstone `course_id`'s CLOs (whole-course, deliberately NOT `OutcomeAssessmentAlignment`'s per-assessment chain — see docs/sprint_decisions_20260723_new06.md). Plagiarism (Ch. 9 "detect humbly") calls the REAL `plagiarism_service.generate_plagiarism_report` and gates final-milestone approval as a mandatory-human-review signal, never itself scored evidence — a deliberate correction from this Book's own literal Ch. 9.1 reading. Deposit is versioned + append-only (ORM-enforced immutability, mirrors `EvidenceRecord`) | — |
+| Committee (G6) | `FacultyAssignment` roles substrate | ✅ **NEW-06: `Committee`/`CommitteeMember`/`CommitteeVerdict` implemented** — `backend/services/committee_service.py`. Formation `proposed→coi_cleared→active`, quorum-gated (institution-configurable), conflict-of-interest check blocks an advisor presiding over their own advisee's defense unless a dean/provost records an explicit, audited policy exception (both directions tested, V3). Acts pipeline: convocation → per-candidate verdict (president-signed + secretary-recorded, 409-guarded one-shot) → verbalization preparation. A `pass` verdict writes `evidence_type="committee_verdict"` at trust 1.0 (`committee_verified`, the Ch. 4.1 ceiling, seeded STX-04) — the ONLY code path writing that evidence type (negative-tested). Recognition committees (`kind="recognition"`) reuse the same aggregate, a documented forward-looking integration with `RecognitionClaim`, not required by this sprint's own V1-V6 | — |
+| Viva dossiers | Assessment Agent | ✅ **STX-11 (2026-07-20): `viva_dossier_service.py`** — ephemeral propose-tier draft (`move_proposal_service`, NOT a new durable model — a dossier has no standalone adjudication lifecycle, unlike `RecognitionClaim`), weakest-link-first probe ordering (lowest confidence + single-source-drift first), R5 deliberation trace in the proposal's `positions`; pass verdict verifies via `CompetencyGraphService.verify()`'s new viva override (`trust_class="viva"`, 0.95, seeded STX-04) | FW3 examiner UI consumes the API in K4 (not built here — API-only, per this sprint's own DoD) |
+| Item analytics | attempt data ✅ | ✅ **STX-11 (2026-07-20): `item_calibration_service.py`** — classical item analysis (facility as difficulty, corrected point-biserial as discrimination — deliberately NOT a fitted 2PL, no fabricated precision at this data volume), versioned+immutable `item_calibration_params` policy knobs (institution-scoped, global fallback, same shape as `competency_engine_params`), Celery job `item_calibration.compute_all_for_tenant`; fairness slicing runs against `StudentTwin.persona` (the only quasi-cohort dimension this codebase genuinely models — no demographic fields exist anywhere, an honest scope limitation, not a silent stand-in), n≥10 suppression | full multi-tenant nightly fan-out (needs the same tenant-iteration/schema-switching scaffolding `frappe_sync_worker.py` uses — left for a follow-up, task is on-demand/explicit-tenant-id today) |
 | Integrity | plagiarism ✅, ContentVariant ✅ | 🟡 | due-process workflow + detector-humility policy ⚪ |
 
 ---

@@ -416,11 +416,11 @@ Status legend as in BOOK-00 Annex A.
 | Credential Engine | credential service, badges | 🟡 | OB 3.0/wallet 🔵 (STX-13) |
 | GPS Engine | eta/curriculum-graph/prerequisite services | 🔵 | STX-07/12 |
 | ACE | agent orchestrator + AI Management registry | 🟡 | Brain routing layer 🔵 (STX-06) |
-| Event Mesh | `EventService` (in-memory), `kg_event_bus`, Redis pub/sub, catalog doc | 🟡 | Streams + outbox + closed taxonomy 🔵 (STX-03) — **the single most load-bearing gap** |
-| Tenancy | schema-per-tenant + `SET LOCAL search_path`/RLS (`tenant_session.py`) + subdomain/header resolution + provisioning + tier limits | ✅ | reseller tenant hierarchy ⚪ (RFC); identity duality reconciliation 🔵 (§5.3, rides STX-01) |
+| Event Mesh | `domain_events` outbox + Redis Streams relay + closed taxonomy (`event_taxonomy.py`) + 5 consumer groups w/ idempotency, DLQ, lag metric — **STX-03 delivered 2026-07-14**; legacy `EventService` dual-publishes (strangler) | ✅ | legacy EventService retirement after parity window 🟡; kg-sync/reco/success-watch handlers 🔵 (STX-04/05) |
+| Tenancy | schema-per-tenant + `SET LOCAL search_path`/RLS (`tenant_session.py`) + subdomain/header resolution + provisioning + tier limits | ✅ | reseller tenant hierarchy ⚪ (RFC); identity duality reconciled ✅ (STX-01, ADR-0014, `identity_map`) |
 | Drivers | Keycloak, ERPNext/n8n, Moodle, Stripe, HeyGen (HMAC callbacks), Kong | ✅ | per-driver bulkhead/circuit-breaker audit 🟡 |
-| AI substrate | ACP Gateway (LiteLLM): virtual keys, quotas, fallback chains, usage callback | ✅ | per-engine cost attribution 🔵 |
-| Observability | OTel + Prometheus + Loki + Tempo + Grafana stack | ✅ | trace_id propagation through events 🔵 (rides STX-03) |
+| AI substrate | ACP Gateway (LiteLLM): virtual keys, quotas, fallback chains, usage callback + **per-engine/process-area cost attribution ✅ (NEW-14, 2026-08-01: `cost_attribution_service.py` static mapping over `LlmUsageLog.service_type` — BOOK-00 Ch. 6.1's real ten engines, not this Book's own Ch. 6.2 "AI substrate" cross-cutting label re-used as an 11th; unmapped `service_type` is an alertable governance defect, never a silent default)** | ✅ | — |
+| Observability | OTel + Prometheus + Loki + Tempo + Grafana stack | ✅ | trace_id propagation through events ✅ (STX-03: outbox captures trace_id, consumer spans link to producer trace) |
 | Conformance tests | pytest markers, release gates | 🟡 | DAS-Core acceptance suite ⚪ (BOOK-20) |
 
 **Migration priority:** the Event Mesh upgrade (STX-03) unlocks Twin sync, KG

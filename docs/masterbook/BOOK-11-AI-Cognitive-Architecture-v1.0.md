@@ -234,13 +234,13 @@ scenario (6.1) — **the university's immune system learns**.
 | R1 grounding | `rag_service`, resource chunks, upload pipeline | ✅ | provenance refs in traces 🔵 |
 | R2 GraphRAG | GraphRAG architecture + `kg_query_service` | ✅ | pattern-per-move declaration ⚪ |
 | R3 inputs | BKT/evidence/aggregates | ✅/🔵 | — |
-| R4 dialogue | `learner_tutor_service` | 🟡 | symbolic dialogue state (hint ladder) ⚪ |
+| R4 dialogue | `tutor_dialogue_service.py` (✅ STX-10, 2026-07-22 — NOT `learner_tutor_service`, a naming correction: that file is CCP-P2-BE-05, a content-recommendation service unrelated to R4) | ✅ | Durable, typed `TutorDialogueState` (hint_level/giveup_count/escalated_to_worked_example) — one active ladder per twin (v1 scope, no concept-key dimension, documented); engages only within a genuine BKT-derived struggle, never manufactures one; position only advances, resets only via a struggle-session staleness window; `hint_giveup_limit` exhaustion repurposes `worked_example`'s existing catalog precondition as the escalation trigger (closed catalog, no purpose-built predicate) — see `docs/sprint_decisions_20260722_stx10.md` |
 | Structured outputs | skill I/O schemas + test endpoints | ✅ | repair-loop policy 🔵 |
-| Moderation/safety | `moderation_service`, plagiarism, quality_gate, content checks | ✅ | education-specific egress set (integrity, sycophancy, scaffolding) ⚪ |
-| Crisis protocol | — | ⚪ | **priority gap**: protocol + never-disable wiring (with BOOK-19 support pathway) |
-| Deterministic testing | `mock_llm_service` | ✅ | — |
-| Scenario bank & graders | test suites, QA markers | 🟡 | pedagogical scenario bank + rubric graders ⚪ (gates STX-06+ agent deployments) |
-| Shadow evals | gateway shadow-mode precedent (ACP-GW-06) | 🟡 | cycle-level shadow scoring ⚪ |
+| Moderation/safety | `moderation_service`, `egress_checks.py` (NEW-02 ✅ 2026-07-18: academic-integrity, anti-sycophancy, over-scaffolding, grounding-fidelity, tone/hedging, injection-resistance) | ✅ | zero-tolerance enforced on the SERVED move post-egress-override, not the Decide-phase choice (decisions doc §2) |
+| Crisis protocol | `crisis_detector.py` + `ace_service._run_phases` (NEW-02 ✅ 2026-07-18) — unconditional, fail-closed at two layers, scripted non-generative handover, `CrisisIncident` restricted-visibility table, tenant `CrisisSupportPathway` config | ✅ | ML classifier (v1 is pattern/lexical only) 🔵 |
+| Deterministic testing | `backend/evals/fake_gateway.py` (NEW-02 — NOT `mock_llm_service`, which is Course-Factory-shaped) | ✅ | — |
+| Scenario bank & graders | `backend/evals/` — versioned bank (9 BOOK-11 Ch. 6.1 classes, Discovery coverage complete), 3 grader tiers (`graders.py`), `harness.run_gate()` (NEW-02 ✅ 2026-07-18) | ✅ | equity/rubric floors are v1 policy knobs, not Book-specified numbers (none exist in the Masterbook) ⚪ |
+| Shadow evals | `shadow_sampler.py` + `eval_harness.shadow_sample` beat (NEW-02 ✅ 2026-07-18) | ✅ | rubric-drift gauge (trace doesn't persist response content) 🔵 |
 | Prompt layering/versioning | ACP persona/skill prompts | 🟡 | layer version composition in traces ⚪ |
 | Embeddings | `academic_embedding_service` | ✅ | reindex-as-release governance 🟡 |
 

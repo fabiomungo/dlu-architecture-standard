@@ -347,15 +347,15 @@ an external alignment never deletes DLU-side state; crosswalk changes are govern
 
 | Semantic element | Turnkey asset | Status | Gap |
 |------------------|--------------|--------|-----|
-| Graph schema v1.0 | Neo4j labels/rels per `KNOWLEDGE_GRAPH_SCHEMA.md` | ✅ | v2.0 renames 🔵 (rides STX-05) |
+| Graph schema v2.0 | `scripts/kg/v2_0_semantic_cleanup.cypher` (`make kg-migrate`, idempotent) — **delivered STX-05 (2026-07-16)**: A8 `NEEDS_ASSET`, A9 `ALIGNED_TO {strength}`, alias window one minor release | ✅ | alias hard-removal at v2.1 🟡 |
 | Extraction staging | PG KG tables + NLP extractor | ✅ | promotion mapping enforcement 🔵; sunset ⚪ (BOOK-13) |
 | Ontology hygiene service | `/api/ontology`: same-as, duplicates, auto-link, terms | ✅ | HITL threshold policy 🟡 |
 | Component typology | `ComponentType` (15 types) | ✅ | LearningActivity binding (`RENDERED_BY`) 🔵 |
-| CASE import | `CASEFramework` model | ✅ | CFItem → Competency mapping rules 🔵 (STX-04) |
+| CASE import | `CASEFramework` model + `import_case_framework` (idempotent, round-trip preview) — **delivered STX-04** | ✅ | — |
 | QTI/Caliper/xAPI vocab | `models_ccp_standards`, xAPI/Caliper models | ✅ | — |
 | Credential vocabulary | `CourseAchievement`, credential VC JSON | 🟡 | OB 3.0 alignment objects (BOOK-16) |
 | Course Exchange Format | FEX v1.3 (`COURSE_EXCHANGE_FORMAT.md`, `models_course_fex.py`, `course_exchange_service`, DLU Course Builder wizard) | ✅ | semantic binding of Ch. 4.4 to enforce at import 🔵; v1.4 gaps (competency alignments, 15 types) ⚪ RFC |
-| Registry + CI gates | — | ⚪ | `dlu-core.yaml` + validation (first deliverable of BOOK-13 sprint work) |
+| Registry + CI gates | `architecture/ontology/dlu-core.yaml` + `lint_ontology.py` (both repos' CI) + A1-S1 staging gate — **delivered STX-05 (2026-07-16)** | ✅ | registry drives codegen ⚪ (future) |
 
 ---
 

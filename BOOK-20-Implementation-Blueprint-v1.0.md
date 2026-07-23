@@ -245,6 +245,25 @@ traces to evidence/mirror source · V3 clearance flips exactly when path-health
 requirements green (fixture) · V4 bollo-required docs block visibly without
 PagoPA (driver stub).
 
+### NEW-17 — Credit Recognition & Pre-Evaluation (G16) *(added by BOOK-14A)*
+*Refs:* BOOK-14A (framework), BOOK-14 Ch. 4, BOOK-15 Ch. 8, BOOK-16.
+*Depends:* NEW-16 (editions), NEW-06 (committee for Tier-2), STX-12
+(recognition agent/skills).
+*Deliver:* `RecognitionRulePack` (IT-CFU seeded per DM 931/2024 + US-SCH
+seeded per PLA/CAEL), `CreditPreEvaluation` three-tier flow (instant AI
+estimate < 60 s with confidence bands + non-binding marker → council HITL →
+Validated Pre-Evaluation Statement as signed document credential →
+conversion at enrollment), `EquivalenceRule` precedent memory,
+`BadgeCreditRule` auto-convalida (Bestr→ESSE3 pattern on dlu-badge),
+`ExternalSyllabusRecord` + historic-syllabus public endpoint, taxonomy
+amendment (`preevaluation.*`, `credential.recognized` — RFC-first).
+*Verify:* V1 rule-pack golden cases (IT fractions/caps/obsolescence/year
+placement; US grades/exclusions/residency) · V2 Tier-1 e2e < 60 s on fixture
+dossier · V3 estimate→validation→conversion chain, precedent recorded ·
+V4 signed-badge auto-convalida round-trip, zero manual steps · V5 anti-gaming
+(rate limit + altered-document flag) · V6 no hard-coded jurisdiction
+parameters outside packs (grep gate).
+
 ### NEW-16 — Catalog Edition & Explorer (G15)
 *Refs:* BOOK-04 C3 (CatalogEdition), BOOK-14 Ch. 9 (`simulate_scenarios`),
 BOOK-16 §6.4a, BOOK-17 (explorer + FW1).

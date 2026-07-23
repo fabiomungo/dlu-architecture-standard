@@ -30,6 +30,7 @@
 | [12](BOOK-12-Memory-Architecture-v1.0.md) | Memory Architecture | four stores M1–M4, consolidation, forgetting by design, cross-learner isolation | AI spine |
 | [13](BOOK-13-Academic-Knowledge-Network-v1.0.md) | Academic Knowledge Network | one graph three planes, schema v2.0, supply chain, canonical queries, analytics, A1 sunset | Intelligence |
 | [14](BOOK-14-Academic-Intelligence-Navigator-v1.0.md) | Academic Intelligence Navigator (GPS) | recognition-aware routing, RouteGraph, examination-decoupled model, real-time reroute, fairness | Intelligence |
+| [14A](BOOK-14A-Credit-Recognition-and-Pre-Evaluation-v1.0.md) | Credit Recognition & Pre-Evaluation (annex) | IT/US jurisdiction rule packs, three-tier pre-evaluation (instant AI + HITL), badge-to-credit automation, equivalence precedents, historic syllabi | Intelligence |
 | [15](BOOK-15-Assessment-and-Evidence-Architecture-v1.0.md) | Assessment & Evidence Architecture | two-products pipeline, trust model, appelli (G2), thesis (G5), committees (G6), integrity | Trust |
 | [16](BOOK-16-Credential-and-Trust-Architecture-v1.0.md) | Credential & Trust Architecture | trust stack, signing (did:web), bidirectional wallet, document credentials (G9/G10/G11), G3 boundary | Trust |
 | [17](BOOK-17-Experiences-v1.0.md) | Experiences | Canvas·Companion·Missions triad, WS00–WS08 + faculty + institution workspaces, quality bars, G1/G4 | Experience |

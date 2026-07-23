@@ -68,13 +68,13 @@ into DLU) · outbound (from DLU) · mirror tables · failure mode · status*.
 |--------|-----------|------|---------|----------|--------------|--------|
 | **Keycloak** | credentials, SSO sessions | OIDC | tokens/claims | user provisioning (n8n) | auth degraded → read-only public surfaces | ✅ |
 | **ERPNext Education/Finance** | official records, enrollment, grades, invoices (non-Italian profile) | API keys via n8n | `enrollment.synced`, `grade.synced`, financial status | institution/program/outcomes push, credential records | mirror staleness surfaced (`synced_at`) | ✅ arch |
-| **ESSE3** (Italian profile) | official records, appelli, verbali, ANS | REST WS (API keys, technical-user groups) + Gateway notifications + replica/boundary tables | Ch. 4 event map | Ch. 4 | as ERPNext + `pending_verbalization` semantics | ⚪ **this Book specifies** |
+| **ESSE3** (Italian profile) | official records, appelli, verbali, ANS | REST WS (API keys, technical-user groups) + Gateway notifications (HMAC-SHA256) + replica/boundary tables | Ch. 4 event map | Ch. 4 | breaker (real `CircuitBreaker`, first landing) + `pending_verbalization` semantics; health panel `GET /health/esse3` | ✅ **NEW-11, 2026-07-29** |
 | **Frappe CRM** | prospects, applications, campaigns | webhooks (tenant-resolved from payload — EXEMPT path exists) | lead/application events | engagement reads | funnel-only impact | ✅ |
 | **Moodle** | delivery experience, forums | LTI 1.3, SCORM, webhooks | xAPI/Caliper, completion | content sync (Mode A/B) | delivery continues; sync queues | ✅ |
 | **n8n** | (broker, not SoR) | internal | workflow-mediated events | same | per-workflow retry queues | ✅ |
 | **Stripe** | money movement | signed webhooks | payment/refund status | checkout sessions | financial-status cache holds last-known | ✅ |
-| **PagoPA** (G9, Italian) | public-sector payments (stamp duty, fees) | per national spec | payment outcomes | payment positions | document issuance blocks on unpaid bollo, visibly | ⚪ |
-| **QES provider** (G3, where not ESSE3) | qualified signatures, legal preservation | provider API | signature completion events | signature requests (verbali, certificates) | acts queue; nothing unsigned ships | ⚪ |
+| **PagoPA** (G9, Italian) | public-sector payments (stamp duty, fees) | OAuth2 client-credentials + HMAC-SHA256 webhook | payment-outcome notifications | payment-position creation | cache-only status read (never live); document issuance blocks on unpaid bollo, visibly | ✅ **NEW-12, 2026-07-30** |
+| **QES provider** (G3, where not ESSE3) | qualified signatures, legal preservation | OAuth2 client-credentials + HMAC-SHA256 webhook | signature-completion notifications | signature requests (verbali, Diploma Supplement seal) | breaker (shared `CircuitBreaker`) + best-effort submission — a provider outage degrades visibly, never blocks the DS/verdict it seals | ✅ **NEW-12, 2026-07-30** |
 | **HeyGen / media** | generated media artifacts | HMAC webhooks | render completion | render jobs | enrichment degrades, courses ship | ✅ |
 | **Kong** | edge routing/limits | — | — | — | platform-down class | ✅ |
 
@@ -204,18 +204,34 @@ DAS-Core conformance suite + DR exercise automation (BOOK-20)
 
 # Chapter 8 — DAS-Core Conformance Snapshot (BOOK-03 Ch. 10 vs today)
 
+**Updated (NEW-15, 2026-08-02) — this snapshot originally predated any K1–K5
+sprint execution; K1 through K5 are now all executed. Current, verified
+status per-criterion lives in BOOK-20 §8.1/§8.2/§8.3 (the meta-test
+`test_ch8_criteria_have_executable_checks.py` confirms every criterion
+below has ≥1 discoverable executable check) — reproduced here so this
+snapshot doesn't drift from that authoritative source again:**
+
 | Criterion | Status |
 |-----------|--------|
-| 1 Layers & no experience-owned state | 🟡 convention held, tooling absent |
-| 2 Ten engine contracts | 🟡 6 substantially present, ACE/GPS/Mesh/Twin gaps phased K1–K3 |
-| 3 Mesh (outbox, idempotent, closed taxonomy) | 🔵 STX-03 |
-| 4 Tenancy isolation tested | ✅ (leakage tests to formalize) |
-| 5 Driver bulkheads | 🟡 audit per driver |
-| 6 Gateway-only model access | ✅ |
-| 7 NFR budgets measured | 🟡 dashboards partial |
+| 1 Layers & no experience-owned state | ✅ pre-existing CI gates (`check_kg_staging_reads.sh` + siblings) |
+| 2 Ten engine contracts | ✅ pre-existing contract tests (`check_evidence_sole_writer.sh` + siblings) |
+| 3 Mesh (outbox, idempotent, closed taxonomy) | ✅ STX-03, permanent V1–V5 suite |
+| 4 Tenancy isolation tested | 🟡 API/graph/streams closed (K4, NEW-15 — the graph closure also fixed a real, previously-undiscovered Course/Lesson/Concept node-identity vulnerability); cache dimension still open |
+| 5 Driver bulkheads | 🟡 most drivers covered; real circuit breaker only landed at NEW-11 (ESSE3/PagoPA/QES); Moodle/Frappe/Stripe/Keycloak/n8n chaos coverage still open |
+| 6 Gateway-only model access | ✅ `check_gateway_only_egress.sh` |
+| 7 NFR budgets measured | ✅ NEW-15 — 4 DAS-specific Grafana panels + pinning test |
 
-Honest reading: **DAS-Core is reachable at the end of Phase K3**;
-DAS-Intelligent at K4; DAS-Certified requires K5 + BOOK-19 audit.
+Honest reading (updated): **DAS-Core and DAS-Intelligent are both reached**
+(K3/K4 exit gates, BOOK-20 §8.1/§8.2). **DAS-Certified is auditable but
+NOT declared achieved** — every criterion that can be code-complete is
+(AI Act register, hash-chained audit fabric, regulatory profile suites, a
+DR exercise on record, all NEW-11–NEW-15); the external audit itself
+(§8.3's own text) cannot be code-complete by definition — it needs an
+actual human auditor, which remains an open ops/compliance action, not a
+code gap. See `implementation/roocode/K5/K5-EXIT-REPORT.md` for the full
+itemized residual-debt table (erasure e2e, KPI scorecards, agent GA
+gating, and the cache-dimension tenancy fuzz all remain genuinely open
+too).
 
 ---
 
