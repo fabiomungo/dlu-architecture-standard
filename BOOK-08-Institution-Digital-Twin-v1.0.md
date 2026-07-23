@@ -206,6 +206,17 @@ requires, as a Track-A view. → BOOK-18 (ESSE3 driver contract), BOOK-19
 > BOOK-19 §5.1): per-CFU Didattica Erogativa/Interattiva ledger health and
 > CEV-evidence freshness, alongside the ANS completeness monitor.
 
+**✅ implemented (NEW-13, 2026-07-31):** the completeness monitor reads
+NEW-11's own `esse3_boundary_career.ans_completeness_ok`/
+`.ans_missing_fields` — the boundary-table row NEW-11 already keeps
+fresh IS the completeness signal, never a new computation this Book's
+own driver doctrine would otherwise forbid. The SUA-CdS evidence feed is
+a Track-A view (`compliance_posture_service.export_g8_dossier_view`)
+over the SAME dossier `compute_compliance_posture` already assembles —
+not a second document-generation pipeline. Degrades honestly to
+`not_yet_available` if NEW-11 has not been executed in a given
+deployment (this Book's driver contract is a soft, not hard, dependency).
+
 ---
 
 # Chapter 7 — Twin Mechanics Deltas (vs BOOK-06)
@@ -249,9 +260,9 @@ requires, as a Track-A view. → BOOK-18 (ESSE3 driver contract), BOOK-19
 | I3 Attention indicators | cohorts/forums ✅ — **as of NEW-10, `faculty_load_balance` is real** (via `FacultyAssignment` counts) | 🟡 **NEW-10 (thinnest of the three, honestly)** | mentorship-hours/belonging-index ⚪ (F5 rollups still don't exist); HITL-queue-health ⚪ (deliberately NOT built on `move_proposal_service.list_for_twin`, which reads a test-only fake-client attribute in production — building on it would fabricate a signal, not surface a real one) |
 | I4 AI economics | gateway usage accounting, quota budgets ✅ | ✅ | per-engine attribution 🔵 (BOOK-03) |
 | I4 Ops | Grafana/OTel stack ✅ | ✅ | consumer-lag + driver-health panels 🟡 |
-| I5 Compliance | compliance/multiregion docs, audit service — **as of NEW-10, `compliance_posture_service.py` generates the real "living self-study" dossier**: 7 of 10 QA claims real/verified (coverage tracking, evidence sole-writer, credential status-list, CLO→PLO→ILO chain, item-calibration governance, clearance live-resolution, staff-only recognition adjudication), each with a kernel-evidence reference + freshness stamp | ✅ **I5 dossier delivered (NEW-10)** | AI Act register ⚪ (BOOK-19, no `AIActRegister` model exists anywhere); G8 ANS/SUA-CdS ⚪; G14 DE/DI ledger ⚪ (all explicitly NEW-13/K5 scope) |
+| I5 Compliance | compliance/multiregion docs, audit service — **as of NEW-13 (2026-07-31), `compliance_posture_service.py` generates the real "living self-study" dossier with all 12 claims real/verified or an honest, data-backed gap**: the original 7 (coverage tracking, evidence sole-writer, credential status-list, CLO→PLO→ILO chain, item-calibration governance, clearance live-resolution, staff-only recognition adjudication) plus 5 NEW-13 fills — AI Act deployer-obligation register (extends the live `ai_agent_configs` registry, never resurrects either dead-code AI-governance attempt), G8 ANS/SUA-CdS completeness monitor (reads NEW-11's own `ans_completeness_ok` signal), G12 RSI ledger, G14 DE/DI ledger (one roster-anchored function, two regimes), G13 Identity Verification Policy (live-resolved, versioned disclosure) — plus a compute-on-read compliance calendar as a new response section | ✅ **I5 dossier fully delivered (NEW-10 + NEW-13)** | none outstanding at I5 posture level — residual gaps are named honestly INSIDE each claim (Moodle instructor-event under-count for G12/G14; FEX v1.4/tutor-mapping/CEV evidence for G14) |
 | I6 Transformation | PI status reports, release gates | 🟡 | maturity evidence model ⚪ (BOOK-20) |
-| G8 completeness monitor | ERPNext/ESSE3 mirrors | ⚪ | driver contract (BOOK-18) |
+| G8 completeness monitor | ERPNext/ESSE3 mirrors | ✅ **NEW-13 (2026-07-31)** | — |
 
 ---
 
