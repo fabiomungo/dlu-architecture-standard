@@ -12,6 +12,15 @@
   (Bestr→ESSE3 pattern on the running OB 3.0 Badge Service), equivalence-
   precedent memory, curricular-drift answer (historic-syllabus endpoint on
   immutable CatalogEditions). Sprint **NEW-17** (K4). Register G1–G16.
+- **CORS preflight fix** (2026-08-04, `dlu_builder_tk`): `CORSMiddleware`
+  was registered innermost (added first), so `TenantContextMiddleware`'s
+  own OPTIONS short-circuit (a deliberate skip of tenant DB resolution on
+  preflight) returned a bare 204 with zero `Access-Control-Allow-*`
+  headers — silently breaking any cross-origin dev split of frontend/API.
+  Found during NEW-18's own browser-testing pass, fixed same-day by
+  reordering `app.add_middleware()` so `CORSMiddleware` is outermost.
+  Verified via a standalone `TestClient` script plus a 161-test
+  middleware/CORS/tenant/auth regression sweep — zero regressions.
 - **NEW-18 executed — closes NEW-17's own carried-gaps note** (2026-08-04,
   `dlu_builder_tk`): Tier-2/registrar (`RecognitionCouncilDesk.js`) and
   badge-rule-authoring (`BadgeCreditRuleAdmin.js`) frontends — neither
@@ -23,11 +32,10 @@
   method + `Esse3CredentialSyncLog` + an `n8n-bridge` consumer
   (`synced`/`no_mapping`/`failed`, the last never raised into the mesh);
   the Tier-1 frontend (`PreEvaluationWorkspace.js`) actually
-  runtime-tested in a live browser for the first time — found a
-  pre-existing CORS bug in the process (a custom middleware swallows the
-  OPTIONS preflight before `CORSMiddleware` runs), worked around via the
-  CRA dev-proxy rather than fixed, flagged for K5; full Tier-1→Tier-2
-  queue→create/deactivate lifecycle exercised live end-to-end. 8 new
+  runtime-tested in a live browser for the first time — found (and,
+  same-day, fixed — see the CORS preflight fix entry above) a
+  pre-existing CORS bug; full Tier-1→Tier-2 queue→create/deactivate
+  lifecycle exercised live end-to-end. 8 new
   tests, full regression clean. Anti-gaming rate-limit integration,
   `EquivalenceRule` consortium sharing, and the outbound
   historic-syllabus endpoint remain open (NEW-17's own carried debt,

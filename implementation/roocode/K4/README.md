@@ -160,13 +160,16 @@ scorecards ⚪ not built. **NEW-08/NEW-09-10/NEW-16/NEW-17/NEW-18 do not
 change this picture on their own** (all delivered, but none targets the
 still-open Ch. 8.2 cross-cutting gaps directly) — closing those gaps is
 tracked separately under "K3 residual debt" above, per the user's own
-stated priority order. NEW-18 did surface one new item worth carrying
-into that list: a pre-existing CORS bug (a custom middleware intercepts
-the OPTIONS preflight before `CORSMiddleware` can attach headers, so any
-cross-origin dev split of frontend/API silently fails browser-side)
-found while finally running the Tier-1 frontend against a live browser —
-worked around for that one test pass via the CRA dev-proxy, not fixed in
-the app itself.
+stated priority order. NEW-18 did surface one new item, since fixed
+same-day: a pre-existing CORS bug (`CORSMiddleware` was registered
+innermost, so `TenantContextMiddleware`'s own OPTIONS short-circuit
+returned a bare 204 with no `Access-Control-Allow-*` headers before
+`CORSMiddleware` ever ran, silently failing any cross-origin dev split
+of frontend/API) found while finally running the Tier-1 frontend against
+a live browser. Reordering `app.add_middleware()` so `CORSMiddleware` is
+outermost fixed it — verified via a standalone `TestClient` script and a
+161-test middleware/CORS/tenant/auth regression sweep, zero regressions;
+see `dlu_builder_tk`'s `docs/sprint_decisions_20260804_new18.md` §5.
 
 `K4-EXIT-REPORT.md` has been produced (STX-13/STX-14-15's own delivery
 audit) — it does not declare the K4 phase itself closed; NEW-08,
