@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+- **Security/tenancy hardening — cross-tenant leakage fuzz cache dimension
+  closed** (2026-08-07, `dlu_builder_tk`, no new G-register item):
+  `move_proposal_service.store()`'s Redis-backed store carried no
+  `tenant_id` anywhere (only `twin_id`/`agent_key`) — added as a required
+  parameter, threaded through all 10 production call sites +
+  3 test call sites; `ace.py`'s `_require_own_proposal` now checks
+  `tenant_id` in addition to the pre-existing `twin_id` check (K3/K4
+  hardening pass) — deliberate defense-in-depth, proven via a dedicated
+  forged-record test. Also adopted `platform.rate_limits` into the
+  Alembic chain (same legacy-script-only status `legal_holds`/
+  `tenant_settings` had) — verified end-to-end against a disposable
+  Postgres (full migration-chain replay, idempotency re-run, downgrade/
+  upgrade round-trip) — and, via that same live-Postgres verification,
+  found and fixed a real production bug: `RateLimitService.
+  check_rate_limit` compared a timezone-aware Postgres `TIMESTAMPTZ`
+  value against naive `datetime.utcnow()`, raising `TypeError` on the
+  second call for any identifier+endpoint — would have hard-failed every
+  second login/registration/password-reset attempt within a rate-limit
+  window in any real deployment, fully masked by mocked unit tests that
+  never exercised a real driver. NEW-17's Tier-1 pre-evaluation limiter
+  was reviewed for coupling to `RateLimitService` and deliberately left
+  self-contained — its business-data-derived rolling-window count has no
+  drift risk, and genuine coupling would change actual block semantics
+  (a product policy call, not a code gap). Streams dimension of the fuzz
+  suite remains open. See
+  `docs/sprint_decisions_20260807_security_tenancy_hardening.md`.
 - **BOOK-14A** — Credit Recognition & Pre-Evaluation Framework (Italy & USA),
   from the comparative regulatory analysis: jurisdiction **RulePacks**
   (IT-CFU with DM 931/2024 caps 48/24, SSD matching, fraction tolerances,
