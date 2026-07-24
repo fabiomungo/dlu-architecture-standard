@@ -2,6 +2,42 @@
 
 ## Unreleased
 
+- **Consolidation debt hardening — dead code removed, a much bigger
+  audit-logging bug fixed** (2026-08-08, `dlu_builder_tk`, no new
+  G-register item): deleted two dead-code AI-governance attempts
+  (`backend/domains/ai_governance/`, zero migration ever created its
+  tables; 6 dead PI-1 models from `models_ai_governance.py`, keeping the
+  live `AIProvenance`) and the dead `PagoPAStubDriver` (kept the
+  still-live `BolloPaymentStatus` dataclass NEW-12's real driver
+  imports). Badge/credential research found a quadruple duplication,
+  not the documented triple — deleted the fully-dead
+  `backend/domains/badge/` (singular) + its broken frontend
+  `BadgeWallet` widget (silently 404ing on every page that rendered it,
+  since `badgeAPI.js` called the unregistered plural
+  `backend/domains/badges/` route); left the plural domain and
+  `services/dlu_badge`-vs-monolith as documented open architecture
+  decisions. The real finding: the legacy audit trail was silently
+  near-completely broken — nearly every `AuditService.log_action` call
+  site never awaited it (an `async def`, silently a no-op),
+  `log_action`'s own internal `execute()`/`commit()` calls weren't
+  awaited either (no-op with `AsyncSession`, used by `auth.py`'s OIDC
+  routes), `AuditLoggingMiddleware` had a permanent `lambda: None`
+  session-factory placeholder since it was added, and — found only by
+  testing against a real disposable Postgres — the table was missing
+  `endpoint`/`http_method` columns in every definition (raw SQL
+  bootstrap scripts and the ORM model) and `log_action` hardcoded the
+  wrong Postgres metadata column name (`meta_data` instead of the real
+  `metadata`, misreading an ORM attribute alias). Fixed all of it,
+  adopted `platform.audit_logs` into the Alembic chain (same
+  legacy-script-only status as `legal_holds`/`tenant_settings`/
+  `rate_limits`), added a nightly partition-maintenance Celery beat job
+  (the table's Postgres-native monthly partitioning had no partitions
+  past March 2026), and mounted NEW-15's hash-chained audit fabric REST
+  API (`backend/api/routes/audit.py`, fully built and tested but never
+  mounted) — with `require_admin()` added to every route first, since it
+  had none and would otherwise have been a new cross-tenant
+  vulnerability (verified live: unauthenticated → 401, non-admin → 403).
+  See `docs/sprint_decisions_20260808_consolidation_debt_hardening.md`.
 - **Security/tenancy hardening — cross-tenant leakage fuzz cache dimension
   closed** (2026-08-07, `dlu_builder_tk`, no new G-register item):
   `move_proposal_service.store()`'s Redis-backed store carried no
