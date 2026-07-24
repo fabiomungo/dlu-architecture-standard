@@ -2,6 +2,36 @@
 
 ## Unreleased
 
+- **Agent governance hardening — mission-budget gate generalized to all
+  9 agents** (2026-08-09, `dlu_builder_tk`, no new G-register item):
+  `ace_service.run_mission`'s BOOK-09 Ch. 6 budget check special-cased
+  exactly two of the nine DAS agents (`learning_coach`, `student_success`)
+  — the other seven had zero volume/rate protection on proactive
+  missions. Replaced the `if/elif` ladder so every agent calls
+  `mission_budget_service` (quiet hours + a daily-contact cap);
+  `learning_coach` alone kept its own dedicated branch through
+  `coach_etiquette_service` to preserve an existing test's patchable
+  call site. Closes BOOK-09 Ch. 6 point 4 (budget lines) only —
+  need-based priority allocation, an equity guardrail, and per-learner
+  floors (Ch. 6 points 1-3) remain genuinely unbuilt, documented as such
+  rather than implied closed. A real bug found first and fixed
+  separately: re-verifying a stale "unreachable in production" docstring
+  claim on `synthesize_blackboard` (carried forward, uncritically, into
+  a prior hardening pass's own reasoning) found `_act_l4` IS reachable
+  since STX-10 and never threaded its own `tenant_id` through — every
+  real `consultation_deadlock` proposal was filed with `tenant_id=
+  "unknown"`, which that earlier pass's own defense-in-depth check would
+  then 404 the twin's own legitimate proposal against. Also corrected an
+  initial research premise before acting on it:
+  `consolidation_service`'s nightly job makes zero LLM calls (pure
+  deterministic token-matching + DB row lifecycle) — applying the
+  learner-contact cap gate there would have been a category error, left
+  functionally untouched with its docstring corrected instead. Two other
+  researched sub-items (per-move calibration + steward alerts;
+  misbehaviour escalation ladder) remain open, both converging on the
+  same missing piece — a real steward role + review surface — documented
+  but not built this pass. See
+  `docs/sprint_decisions_20260809_agent_governance_budget_hardening.md`.
 - **Consolidation debt hardening — dead code removed, a much bigger
   audit-logging bug fixed** (2026-08-08, `dlu_builder_tk`, no new
   G-register item): deleted two dead-code AI-governance attempts
