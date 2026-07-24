@@ -22,21 +22,33 @@
   `erasure_purge_worker` — no Book anywhere specifies the actual
   "retention schedule" duration BOOK-06 refers to, so this is a
   documented 30-day default, not a silent guess), a structurally-ready
-  L4/Neo4j no-op hook (confirmed no twin-owned graph data exists anywhere
-  yet), a Redis move-proposal cache flush, and dual audit emission (the
-  DAS hash-chained fabric + the legacy `audit_logs` `user.data_delete`
-  action — found to be referenced by `compliance_service`'s own GDPR
-  report query but never once emitted anywhere before this). Gated on
-  the existing `ComplianceService.get_legal_holds` (BOOK-19 RACI: DPO
-  owns retention/erasure exceptions) rather than a new approval workflow,
-  which surfaced `platform.legal_holds` had existed only via a standalone
-  `sql/compliance_schema.sql` bootstrap script, never any Alembic
-  migration — adopted into the chain for the first time this pass. A
-  real bug found and fixed while wiring `TwinSnapshot`'s new narrow,
-  audited immutability bypass: committing the purge AFTER the
-  authorization context manager had already exited meant the flush-time
-  `before_delete` listener saw authorization already revoked and rejected
-  its own legitimate caller. 5 new tests, full regression clean. See
+  L4/Neo4j no-op hook, a Redis move-proposal cache flush, and dual audit
+  emission (the DAS hash-chained fabric + the legacy `audit_logs`
+  `user.data_delete` action — found to be referenced by
+  `compliance_service`'s own GDPR report query but never once emitted
+  anywhere before this). Gated on the existing `ComplianceService.
+  get_legal_holds` (BOOK-19 RACI: DPO owns retention/erasure exceptions)
+  rather than a new approval workflow, which surfaced `platform.
+  legal_holds` had existed only via a standalone `sql/compliance_schema
+  .sql` bootstrap script, never any Alembic migration — adopted into the
+  chain for the first time this pass. A real bug found and fixed while
+  wiring `TwinSnapshot`'s new narrow, audited immutability bypass:
+  committing the purge AFTER the authorization context manager had
+  already exited meant the flush-time `before_delete` listener saw
+  authorization already revoked and rejected its own legitimate caller.
+  **Same-day follow-up, all three of this pass's own carried gaps
+  closed:** the "no twin-owned Neo4j data exists" premise behind the L4
+  no-op was found WRONG (`kg_overlay_sync.py` — live, registered on
+  `kg-sync`, not dead code — writes real `(:Student {twin_id})` nodes) and
+  fixed with a real `DETACH DELETE`, proven against an actual Neo4j
+  instance (a new `@pytest.mark.integration` test, not mocked); the
+  30-day L3 retention window is now per-tenant overridable via
+  `platform.tenant_settings.erasure_l3_deferred_purge_days` (that table
+  also adopted into the Alembic chain for the first time, same legacy-
+  script-only status `legal_holds` had); a self-service `/student/privacy`
+  frontend was built and browser-tested end-to-end (confirm-phrase gate,
+  real request round-trip verified server-side, zero console errors). 9
+  tests total, full regression clean. See
   `docs/sprint_decisions_20260805_k5_erasure_hardening.md`.
 - **CORS preflight fix** (2026-08-04, `dlu_builder_tk`): `CORSMiddleware`
   was registered innermost (added first), so `TenantContextMiddleware`'s
