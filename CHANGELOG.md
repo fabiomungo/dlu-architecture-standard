@@ -12,6 +12,32 @@
   (Bestr→ESSE3 pattern on the running OB 3.0 Badge Service), equivalence-
   precedent memory, curricular-drift answer (historic-syllabus endpoint on
   immutable CatalogEditions). Sprint **NEW-17** (K4). Register G1–G16.
+- **K5 hardening — Erasure e2e chain closed** (2026-08-05, `dlu_builder_tk`,
+  no new G-register item): `erasure_service.request_erasure` finally
+  calls `credential_revocation_service.revoke_or_suspend(purge_pii=True)`
+  (real since STX-13, zero callers until now) and executes BOOK-06 Ch.
+  9.3's full erasure procedure — anchor soft-delete, immediate hard purge
+  of L5 (Career)/L6 (Behaviour)/L7 (AI memory + episodic summaries), a
+  deferred L3 (Competency) purge (new `purge_after` column + a nightly
+  `erasure_purge_worker` — no Book anywhere specifies the actual
+  "retention schedule" duration BOOK-06 refers to, so this is a
+  documented 30-day default, not a silent guess), a structurally-ready
+  L4/Neo4j no-op hook (confirmed no twin-owned graph data exists anywhere
+  yet), a Redis move-proposal cache flush, and dual audit emission (the
+  DAS hash-chained fabric + the legacy `audit_logs` `user.data_delete`
+  action — found to be referenced by `compliance_service`'s own GDPR
+  report query but never once emitted anywhere before this). Gated on
+  the existing `ComplianceService.get_legal_holds` (BOOK-19 RACI: DPO
+  owns retention/erasure exceptions) rather than a new approval workflow,
+  which surfaced `platform.legal_holds` had existed only via a standalone
+  `sql/compliance_schema.sql` bootstrap script, never any Alembic
+  migration — adopted into the chain for the first time this pass. A
+  real bug found and fixed while wiring `TwinSnapshot`'s new narrow,
+  audited immutability bypass: committing the purge AFTER the
+  authorization context manager had already exited meant the flush-time
+  `before_delete` listener saw authorization already revoked and rejected
+  its own legitimate caller. 5 new tests, full regression clean. See
+  `docs/sprint_decisions_20260805_k5_erasure_hardening.md`.
 - **CORS preflight fix** (2026-08-04, `dlu_builder_tk`): `CORSMiddleware`
   was registered innermost (added first), so `TenantContextMiddleware`'s
   own OPTIONS short-circuit (a deliberate skip of tenant DB resolution on
