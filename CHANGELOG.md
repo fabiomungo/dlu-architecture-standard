@@ -2,6 +2,38 @@
 
 ## Unreleased
 
+- **Driver/integration + data/model hardening — small/mechanical tier**
+  (2026-08-10, `dlu_builder_tk`, no new G-register item): the user's own
+  next pick after agent-governance hardening, scoped to the
+  small/mechanical tier only (LTI full JWT verification, analytics real
+  SQL, Moodle grade-passback ID-mapping, marketing domain, GPS ESCO
+  crosswalk, G7 schema change, and Institution workspaces IW4-6 all
+  explicitly deferred). `gateway_config_sync.delete_provider` was a
+  no-op — now calls the real gateway `/model/delete`, keyed by
+  `provider_id` to match how the provider was registered, wired into
+  `soft_delete_provider` post-commit with fail-open error handling.
+  `ai_management`'s Test-Skill preview always returned a literal
+  MVP-stub string — now a real LLM invocation mirroring the working
+  Test-Agent pattern. `graduation.predicted` premise-corrected: its own
+  docstring claimed no producer existed, already false when written
+  (`gps_worker.recompute_path_health_task` has emitted it since STX-07's
+  first commit) — the real bugs were an overly-broad emission gate
+  (fired on nearly every recompute, predicting nothing — tightened to
+  require completion within 1 term) and a dormant consumer stub, now
+  wired to enqueue a real career-gap-refresh task. A critical, unrelated
+  bug found first and fixed separately while researching LTI: a live,
+  unauthenticated open redirect in `lti_oidc_init` (fixed with a
+  same-origin/bare-path allow-list, committed separately). A live decoy
+  found during research and separately confirmed for removal:
+  `/advisor/dashboard` rendered hardcoded fake KPIs and two fabricated
+  named students unconditionally, as if real — replaced with an honest
+  not-yet-available state; the real underlying gap (no
+  advisor-assignment relationship exists anywhere in this data model) is
+  disclosed, not fixed. Full regression clean (3053 tests collected, 19
+  more than the prior pass's own new tests; `phase1` CI gate: 104
+  passed, 4 skipped, 0 failed, identical to the prior pass's own
+  baseline). See
+  `docs/sprint_decisions_20260810_driver_integration_hardening.md`.
 - **Agent governance hardening — mission-budget gate generalized to all
   9 agents** (2026-08-09, `dlu_builder_tk`, no new G-register item):
   `ace_service.run_mission`'s BOOK-09 Ch. 6 budget check special-cased
