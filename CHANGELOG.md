@@ -2,6 +2,67 @@
 
 ## Unreleased
 
+- **Large-tier driver/integration backlog — all 6 deferred items closed**
+  (2026-08-15, `dlu_builder_tk`, no new G-register item): closes the
+  moderate/large-tier backlog deferred by the two prior driver/
+  integration hardening passes below — LTI 1.3 full JWT verification,
+  GPS `lowest_cost`, G7 regulation-year schema binding, Institution
+  Workspace IW4 (Advisor Workspace) + IW6 (Operator Plane), and a full
+  ESCO occupation crosswalk. Planned as one 6-item effort, executed and
+  committed one item at a time in dependency order (G7 → GPS-cost → LTI
+  → IW4 → IW6 → ESCO).
+  **G7**: `program_courses.program_version_id` (nullable FK, two
+  PARTIAL unique indexes — a naive 3-column unique would have silently
+  allowed duplicates for the version-agnostic NULL case every existing
+  row is in) makes NEW-04's regulation-year fingerprint tag actually
+  change computed plans instead of being cosmetic-only; no backfill to
+  a specific version, to avoid silently emptying a different cohort's
+  requirement set.
+  **GPS `lowest_cost`**: new `cost_per_credit` column, honesty-gated
+  total (any course missing cost/credits data keeps the whole scenario
+  `not_yet_available`).
+  **LTI**: new `LtiPlatform` registration table + a real JWKS-fetch-and-
+  cryptographically-verify path (`PyJWT`'s `PyJWKClient`) — no genuine
+  verified-JWT pattern existed anywhere in this codebase before this;
+  OIDC init now redirects to a registered platform's real auth endpoint
+  when one resolves, falling back to the prior demo behavior unchanged
+  otherwise.
+  **IW4**: new `AdvisorAssignment` table (partial-unique-indexed for
+  soft-delete/reassignment) + management-gated CRUD + an own-caseload-
+  default composite (GPS hedges, risk stream); also fixed a real latent
+  bug in `move_proposal_service.list_for_twin` — reached into a
+  client-specific private `_cache` dict instead of the real
+  `redis.asyncio.Redis` `scan_iter` interface every other cache-backed
+  service already uses (verified this doesn't currently manifest in
+  production, since `redis_client` is still always the same in-process
+  mock everywhere, but would silently break the moment a real Redis
+  client is ever substituted).
+  **IW6**: driver-health snapshot reusing the three existing per-driver
+  `CircuitBreaker` singletons directly (already process-wide), a new
+  read-only `ConsumerGroup.mesh_lag()` sibling to `drain()` (zero
+  `XREADGROUP`/`XAUTOCLAIM`/handler dispatch), and one new anonymized
+  cross-tenant AI-spend aggregate — gated to `platform_admin`/
+  `super_admin` only, no new role invented.
+  **ESCO**: sourced REAL data from the official public ESCO REST API
+  (confirmed reachable — the plan's own honest "if not fetchable"
+  fallback did not apply) — 2,700 of ESCO's ~2,942 published
+  occupations (91.8%), 104,504 real skill-relation rows, via a
+  pagination quirk found and fixed empirically (ESCO's own `offset`
+  param is a page index, not an item-skip count); replaces the
+  STX-14/15 hand-curated 8-occupation `urn:dlu-esco-lite:` seed via the
+  first CSV-bundled bulk-insert migration in this codebase;
+  `career_gap_service._skill_has_competency`'s matching logic
+  deliberately unchanged (verified via a direct sanity break-and-revert
+  check); every live "ESCO-lite" doc reference across `backend/` swept
+  and corrected, including the eval scenario bank and the Career
+  Advisor agent's own persisted system prompt.
+  All 6 migrations verified end-to-end against a disposable Postgres
+  (clean upgrade/downgrade/re-upgrade round-trip); 51 new tests;
+  `phase1` gate 104 passed/3 skipped/0 failed unchanged throughout; a
+  full raw-suite run's 68 failures confirmed pre-existing and unrelated
+  (zero file overlap, spot-checked across 5 failure categories). See
+  `docs/sprint_decisions_20260815_large_tier_backlog_summary.md`
+  (cross-references all 6 per-item docs).
 - **Category 2 hardening — governed per-institution policy calibration
   infrastructure** (2026-08-12, `dlu_builder_tk`, no new G-register
   item): the user's own next pick, continuing the priority order (code
