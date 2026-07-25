@@ -2,6 +2,54 @@
 
 ## Unreleased
 
+- **Category 3 infrastructure gaps — all 3 items closed** (2026-08-19,
+  `dlu_builder_tk`, no new G-register item): closes the user's own
+  stated priority order's last tier — "no real deployment target/IaC,
+  alerting not reaching anyone, no automated backup schedule"
+  (`docs/sprint_decisions_20260807_security_tenancy_hardening.md`
+  lines 3-5/159-161).
+  **Alerting** (2026-08-16): Prometheus's `alerting:` block, commented
+  out since inception, now points at a new Alertmanager instance
+  (staging + production compose); a new in-app webhook receiver
+  (`POST /api/internal/alerts/webhook`, mirrors `internal.py`'s shared-
+  secret auth pattern) always logs every received alert and optionally
+  forwards to a configured Slack/webhook URL. Found while closing this:
+  most pre-existing alert rules (all of the orphaned `prometheus-
+  alerts-pi4.yml`, a real subset of the already-mounted `alerts.yml`)
+  reference metrics that are never incremented anywhere or don't exist
+  at all — only the 2 confirmed-live orphaned rule files (event-mesh,
+  eval-harness) are wired in; `pi4`'s stays deliberately unmounted
+  rather than faking working payment/workflow/AI-governance alerting.
+  **Backup automation** (2026-08-17): a dedicated Celery beat+worker
+  pair runs `pg_dump` nightly with the existing `scripts/backup_
+  production.sh`'s own 7-day retention policy; `postgresql-client`
+  added to `backend/Dockerfile` so `pg_dump` is actually present in the
+  worker container. Found while closing this: `celery beat` has never
+  run in ANY environment (dev/turnkey/italian run a plain worker only;
+  staging/production run no Celery process at all) — all ~20 pre-
+  existing `beat_schedule` entries have therefore never fired anywhere.
+  Surfaced to the user directly (turning that on wholesale would
+  activate 20 previously-dormant production tasks at once); the user
+  chose a minimal, dedicated beat+worker pair scoped to backup only,
+  leaving the shared scheduler exactly as dormant as before.
+  **Deployment/IaC** (2026-08-18): new CI workflow builds and pushes
+  `backend`/`frontend` Dockerfiles to GitHub Container Registry using
+  the repo's own `GITHUB_TOKEN` — closes the loop `docker-compose.
+  production.yml` already assumed existed (`${PRODUCTION_BACKEND_
+  IMAGE}`/`${PRODUCTION_FRONTEND_IMAGE}`, previously referencing images
+  nothing ever built; `docker compose --profile ops config` now exits 0
+  with zero env vars supplied). Deliberately no Kubernetes/Terraform —
+  BOOK-18 Ch. 6 already treats orchestrator choice as an ops decision,
+  not an architecture one.
+  15 new tests; every new/changed infra file verified with its real
+  authoritative tool (`promtool`, `amtool`, `docker compose config`,
+  `actionlint`), not just visual inspection; full raw-suite regression
+  (52 failed/5 errors) confirmed the same pre-existing, unrelated
+  baseline documented one day earlier in the large-tier-backlog summary
+  below (68 failed/5 errors, same categories, zero file overlap). See
+  `docs/sprint_decisions_20260819_category3_summary.md` (cross-
+  references all 3 per-item docs).
+
 - **Large-tier driver/integration backlog — all 6 deferred items closed**
   (2026-08-15, `dlu_builder_tk`, no new G-register item): closes the
   moderate/large-tier backlog deferred by the two prior driver/
