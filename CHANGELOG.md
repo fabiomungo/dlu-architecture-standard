@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+- **Category 2 hardening — governed per-institution policy calibration
+  infrastructure** (2026-08-12, `dlu_builder_tk`, no new G-register
+  item): the user's own next pick, continuing the priority order (code
+  gaps, then ops/business gaps, then infrastructure) into category 2 for
+  the first time. Fresh re-verification confirmed almost all of category
+  2 genuinely cannot be substituted for by code (external audit, legal
+  sign-off, agent GA gating, live third-party credentials, real
+  production PITR all remain exactly as open as before) — but surfaced
+  one real, code-shaped gap: per-institution policy calibration was a
+  MIXED bag, not a uniform gap. `ItemCalibrationParams`/
+  `CompetencyEngineParams` already had a real, governed, versioned,
+  institution-scoped-with-global-fallback override mechanism (just never
+  populated per-institution); `move_policy_service.RISK_THRESHOLD`,
+  `recommendation_service_v2`'s rank weights + `SERENDIPITY_QUOTA`, and
+  `consolidation_service`'s salience weights had NO override mechanism at
+  all. New `RiskPolicyParams`/`RecommendationPolicyParams`/
+  `SalienceWeightParams` (one migration, same immutable-row shape as
+  `ItemCalibrationParams`) close that gap — the knob, not the calibration
+  decision itself, which remains a genuine steward/institution-authority
+  call, unmade for any institution before or after this pass.
+  `build_assessment` resolving the new `RiskPolicyParams` rippled into 8
+  existing test files (every agent's `run_cycle`/`run_mission` passes
+  through it) — found running the full suite, not assumed. Full
+  regression clean (12 new tests plus 150 passed across the 8
+  ripple-affected files; `phase1` gate: 104 passed, 4 skipped, 0 failed).
+  See
+  `docs/sprint_decisions_20260812_category2_policy_calibration_hardening.md`.
 - **Driver/integration hardening II — small/contained tier from the
   moderate/large backlog** (2026-08-11, `dlu_builder_tk`, no new
   G-register item): continuation of the pass below — re-surveyed the
