@@ -2,6 +2,34 @@
 
 ## Unreleased
 
+- **Driver/integration hardening II — small/contained tier from the
+  moderate/large backlog** (2026-08-11, `dlu_builder_tk`, no new
+  G-register item): continuation of the pass below — re-surveyed the
+  deferred moderate/large backlog and found several premises wrong once
+  verified: analytics revenue/quality metrics is genuinely large (not
+  moderate as first labeled), Moodle grade-passback is smaller than
+  "large" (real driver + ID-mapping tables already existed, just
+  unpopulated), and the marketing domain isn't a sizing problem at all —
+  its routers were never mounted in `main.py`, so its real, routed
+  frontend pages have 404'd since they were built (flagged for removal
+  per the user's own choice, nothing implemented). GPS `best_career_path`
+  premise-corrected and wired onto the existing ESCO-lite seed;
+  `lowest_cost` stays an honest gap with its stale "STX-12 brings them"
+  reason replaced by the real blocker. New IW5 Steward Console composes
+  already-real agent-governance data (scorecards, release-gate history,
+  incident queue, an honest calibration-drift gap) behind a narrower role
+  gate than IW1-3. New Moodle `assessment.completed` grade-passback
+  consumer on the `n8n-bridge` group. A test-infrastructure side-quest
+  found and fixed four independent, pre-existing bugs blocking a
+  real-Postgres container test run (a `DLU_TEST_PG_URL` clobber, a
+  `metadata`/`meta_data` column typo, a dead duplicate SQLite-only DDL
+  block, and a missing pgvector test image) — never exercised this way
+  before. G7 regulation-year and LTI full JWT verification were
+  re-verified and confirmed at their original size, both still deferred.
+  Full regression clean (3071 tests collected, 18 more than the prior
+  pass's own new tests; `phase1` gate: 104 passed, 4 skipped, 0 failed).
+  See
+  `docs/sprint_decisions_20260811_driver_integration_hardening_ii.md`.
 - **Driver/integration + data/model hardening — small/mechanical tier**
   (2026-08-10, `dlu_builder_tk`, no new G-register item): the user's own
   next pick after agent-governance hardening, scoped to the
