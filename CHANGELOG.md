@@ -2,6 +2,47 @@
 
 ## Unreleased
 
+- **Investor-demo readiness — all 4 items delivered** (2026-08-20,
+  `dlu_builder_tk`, no new G-register item — a demo/pilot-readiness
+  pass, not a regulatory gap): the nine named agents seeded since
+  STX-14/15 had never been seeded outside the test suite — a fresh
+  environment showed an empty agent registry and no Twin/GPS/
+  credential/recognition data to demo.
+  **Demo data** (`--scenario=ai_native_demo`, `backend/scripts/
+  seed_demo.py`): seeds all 9 agents, 5 Student Digital Twins, a real
+  GPS `fastest_path` scenario, a signed credential, a granted
+  recognition claim, a Tier-1 pre-evaluation, viva evidence, a real
+  advisor caseload, and one demo login per persona (student/instructor/
+  admin/platform_admin) — reusing real service functions throughout,
+  never hand-written rows bypassing business logic. Found and worked
+  around two pre-existing `academic_gps_service.py` bugs along the way
+  (`platform.course_catalog_items` has no creation migration anywhere;
+  a `not_yet_available` reason string exceeds `PathScenario.reason`'s
+  own 200-char column limit, aborting the 4-scenario batch insert) —
+  both disclosed, neither fixed, out of this pass's scope.
+  **Nav/persona alignment**: the AI-native student pages were
+  completely unreachable from the app's own navigation — the component
+  first assumed to be the live nav (`Sidebar.js`) turned out to be dead
+  code with zero imports anywhere, and the actual live one
+  (`PaperNav.js`) showed the identical course-authoring toolbar to
+  every logged-in persona regardless of role, including a
+  `platform_admin` with no click-path to Operator Plane at all (nested
+  under an `admin`-only dropdown, a different role set than
+  `operator_plane.py`'s own `_require_operator`) despite being fully
+  authorized server-side. Fixed: persona-aware post-login redirect, the
+  course-authoring toolbar hidden for a "pure" student/operator
+  account, Operator Plane promoted to its own persona-gated link.
+  **New pages**: IW4 Advisor Workspace and IW6 Operator Plane, both
+  left backend-only by the large-tier backlog below, now have real
+  frontend pages.
+  All four personas rehearsed and screen-recorded end to end against a
+  live local instance; `docs/INVESTOR_DEMO_WALKTHROUGH.md` is the
+  resulting script. Found, disclosed, not fixed here: the entire
+  `backend/domains/payments/` subsystem (financial holds, invoices,
+  installments) has no Alembic migration anywhere — surfaces as a real
+  500 on the Credential Wallet's clearance-checklist section, degrading
+  to an honest empty state rather than crashing.
+
 - **Category 3 infrastructure gaps — all 3 items closed** (2026-08-19,
   `dlu_builder_tk`, no new G-register item): closes the user's own
   stated priority order's last tier — "no real deployment target/IaC,
