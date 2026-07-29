@@ -2,6 +2,34 @@
 
 ## Unreleased
 
+- **SPRINT-02/NEW-17a — admissions-funnel Credit Pre-Evaluation CASE
+  workflow (F1)** (2026-07-29, `dlu_builder_tk`, closes the first slice of
+  G17 — see TRACEABILITY.md; `_dlu/sprint-plan` program): the pre-
+  evaluation workflow goes live with evaluation still MANUAL — a human
+  pre-evaluator types in recognized/to-integrate totals; no AI extraction
+  yet. 6 new tables (`preval_requests`/`preval_documents`/
+  `preval_evaluations`/`preval_sheets`/`hitl_reviews`/
+  `sheet_countersignatures`), a new `/api/preval-requests` +
+  `/api/preval-sheets` API with R21A.1 workability gates (identity, CF,
+  dedup/homonym, CDS-target — structured `not_workable_reason`, never a
+  silent drop), a confidence-ordered HITL queue with mandatory-reason
+  overrides, and a countersignature that makes the sheet immutable
+  (DB-level unique constraint, not just an app check). 7 `preval_case.*`
+  events wired end-to-end (2 of them correct a SPRINT-01 naming mistake —
+  see SPRINT-02.md's own "Correzioni al piano" — `preevaluation.shared`/
+  `countersigned` renamed to `preval_case.shared`/`countersigned` since
+  this is a genuinely distinct domain from NEW-17's existing Tier1-3
+  `credit_pre_evaluations`, not an extension of it). Frontend:
+  `PreEvaluationWorkspace` gets a clearly-separated new case section
+  (wizard, document upload, sheet review/countersign via
+  `AIProposalCard`), plus a new staff `PrevalDesk` HITL desk. Verified
+  against a real migrated Postgres: migration round-trip clean, 12
+  conformance tests (workability gates, C21A.1 — no sheet reaches
+  `shared` without a completed HITL chain — even when `status` is forced
+  to `approved` directly, C21A.5 — countersigned immutability — event
+  emission in exact order, `dlu.preval_case.v0_2` serializer round-trip),
+  correctly skip (not error) when Postgres isn't reachable.
+
 - **SPRINT-01/NEW-17f — target-state program foundations** (2026-07-29,
   `dlu_builder_tk`, opens G17-G21 — see TRACEABILITY.md; first sprint of
   the separate 22-sprint `_dlu/sprint-plan` program, BOOK-20 §7b): pure

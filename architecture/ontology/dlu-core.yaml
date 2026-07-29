@@ -155,3 +155,8 @@ event_nouns:
   - policy
   - catalog_edition
   - kpi
+  # NEW-17a (_dlu/sprint-plan SPRINT-02, BOOK-21A §6): preval_case.
+  # {requested,documents_complete,auto_evaluated,sheet_proposed,reviewed,
+  # shared,countersigned} — the admissions-funnel case workflow, distinct
+  # from "preevaluation" above (see event_taxonomy.py's own comment).
+  - preval_case
