@@ -142,3 +142,16 @@ event_nouns:
   # NEW-17 (BOOK-14A Credit Recognition & Pre-Evaluation): preevaluation.
   # {requested,estimated,converted,validated}
   - preevaluation
+  # SPRINT-01/NEW-17f (_dlu/sprint-plan) — target-state nouns for T1/T4/T6/T7/T10
+  # (ER_MAP_TARGET.md §Invarianti). Registered now, no producer/consumer wired
+  # until each domain's own owning sprint (see event_taxonomy.py's own comments
+  # for the exact sprint per event).
+  - application
+  - applicant
+  - qualification
+  - engagement
+  - milestone
+  - invoice
+  - policy
+  - catalog_edition
+  - kpi

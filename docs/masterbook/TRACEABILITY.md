@@ -33,6 +33,21 @@
 Cross-cutting dependency: G12/G14 ledgers require instructor-role event
 capture from Moodle (Review finding M3 → BOOK-18 Moodle driver contract).
 
+**G17-G21 opened 2026-07-29** (`_dlu/sprint-plan/PLAN.md`, a separate
+22-sprint target-state program, post-K5 — see BOOK-20 §7b). Each row
+below is OPEN — scaffolding only so far (NEW-17f); full closure is
+spread across each domain's own owning sprints, tracked in
+`_dlu/sprint-plan/SPRINT-NN.md` headers and `_dlu/BACKLOG_TARGET.xlsx`,
+not narrated row-by-row here until each gap actually closes.
+
+| G | Gap | Found by | Owner Book | Resolution | Sprint | Conformance check |
+|---|-----|----------|-----------|------------|--------|-------------------|
+| G17 | No admissions/orientation funnel for prospects; credit pre-evaluation lacks real document extraction + matching engine | `_dlu/sprint-plan` gap analysis | **21** (Admissions) + **21A** (Credit Pre-Evaluation Ops) | full funnel (application→eligibility→orientation→offer→matriculation) + CDS extraction/matching/rule-pack authoring/golden-set | **NEW-17f ✅ (2026-07-29, scaffolding only — `models_admission.py`/`models_preval.py` empty, `PREEVALUATION_SHARED`/`COUNTERSIGNED` events reserved)**; full closure NEW-18/NEW-17a-d (SPRINT-02..04/06/07) | — (no producer yet) |
+| G18 | No faculty onboarding/contracting/HR workload domain (Course Creation v1.0 process unimplemented) | `_dlu/sprint-plan` gap analysis | **22** (Faculty Lifecycle) | onboarding + QES-signed authoring contracts + milestone/deliverable gates + HR positions/workload ledger | **NEW-17f ✅ (2026-07-29, scaffolding only — `models_faculty_lifecycle.py`/`models_hr.py` empty, `ENGAGEMENT_EXECUTED`/`MILESTONE_APPROVED` events reserved)**; full closure NEW-20a/b/NEW-21 (SPRINT-08..10) | — (no producer yet) |
+| G19 | No native AR/AP finance (invoicing lives only in external Frappe/PagoPA) | `_dlu/sprint-plan` gap analysis | **23** (Financial Operations) | native invoices/holds/supplier invoices/budgets, reconciled (not replacing) Frappe/PagoPA | **NEW-17f ✅ (2026-07-29, scaffolding only — `models_finance.py` empty, `INVOICE_ISSUED/PAID/OVERDUE` events reserved)**; full closure NEW-19/NEW-20b/NEW-30 (SPRINT-05/09/18) | — (no producer yet) |
+| G20 | No policy/catalog-approval workflow or executive KPI/governance layer | `_dlu/sprint-plan` gap analysis | **24** (Executive Command) | versioned policy + catalog approval chain + historized KPI layer + board governance | **NEW-17f ✅ (2026-07-29, scaffolding only — `models_governance.py`/`models_executive.py` empty, `POLICY_PROMULGATED`/`CATALOG_EDITION_APPROVED`/`KPI_BREACHED` events reserved)**; full closure NEW-25/26/27 (SPRINT-14..16) | — (no producer yet) |
+| G21 | No research workspace (10th persona: Researcher) — reproducibility/provenance, federated RAG, grant→budget/workload links | `_dlu/sprint-plan` gap analysis + "Architetture IA per Ricerca Universitaria" | **25** (Research Workspace) | Renku-2.0-style provenance DAG, Swiss-Data-Custodian-style zero-trust federation, grant/budget/workload integration | not yet started (SPRINT-21/NEW-33) | — |
+
 ---
 
 ## 2. A-Register (structural/semantic anomalies) — A1–A12 (all closed)

@@ -343,6 +343,48 @@ C_learner reconciles with usage snapshots.
 
 ---
 
+## 7b. Target-State Program (`_dlu/sprint-plan`, post-K5)
+
+A SEPARATE, 22-sprint executable plan (NEW-17f through NEW-33/NEW-29),
+distinct from the K1-K5 blueprint above (which remains "complete through
+K5" per §7's own closing line) — it closes new gaps G17-G21 (Admissions/
+BOOK-21, Credit Pre-Evaluation operations/BOOK-21A, Faculty Lifecycle/
+BOOK-22, Financial Operations/BOOK-23, Executive Command/BOOK-24,
+Research Workspace/BOOK-25) and the ~105-item backlog in
+`_dlu/ALBERO_FUNZIONALITA_TARGET.xlsx`/`_dlu/BACKLOG_TARGET.xlsx`. Full
+sprint sequence, protocol, and source-of-truth files: `_dlu/sprint-plan/
+PLAN.md`. Progress tracked per-sprint in `_dlu/sprint-plan/HANDOVER.md`
+and each `SPRINT-NN.md`'s own header, not narrated sprint-by-sprint here
+(this Book's own sync duty is the G-register row in TRACEABILITY.md,
+kept current at each sprint's DOC-SYNC step).
+
+### NEW-17f — Target-state foundations (scaffolding)
+*Deliver:* 9 empty target-domain model files (T1-T10/T12, populated by
+later sprints); 14 target-state events registered in the closed taxonomy
+(`event_taxonomy.py`) as reserved/unwired slots; the T11 eval-harness
+target tables (`eval_datasets`/`eval_cases`/`eval_runs`/
+`eval_case_results`) added to the EXISTING NEW-02 `models_eval.py` (not
+a parallel file) with two 🔧 FK links extending `agent_gate_runs`/
+`eval_human_samples`, plus `scripts/eval_runner.py`; a CI "Conformance
+Suite" job (tests/conformance/ had 3 real meta-tests, never wired into
+any workflow before this sprint); Paper v3 ratified as the one frontend
+design-token system (`legacyBridge.css` aliases the legacy `--color-*`
+set, zero rewrites), an 8-component `frontend/src/components/ds/`
+library (AIProposalCard is the flagship — every future AI-proposal
+surface in this program consumes it), and an anti-hex-regression CI
+lint. No user-facing feature — pure scaffolding for the 21 sprints that
+follow.
+*Verify:* migrations round-trip clean; `eval_runner.py --dataset dummy`
+produces a real `eval_runs` row; taxonomy/ontology lints green
+(`scripts/ci/lint_ontology.py` — found and fixed a real cross-repo
+registry gap: 9 new event nouns were missing from
+`dlu-core.yaml`/`architecture/ontology/dlu-core.yaml`, same class of gap
+as NEW-11/NEW-17's own `degree`/`preevaluation` additions); design
+system showcase page renders all 8 components; hex lint tested against
+a deliberate fixture (fails red) and a clean diff (passes).
+
+---
+
 # Chapter 8 — Conformance Suites
 
 ## 8.1 DAS-Core (exit K3) — per BOOK-03 Ch. 10

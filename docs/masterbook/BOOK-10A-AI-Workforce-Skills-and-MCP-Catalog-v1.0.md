@@ -286,3 +286,23 @@ this catalog's tables are the checklist the K-phase prompt packs enumerate.
 *BOOK-10A v1.0 — awaiting review. With this catalog approved, the K1 prompt
 pack can be generated knowing exactly which intelligent components K2–K5 will
 demand of the kernel foundations.*
+
+---
+
+## Annex T (target additions, v0.1-draft — sprint NEW-31)
+
+Five persona-support agents extend the roster (24 → 29). All are ACP-composed,
+**propose-only** (no autonomous acts on careers, money, or grades), carry contract
+cards, run under envelopes where applicable, and pass the eval-harness GA gate
+(BOOK-11) with a dedicated dataset (≥20 golden cases each).
+
+| Agent | Persona | Scope | Surfaces |
+|---|---|---|---|
+| Student Companion (consolidated) | Student | missions, nudging, objectives, admission/pre-eval status; twin context `purpose=self` | Companion Workspace |
+| Faculty Assistant | Teacher | authoring suggestions (FEX/CLO-MLO), teaching-ops drafts (register G4, appelli/office-hours reminders), engagement/milestone status | Faculty workspace |
+| Admin Copilot | Back-office | explains pre-eval sheets and applied rules, dossier/checklist assistance, certificate drafts (G9), governed standard notices | Registrar/Preval Desk |
+| CFO Analyst | CFO | variance/forecast/cash narratives, KPI drill-down explanations, period-close draft commentary; every action routes via `governance_actions` | CFO Command (BOOK-24) |
+| Research Assistant (NEW-33) | Researcher | literature review with verifiable citations (every claim resolves to a source chunk), structured extraction from corpora, drafting support; no writes to project state | Research Workspace (BOOK-25) |
+
+Also part of NEW-31: the uniform "AI proposal" affordance (accept / modify / reject
+with reason) — rejections feed the eval datasets.

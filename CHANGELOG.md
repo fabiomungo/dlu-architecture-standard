@@ -2,6 +2,59 @@
 
 ## Unreleased
 
+- **SPRINT-01/NEW-17f — target-state program foundations** (2026-07-29,
+  `dlu_builder_tk`, opens G17-G21 — see TRACEABILITY.md; first sprint of
+  the separate 22-sprint `_dlu/sprint-plan` program, BOOK-20 §7b): pure
+  scaffolding, no user-facing feature. 9 empty domain model files
+  (T1-T10/T12); 14 target-state events registered in the closed
+  taxonomy as reserved slots (2 correct a plan drift — 3 of the
+  originally-specified 5 "Preval*" events already existed as
+  `PREEVALUATION_REQUESTED/ESTIMATED/VALIDATED`, only `SHARED`/
+  `COUNTERSIGNED` were genuinely new; see SPRINT-01.md's own
+  "Correzioni al piano"); the T11 eval-harness target tables added to
+  the EXISTING NEW-02 `models_eval.py` (not a parallel file), extending
+  `agent_gate_runs`/`eval_human_samples` via two 🔧 FK links rather than
+  duplicating them, plus `scripts/eval_runner.py`; a CI "Conformance
+  Suite" job (3 real meta-tests in `tests/conformance/` had never been
+  wired into any workflow before this sprint); Paper v3 ratified as the
+  one frontend token system (`legacyBridge.css`, zero rewrites), an
+  8-component `components/ds/` library (`AIProposalCard` is the
+  flagship), and an anti-hex-regression CI lint. Found and fixed a real
+  cross-repo drift while running `scripts/ci/lint_ontology.py`: 9 new
+  event nouns were missing from both `dlu-core.yaml` copies (same class
+  of gap NEW-11/NEW-17 hit for `degree`/`preevaluation`) — fixed in both
+  repos before closing the sprint.
+
+- **Tenth persona: the Researcher — Research Workspace & Open Science**
+  (2026-07-29, plan `_dlu/sprint-plan`): grounded in the comparative
+  analysis "Architetture IA per Ricerca Universitaria" (Renku 2.0
+  reproducibility/provenance, Swiss Data Custodian zero-trust
+  collaboration, EuroHPC AI Factories, Federated RAG, GDPR/AI-Act for
+  research). New **BOOK-25** (v0.1-draft, G21) and ER domain **T13**
+  (11 tables: projects, versioned datasets, reproducible environments,
+  provenance DAG, outputs, grants→budget links, federated KB scopes,
+  compliance assessments). Research Assistant added to BOOK-10A Annex T
+  (propose-only, verifiable citations). Feature tree area 25 (+12),
+  backlog 93 → **105** items; executable plan grows to **22 sprints**
+  (new SPRINT-21 = NEW-33; hardening renumbered SPRINT-22 = NEW-29);
+  demo pack gains the Researcher scenario.
+
+## Unreleased
+
+- **Target-state plan extension — CFO planning & control, persona agents,
+  demo scenarios** (2026-07-28, plan `_dlu/sprint-plan`): coverage check on
+  the 21-sprint target plan found three gaps, now closed. (1) BOOK-23 gains
+  Ch. 8 (v0.2-draft): fee schedules, pipeline-driven revenue forecasts,
+  cash-flow projections, what-if scenarios, period closes and variance
+  analyses with governance-action routing (sprint NEW-30, C23.6–C23.8).
+  (2) BOOK-10A gains Annex T: four propose-only persona-support agents —
+  Student Companion (consolidated), Faculty Assistant, Admin Copilot, CFO
+  Analyst (sprint NEW-31); BOOK-24 CFO Command row updated accordingly.
+  (3) Demo Scenario Pack (sprint NEW-32): extends `seed_demo.py` and adds
+  nine per-persona guided scenarios, each mirrored by an automated E2E
+  test. Feature tree/backlog grow 82 → 93 items; final hardening renumbered
+  NEW-29 = SPRINT-21.
+
 - **Investor-demo readiness — all 4 items delivered** (2026-08-20,
   `dlu_builder_tk`, no new G-register item — a demo/pilot-readiness
   pass, not a regulatory gap): the nine named agents seeded since
