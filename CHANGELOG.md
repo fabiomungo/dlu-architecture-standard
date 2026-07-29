@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+- **SPRINT-03/NEW-17b — real document extraction + deterministic matching
+  engine (F2)** (2026-07-30, `dlu_builder_tk`, second slice of G17): the
+  admissions-funnel case workflow's manual evaluation step (SPRINT-02)
+  becomes real. 5 new tables (`extracted_careers`/`extracted_exams`/
+  `cds_grids`/`cds_grid_rows`/`ssd_crosswalk`) + a migration. Agent A1
+  (document classification/legibility, `preval/intake.py`); agent A2
+  (transcript parsing via a real `LLMClientFactory` call, isolated
+  behind a monkeypatchable seam per this codebase's own convention) +
+  agent A5 (SSD crosswalk mapping, `preval/parser.py`); agent A6 — a
+  byte-for-byte Python port of the Workbench prototype's own
+  `calcolaMatching()`/`totali()` JS (SSD matching, valid-certification
+  fills, student-choice/seminar surplus chaining, V.O. full-fill,
+  internship/final-exam never auto-filled), against 2 seeded pilot CDS
+  grids ("L-33 Economia e Commercio", "L-24 Scienze e Tecniche
+  Psicologiche") transcribed verbatim from that same prototype (no
+  external xlsx files exist — corrected a pre-flight assumption in the
+  plan). `preval_requests.target_program_label` added as the real
+  lookup key (no seeded `catalog_editions` rows exist for the 2 pilot
+  programs yet). Pre-flight also found the task's own algorithm summary
+  omitted the certification-matching step — required to reproduce the
+  DoD's own fixture (demo career "Conti" → 74 units recognized/3 to
+  integrate/71 net/3rd-year admission), verified byte-identical
+  end-to-end via a real integration test (not just the pure engine in
+  isolation). Found and fixed a real bug during verification: the
+  auto-evaluation trigger, wired into document-upload completion, could
+  raise unhandled for a legitimate applicant with no prior credits to
+  pre-evaluate (the 'triennale' checklist doesn't require a transcript —
+  correctly, since a brand-new student may have nothing to convalidate)
+  — now degrades gracefully to the SPRINT-02 manual staff fallback
+  instead of crashing the upload request. 16 new conformance tests (6
+  engine, 9 parser, 1 full-workflow integration), all passing against a
+  real migrated Postgres; correctly skip (not error) when Postgres isn't
+  reachable.
+
 - **SPRINT-02/NEW-17a — admissions-funnel Credit Pre-Evaluation CASE
   workflow (F1)** (2026-07-29, `dlu_builder_tk`, closes the first slice of
   G17 — see TRACEABILITY.md; `_dlu/sprint-plan` program): the pre-
