@@ -2,6 +2,59 @@
 
 ## Unreleased
 
+- **SPRINT-05/NEW-19 — native student AR, unified administrative holds,
+  student dossier (G19)** (2026-07-30, `dlu_builder_tk`): native
+  receivables register replacing "invoicing lives only in external
+  Frappe/PagoPA" — `student_invoices`/`invoice_lines`/
+  `payment_reconciliations` (`finance_service.py`,
+  `draft → issued → paid | overdue → cancelled`, R23.2's payment
+  confirmation gated to reconciliation or an audited CFO override —
+  C23.1 verified as a property test against a real Postgres). Pre-flight
+  found an entire parallel Stripe Connect AR system already living in
+  `backend/domains/payments/` with zero HTTP routes ever mounted, and 3
+  incompatible "financial hold" concepts never reconciled with each
+  other — resolved via an explicit architecture decision with the
+  operator: `administrative_holds` becomes the ONE authoritative hold
+  table (`source: native|stripe|frappe_sync`, same discriminated-source
+  pattern as `EvidenceRecord.source_kind`), `backend/domains/payments/`
+  stays untouched (disclosed as orphaned tech debt, not silenced). Wired
+  the first real enrollment-time hold check in this codebase
+  (`assessment_session_service.enroll`, C23.3, same transaction
+  boundary — the Stripe domain's own hold check was previously the only
+  one, and only ever ran at degree-clearance time, never at exam-session
+  enrollment). Added the student administrative dossier (T8, BOOK-23
+  §5) in full: `student_dossiers`/`dossier_documents`/
+  `matriculation_checklists` (one row per item, live-resolved — mirrors
+  `clearance_service`'s never-mutate posture), and re-wired the 3
+  previously-dead Finance UI pages (`FinancePayments`,
+  `FinanceReconciliation`, `FinanceHolds`) plus `RegistrarDesk` to this
+  new native domain at their own pre-existing `paymentAPI.js` URL
+  prefix — per BOOK-23 Annex A's own wording ("UI reused over native
+  domain"), not the Stripe domain, correcting my own initial framing of
+  the operator-approved decision after reading that line in full. Found
+  and fixed a real naming collision during conformance testing: a
+  pre-existing, orphaned PI-3/Stripe-billing `invoices` table already
+  occupied that name in every migrated environment — the new AR
+  aggregate is `student_invoices` instead. G13's identity-verification
+  checklist item is honestly scoped to "policy configured + disclosure
+  ack at current version" — no per-student verification-succeeded event
+  exists anywhere in this codebase, and none is fabricated. Two new
+  `ds/` components (`MoneyTable`, `DocChecklist`, UI_AUDIT.md #12/#10,
+  never built in SPRINT-01's original 8) plus the 4 pages migrated from
+  antd to Paper tokens. Also found, during doc-sync, that `ER_MAP.md`
+  had not been updated by any of the 3 preceding sprints (SPRINT-02/03/04
+  NEW-17a/b/c's ~15 preval tables are entirely missing from it, and its
+  own "308 tables" header predates all of them) — disclosed honestly in
+  the file itself rather than silently patched or retroactively
+  backfilled (out of scope for this sprint). 69 new conformance tests
+  (invoices, holds, dossier, payment routes) plus the full existing
+  suite (141 total) verified green against a real, freshly-migrated
+  disposable Postgres; the combined migration's up round-trip clean.
+  AP/budgets (Ch. 3-4) and Ch. 8 planning & control remain entirely
+  target — NEW-20b/NEW-30. BOOK-23 bumped to v0.3 (Annex A refined:
+  AR slice + T8 → exists, every remaining gap named explicitly rather
+  than left implicit).
+
 - **SPRINT-04/NEW-17c — rule packs, registries, VRA (F3)** (2026-07-30,
   `dlu_builder_tk`, third slice of G17): versioned CDS-specific
   derogations (`cds_rule_packs`, A6 addition — the one concrete rule
