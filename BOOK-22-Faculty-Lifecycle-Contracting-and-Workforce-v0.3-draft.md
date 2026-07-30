@@ -1,5 +1,5 @@
 # BOOK-22 — Faculty Lifecycle, Contracting & Human Workforce
-### DAS v0.2-draft · Layer: Institution / Trust · Status: PARTIALLY IMPLEMENTED (Step 1-2, SPRINT-08/NEW-20a) — Step 3 + T9 remain target-state
+### DAS v0.3-draft · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3, T4 complete) — T9 remains target-state
 
 > Closes **G18** (teacher onboarding, authoring contractualization with digital signature,
 > and the HR/workload backbone are absent from the Turnkey baseline). Normativizes the
@@ -11,8 +11,15 @@
 > **v0.2 (SPRINT-08/NEW-20a):** Step 1 (onboard) and Step 2 (contract + ordered QES
 > signing) are real, implemented, conformance-verified (`ER_MAP.md` §18; `ER_MAP_TARGET.md`
 > T4 ✅ parte 1/2). Two corrections to this Book's own text found during implementation —
-> see the inline note after Step 2 and Annex A below; Step 3 (milestones/deliverables) and
-> T9 (workload ledger) are unchanged target-state, proposed SPRINT-09/NEW-20b.
+> see the inline note after Step 2 and Annex A below.
+>
+> **v0.3 (SPRINT-09/NEW-20b):** Step 3 (milestone/deliverable/review, T4 now 9/9 tables
+> complete) is real, implemented, conformance-verified (`ER_MAP.md` §18; `ER_MAP_TARGET.md`
+> T4 ✅ complete). Two more corrections found during implementation — see the inline notes
+> after §3/§6 and Annex A below (the "FEX format" false-friend recurred and was
+> re-corrected; the executed-copy archival correction from v0.2 also applies to how
+> `SupplierInvoice` generation reads a milestone, not `issued_document_credentials`). T9
+> (workload ledger) remains unchanged target-state, proposed a later sprint.
 
 ---
 
@@ -64,6 +71,25 @@ Rules:
 - R22.4 The design lock (milestone 1) makes CLO/MLO structure immutable except through a
   change-request that reopens the design gate.
 
+**Corrections, SPRINT-09/NEW-20b:**
+(1) "Deliverable content" above assumes real FEX/CLO/MLO integration this sprint does NOT
+build — `engagement_deliverables.content_ref_type`/`content_ref_id` are a SOFT reference
+(no FK, never dereferenced) to a `course_exchange_service` FEX export or a `CourseVersion`
+row; the actual CLO/MLO/exam/bibliography content lives in those OTHER domains, not
+inspected here. `deliverable_reviews.checklist` is a free-form JSON dict a reviewer fills
+in manually (e.g. `{"clo_count_in_range": true, ...}`), not a computed check against real
+course structure. (2) R22.2 is NOT literally event-driven in this sprint's implementation:
+`MilestoneApproved` IS emitted, but nothing listens to it — `supplier_invoices` generation
+is an explicit follow-up call (`ap_service.generate_supplier_invoice_from_milestone`),
+gated only by `milestone.status == 'approved'`. "Manual invoice creation forbidden" IS
+true (that function is the sole writer), just not via an event subscriber. (3) R22.4's
+design lock is enforced ONLY within this domain (`reopen_milestone`, reason required) —
+no integration with `course_governance.py`'s own, separate content-editing locks. (4) The
+"FEX format" wording is a recurring false-friend across this Book's own drafts:
+`course_fex.py` is "Final Course Examination", an unrelated domain (SPRINT-08.md
+correction #5, SPRINT-09.md correction #2) — the real exchange format lives in
+`course_exchange_service.py`.
+
 ## 3. State machines
 
 **Engagement:** `draft → pending_signatures → executed → in_delivery → completed`
@@ -94,10 +120,11 @@ supervision, committee duty, and authoring engagement posts to
 
 - C22.1 ✅ Fixture: contract execution with a missing university-side signature → MUST fail
   (SPRINT-08/NEW-20a, `tests/conformance/test_faculty_engagement.py`).
-- C22.2 Property: sum of `fee_share_pct` over milestones of one engagement = 100. Target —
-  `engagement_milestones` (SPRINT-09/NEW-20b) doesn't exist yet; SPRINT-08 built the
-  analogous one-level-up check on `authoring_engagements.design_fee_pct`/
-  `full_course_fee_pct` itself (DB CHECK, sums to 100) as a declared-only placeholder.
+- C22.2 ✅ Property: sum of `fee_share_pct` over milestones of one engagement = 100
+  (SPRINT-09/NEW-20b, `tests/conformance/test_milestone_ap_budget.py` — the 2
+  `engagement_milestones` rows are auto-created at engagement execution, mirroring
+  `AuthoringEngagement.design_fee_pct`/`.full_course_fee_pct`, already CHECK-summed to
+  100 since SPRINT-08).
 - C22.3 ✅ Reproducibility: the executed contract PDF re-generates byte-identically from
   engagement data + template version (SPRINT-08/NEW-20a; NOT a document credential —
   see the §2 correction above).
@@ -112,8 +139,8 @@ supervision, committee duty, and authoring engagement posts to
 |---|---|---|
 | Faculty profile/assignments | `faculty_profiles`, `faculty_assignments`, `faculty_workspace.py` | ✅ activation gated by onboarding verification (`onboarding_status`, SPRINT-08/NEW-20a) |
 | QES signature | `qes_signature_ref`, `qes.py` (G3 ✅) | ✅ reused for engagement signatures — 3rd subject column `dlu_engagement_signature_id` (SPRINT-08/NEW-20a); catalog signatures still target |
-| FEX packages | `course_fex.py` is an unrelated domain ("Final Course Examination", not exchange format — corrected, SPRINT-08.md) — the real exchange-format code is `course_exchange_service.py`, FEX v1.3 | `authoring_engagements.fex_format_version` — a SOFT string reference only, not validated against that service this sprint |
+| FEX packages | `course_fex.py` is an unrelated domain ("Final Course Examination", not exchange format — corrected TWICE now, SPRINT-08.md #5 and SPRINT-09.md #2, a recurring false-friend in this Book's own drafts) — the real exchange-format code is `course_exchange_service.py`, FEX v1.3 | `authoring_engagements.fex_format_version` + `engagement_deliverables.content_ref_type/_id` — both SOFT references only, never validated against that service |
 | Document credentials | `issued_document_credentials` (G9/G10 ✅) | **corrected, SPRINT-08/NEW-20a**: executed contracts are NOT archived here — see §2/§6 correction notes above; archived directly on `authoring_engagements` instead |
-| New tables | ✅ 6/9 real (SPRINT-08/NEW-20a): `faculty_onboarding_journeys`, `faculty_documents`, `faculty_document_verifications`, `contract_templates`, `authoring_engagements`, `engagement_signatures` | T4 remaining 3/9 (`engagement_milestones`, `engagement_deliverables`, `deliverable_reviews`); T9: 3 tables |
-| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2) | Step 3 + T9 (workload ledger), proposed **NEW-20b** |
-| Register | ✅ **G18** added to TRACEABILITY, marked done for Step 1-2 | Step 3 + T9 remain open in the register |
+| New tables | ✅ 9/9 real: `faculty_onboarding_journeys`, `faculty_documents`, `faculty_document_verifications`, `contract_templates`, `authoring_engagements`, `engagement_signatures` (SPRINT-08/NEW-20a); `engagement_milestones`, `engagement_deliverables`, `deliverable_reviews` (SPRINT-09/NEW-20b) | T9: 3 tables (`hr_positions`/`hr_contracts`/`faculty_workload_entries`) remain target |
+| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2); ✅ **SPRINT-09/NEW-20b** (milestone/deliverable/review, Step 3) | T9 (workload ledger), proposed a later sprint |
+| Register | ✅ **G18** added to TRACEABILITY, marked done for Step 1-3 (T4 complete) | T9 remains open in the register |

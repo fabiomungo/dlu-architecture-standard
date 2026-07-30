@@ -1,9 +1,12 @@
 # BOOK-23 — Financial Operations & Administrative Backbone
-### DAS v0.3-draft · Layer: Institution / Delivery · Status: DRAFT (target-state extension)
+### DAS v0.4-draft · Layer: Institution / Delivery · Status: IMPLEMENTED (Ch. 2-4, T7 complete + T8) — Ch. 8 remains target-state
 *(v0.2: adds Ch. 8 — Financial Planning & Control, sprint NEW-30 — still target, not built.
 v0.3: SPRINT-05/NEW-19 implements the AR slice (Ch. 2, minus R23.1's automatic trigger) and
 the full student dossier (Ch. 5, T8) — see Annex A for exactly what is real vs. still target.
-AP/budgets (Ch. 3–4, NEW-20b) and Ch. 8 planning & control (NEW-30) remain entirely target.)*
+AP/budgets (Ch. 3–4, NEW-20b) and Ch. 8 planning & control (NEW-30) remain entirely target.
+v0.4: SPRINT-09/NEW-20b implements the AP slice (Ch. 3) + budgets with real commitment
+accounting (Ch. 4) — T7 now 9/9 tables complete. Ch. 8 planning & control (NEW-30) remains
+entirely target — see Annex A for what changed.)*
 
 > Closes **G19** (native invoicing, reconciliation, budgets and the student administrative
 > dossier are absent — today they live only in the external ERP and PagoPA rails).
@@ -55,17 +58,33 @@ why) `+invoice_lines` are first-class: tuition, fees, stamps. Lifecycle:
 
 ## 3. Payables — the faculty side (AP)
 
-`supplier_invoices` are generated exclusively by `MilestoneApproved` (BOOK-22).
-`payment_runs` batch approved payables; execution requires role `cfo` approval and is
-performed by the banking/ERP driver. Rule R23.5: an AP invoice without a matching
-approved milestone is structurally impossible (FK + conformance check).
+✅ **Implemented SPRINT-09/NEW-20b** (`supplier_invoices`/`supplier_invoice_lines`/
+`payment_runs`, `backend/services/ap_service.py`). `supplier_invoices` are generated
+exclusively by `generate_supplier_invoice_from_milestone` — a REAL, NOT NULL FK
+(`milestone_id -> engagement_milestones.id`, `models_finance.py`) makes R23.5 ("an AP
+invoice without a matching approved milestone is structurally impossible") true at the DDL
+level, not just a conformance check; the function additionally requires
+`milestone.status == 'approved'` (defense in depth). `MilestoneApproved` (BOOK-22) IS
+emitted at that point, but generation itself is an explicit follow-up call, not an event
+subscriber — correction, see BOOK-22 v0.3 §2. `payment_runs` batch `pending` invoices;
+approval requires `finance_service.CFO_ROLES` (reused, not a new `cfo`-only check);
+execution is a MOCK driver (`_mock_execute_payment_run` — no real banking/ERP integration
+this sprint, as this chapter's own "mock ok" already anticipated).
 
 ## 4. Budgets
 
-`budgets` (+`budget_lines`) per fiscal year, department/program dimensioned.
-Authoring engagements and payment runs impute to budget lines at authorization time
-(commitment accounting), giving the CFO dashboard (BOOK-24) budget-vs-actual without
-extraction jobs.
+✅ **Implemented SPRINT-09/NEW-20b** (`budgets`/`budget_lines`, same file/service).
+`AuthoringEngagement.budget_line_id` (nullable — not every engagement is budget-tracked)
+imputes `total_fee_cents` to `committed_amount_cents` at engagement EXECUTION (the real
+authorization event); `payment_runs` execution moves that SAME amount from
+`committed_amount_cents` to `spent_amount_cents` (decrement + increment together) for
+every invoice in the run — `committed` always reflects OUTSTANDING (not-yet-paid)
+commitments, real commitment accounting, not an append-only ledger. A `terminated`
+engagement's un-invoiced commitment is not reconciled this sprint (honest, disclosed gap).
+New page `frontend/src/pages/finance/APBudgetDashboard.js`
+(`/admin/finance/ap-budget`) — role-gated on the REAL backend check (`cfo`/`admin`/
+`super_admin`), not the sibling AR pages' `finance_admin` (a pre-existing frontend/backend
+role-naming drift this sprint didn't introduce or fix).
 
 ## 5. The student administrative dossier (T8)
 
@@ -96,8 +115,10 @@ remains target; no certificate-generation code reads `student_dossiers`/`dossier
 - C23.1 ✅ **Verified SPRINT-05/NEW-19** Property: `paid` state unreachable without a
   reconciliation row (or audited CFO override) — `tests/conformance/test_finance_invoices.py`,
   against a real migrated Postgres.
-- C23.2 ⚠ Not implemented (AP side, NEW-20b, still target): AP invoice insert without approved
-  milestone → MUST fail.
+- C23.2 ✅ **Verified SPRINT-09/NEW-20b**: an AP invoice insert without an approved milestone
+  MUST fail — both the service-layer guard (`ap_service.APError`) and a raw FK-violating
+  insert (rejected by Postgres itself) are tested,
+  `tests/conformance/test_milestone_ap_budget.py`, against a real migrated Postgres.
 - C23.3 ✅/⚠ **Partially verified SPRINT-05/NEW-19**: a financial hold blocks session enrollment
   in the same transaction boundary — verified
   (`tests/conformance/test_finance_holds.py::test_c23_3_active_hold_blocks_enrollment_then_release_allows_it`,
@@ -146,12 +167,13 @@ funnel data pinned at snapshot date.
 | PagoPA | `pagopa_payment_position`, `pagopa_notification_log`, `pagopa.py` | reconciliation source |
 | ERP | `frappe_*` mappings + sync jobs | driver |
 | Native AR ✅ (NEW-19) | `student_invoices`, `invoice_lines`, `payment_reconciliations` (`backend/database/models_finance.py`), `finance_service.py`, `backend/api/routes/invoices.py` (`/api/invoices`) | R23.1's automatic trigger + Ch. 8 fee schedules |
+| Native AP + budgets ✅ (NEW-20b) | `supplier_invoices`, `supplier_invoice_lines`, `payment_runs`, `budgets`, `budget_lines` (same `models_finance.py`), `ap_service.py`, `budget_service.py`, `backend/api/routes/ap.py` (`/api/supplier-invoices`, `/api/payment-runs`), `backend/api/routes/budgets.py` (`/api/budgets`) | Ch. 8 planning objects still read nothing from this slice yet |
 | Administrative holds ✅ (NEW-19) | `administrative_holds` (unifies 3 previously-incompatible hold concepts: native/`financial_holds`-Stripe/`frappe_financial_hold` — see `ER_MAP.md` "Finanza & Fascicolo"), `holds_service.py`, enrollment gate wired into `assessment_session_service.enroll` (C23.3) | credential-issuance gate + automatic overdue→hold sweep + GPS route-constraint read |
 | Student dossier ✅ (NEW-19) | `student_dossiers`, `dossier_documents`, `matriculation_checklists` (`models_student_dossier.py`), `student_dossier_service.py` | auto-creation from `ApplicantMatriculated`, feeds certificate generation (C23.4) |
-| Finance UI ✅ (NEW-19) | `FinancePayments`, `FinanceReconciliation`, `FinanceHolds`, `RegistrarDesk` re-wired to the **native** domain above via `backend/api/routes/payments.py` (`/api/v1/payments/*`, the pages' own pre-existing URL prefix) — NOT the pre-existing, orphaned Stripe domain (`backend/domains/payments/`, zero HTTP routes, stays untouched/out of scope — genuine tech debt for a future domain owner, undocumented anywhere before this sprint found it) | — |
+| Finance UI ✅ (NEW-19 + NEW-20b) | `FinancePayments`, `FinanceReconciliation`, `FinanceHolds`, `RegistrarDesk` re-wired to the **native** AR domain via `backend/api/routes/payments.py` (`/api/v1/payments/*`) — NOT the pre-existing, orphaned Stripe domain (`backend/domains/payments/`, zero HTTP routes, stays untouched/out of scope); new `APBudgetDashboard.js` (`/admin/finance/ap-budget`, NEW-20b) for the AP/budget slice, role-gated on the REAL `cfo`/`admin`/`super_admin` check (not the sibling pages' `finance_admin`, a pre-existing drift) | — |
 | ds/ components ✅ (NEW-19) | `MoneyTable`, `DocChecklist` (`frontend/src/components/ds/`) | — |
 | Billing (platform) | `billing.py`, `subscriptions` | unchanged (tenant-level) |
 | Certificates | G9 ✅ document credentials | generated from dossier (C23.4, still target) |
-| New tables | ✅ T7 AR slice: 4/9 tables (`student_invoices`, `invoice_lines`, `payment_reconciliations`, `administrative_holds`); ✅ T8: 3/3 tables | T7 AP/budget slice: 5 tables (`supplier_invoices`, `supplier_invoice_lines`, `payment_runs`, `budgets`, `budget_lines`); Ch. 8: `fee_schedules(+lines)`, `revenue_forecasts`, `cashflow_projections`, `financial_scenarios`, `period_closes`, `variance_analyses` |
-| Sprint | ✅ **NEW-19** (AR slice + dossier, this sprint) | **NEW-20b** (AP+budget), **NEW-30** (planning & control, Ch. 8) |
-| Register | ✅ **G19** added to TRACEABILITY gap register | — |
+| New tables | ✅ T7 complete: 9/9 tables (`student_invoices`, `invoice_lines`, `payment_reconciliations`, `administrative_holds` — NEW-19; `supplier_invoices`, `supplier_invoice_lines`, `payment_runs`, `budgets`, `budget_lines` — NEW-20b); ✅ T8: 3/3 tables | Ch. 8: `fee_schedules(+lines)`, `revenue_forecasts`, `cashflow_projections`, `financial_scenarios`, `period_closes`, `variance_analyses` |
+| Sprint | ✅ **NEW-19** (AR slice + dossier); ✅ **NEW-20b** (AP + budgets) | **NEW-30** (planning & control, Ch. 8) |
+| Register | ✅ **G19** added to TRACEABILITY gap register, marked done for Ch. 2-5 (T7 complete + T8) | Ch. 8 remains open in the register |

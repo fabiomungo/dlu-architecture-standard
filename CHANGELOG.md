@@ -2,6 +2,72 @@
 
 ## Unreleased
 
+- **SPRINT-09/NEW-20b — milestone, deliverable, AP, budget (BOOK-22 §2
+  Step 3 + BOOK-23 §3-4, closes G18 + G19 completely — T4 and T7 both
+  now 9/9 tables)** (2026-07-30, `dlu_builder_tk`): the second and final
+  slice of the Course Creation v1.0 faculty pipeline, plus native
+  Accounts-Payable and budget commitment accounting. `engagement_
+  milestones` (2 rows, `course_design` 30% / `full_course` 70%) are
+  created automatically as a side effect of `execute_engagement`
+  (SPRINT-08's own function, extended) — not a separate step a caller
+  must remember to invoke; their `fee_share_pct` mirrors `Authoring
+  Engagement.design_fee_pct`/`.full_course_fee_pct`, already CHECK-summed
+  to 100 (C22.2, now verified end-to-end). `engagement_deliverables`/
+  `deliverable_reviews` add the release → review → approve cycle (R22.1:
+  only a passing review promotes a milestone to `approved`, never set
+  directly). `content_ref_type`/`content_ref_id` are a soft reference to
+  a `course_exchange_service` FEX export or a `CourseVersion` row —
+  found the SAME "FEX format" false-friend again in this sprint's own
+  plan text (`course_fex.py` is "Final Course Examination", unrelated;
+  already corrected once in SPRINT-08, re-corrected here). Design lock
+  (BOOK-22 §2): an `approved`/`invoiced`/`paid` `course_design` milestone
+  refuses a new deliverable release until `reopen_milestone` (reason
+  required) — enforced only within this domain, no integration with
+  `course_governance.py`'s own, unrelated content-editing locks.
+  `supplier_invoices` are generated exclusively by
+  `ap_service.generate_supplier_invoice_from_milestone` — a REAL,
+  NOT NULL FK (`milestone_id -> engagement_milestones.id`) makes R23.5/
+  C23.2 ("an AP invoice without an approved milestone is structurally
+  impossible") true at the DDL level, not just a service-layer check
+  (both are tested). `payment_runs` batch invoices; approval reuses
+  `finance_service.CFO_ROLES` (not a new role); execution is a MOCK
+  driver (no real banking/ERP integration this sprint, as BOOK-23 §3
+  already names explicitly). Real commitment accounting (BOOK-23 §4):
+  `AuthoringEngagement.budget_line_id` (nullable — not every engagement
+  is budget-tracked) commits `total_fee_cents` to a `BudgetLine.
+  committed_amount_cents` at engagement execution; payment-run execution
+  moves that same amount to `spent_amount_cents` (decrement + increment
+  together) — corrected mid-implementation from an initially-assumed
+  append-only ledger (which would have left `committed` permanently
+  overstated instead of reflecting outstanding commitments). New
+  frontend: milestone/deliverable sections added to `FacultyOnboarding.js`
+  (release deliverables) and `FacultyVerificationQueue.js` (review +
+  reopen), and a new `pages/finance/APBudgetDashboard.js`
+  (`/admin/finance/ap-budget`) — role-gated on the REAL backend check
+  (`cfo`/`admin`/`super_admin`), not the sibling AR finance pages'
+  `finance_admin` (a pre-existing frontend/backend role-naming drift,
+  not introduced or fixed by this sprint). **Found and fixed a real bug
+  before writing any new code**: SPRINT-08's own migration (still open
+  in PR #84) had a `down_revision` pointing at SPRINT-07's unmerged
+  migration chain — a leftover from before SPRINT-08 was correctly
+  re-branched off `origin/main` mid-closure; `alembic heads` failed to
+  resolve. Corrected directly on PR #84 (the real chain tip is
+  SPRINT-06/NEW-18's migration), not worked around locally, since
+  SPRINT-09 depends on that same chain being valid. Migration verified
+  via a full upgrade-from-zero + downgrade + re-upgrade round-trip
+  against a real disposable Postgres (8 new tables + 1 new column). 7
+  new conformance tests (C22.2, C23.2 — both service-guard and raw-FK
+  paths — design lock, CFO gate, full E2E fixture from engagement
+  execution through paid payment run with budget commitment verified at
+  every step), full regression sweep clean on a genuinely fresh
+  container (Phase1: 104 passed; conformance: 190/193, the 3 remaining
+  failures a pre-existing, unrelated test-fixture collision between
+  `test_admission_orientation.py`/`test_admission_e2e_fixture.py`
+  (SPRINT-06) and the real preval pilot CDS-grid seed data (SPRINT-03/04)
+  — both independently hardcode the literal program name "L-33 Economia
+  e Commercio," confirmed via traceback inspection, not touched by this
+  sprint's own domain).
+
 - **SPRINT-08/NEW-20a — faculty onboarding + authoring-contract signing
   (BOOK-22 §2 Step 1-2, closes G18 parte 1/2)** (2026-07-30,
   `dlu_builder_tk`): the first slice of the Course Creation v1.0 faculty
