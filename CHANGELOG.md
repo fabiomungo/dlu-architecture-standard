@@ -2,6 +2,42 @@
 
 ## Unreleased
 
+- **SPRINT-04/NEW-17c — rule packs, registries, VRA (F3)** (2026-07-30,
+  `dlu_builder_tk`, third slice of G17): versioned CDS-specific
+  derogations (`cds_rule_packs`, A6 addition — the one concrete rule
+  type documented anywhere in the source material,
+  `max_cap_per_ssd_family`, proven via a synthetic fixture since neither
+  of the 2 pilot CDS grids has a real derogation on record), career/
+  certification validity registries (`career_validity_registry`/
+  `certification_registry`, A3/A4 — promotes NEW-17b's `engine.py`
+  in-code certification stand-in to a real table), VRA for master's
+  applicants (`vra_evaluations`, A7 — 4 outcomes, first-applicable-wins;
+  `run_automatic_evaluation` now hard-blocks any magistrale case with no
+  prior VRA record, C21A.4), a third per-row confidence factor +
+  targeted escalation flag (A8), and a public, stateless, zero-
+  persistence `POST /api/preval-requests/instant-estimate` (multi-CDS
+  what-if preview, usable before any formal case exists). Pre-flight
+  found the 178-page source manual isn't extractable in this
+  environment (no PDF renderer installed) — exactly the situation this
+  sprint's own prerequisites anticipated; all registries are seeded only
+  with the concrete examples already documented in PREVALUTAZIONE_SPEC/
+  BOOK-21A, the rest is explicitly open data-entry, not fabricated.
+  Found and corrected my own earlier pre-flight assumption during
+  verification: SPRINT-02's HITL override is audit-only — it never
+  mutates a sheet's actual row data — so C21A.6 (granting the seminar
+  row near an admission-year threshold without real surplus) is an
+  honestly unresolved gap, not something "verified via the existing
+  mechanism" as first written; a future "amend sheet row" endpoint is a
+  prerequisite. Also closed a real test gap found in NEW-17b's own
+  engine logic (C21A.3, student-choice partial coverage correctly
+  rejected — the logic already existed, it just had no dedicated test).
+  32 new conformance tests; BOOK-21A bumped to v0.2 (Annex A refined —
+  F1-F3 all live, only F4 remains, C21A.6 flagged as an open gap).
+  Verified end-to-end against a disposable Postgres: the combined
+  migration's up/down/up round-trip clean, seed script confirmed
+  idempotent, 72/72 conformance tests green, Phase1 (104 tests)
+  regression sweep clean.
+
 - **SPRINT-03/NEW-17b — real document extraction + deterministic matching
   engine (F2)** (2026-07-30, `dlu_builder_tk`, second slice of G17): the
   admissions-funnel case workflow's manual evaluation step (SPRINT-02)
