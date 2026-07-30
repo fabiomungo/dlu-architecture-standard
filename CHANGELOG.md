@@ -2,6 +2,59 @@
 
 ## Unreleased
 
+- **SPRINT-10/NEW-21 — HR positions/contracts + the workload ledger
+  (BOOK-22 §4, closes G18 completely — T4 and T9 both now 100%)**
+  (2026-07-30, `dlu_builder_tk`): the HR/workload backbone half of BOOK-22
+  that SPRINT-08/09 left target. `hr_positions`/`hr_contracts` (default
+  schema, column `tenant_id` — NOT `platform` as the original target
+  sketch assumed, consistent with the rest of this domain) plus
+  `faculty_workload_entries`, a REAL append-only ledger: a Postgres
+  `BEFORE UPDATE OR DELETE` trigger rejects any mutation outright
+  (verified both ORM-level and raw-SQL, C22.4) — chosen over a DB-role
+  `REVOKE UPDATE/DELETE` because this codebase has a single application
+  role that doesn't cleanly support per-role grants. Corrections post as
+  new, opposite-sign rows (`is_compensating=True`, `compensates_entry_id`
+  back-reference, `reason` required by a CHECK constraint), never a
+  mutation of the original. Entries are sourced automatically from 3
+  Event Mesh subscriptions via a genuinely new `hr-workload` consumer
+  group (STX-03 framework) — deliberately NOT another handler bolted onto
+  the pre-existing `n8n-bridge` group, which would have been cheaper but
+  semantically wrong (this program's standing "don't shoehorn into the
+  wrong-named bucket" discipline): `teaching_assignment.confirmed` (a
+  brand-new event this sprint — no event existed before for teaching
+  assignments, a real gap found and closed in pre-flight, wired into
+  `teaching_sections.py`'s `add_faculty`), `milestone.approved` (real
+  since SPRINT-09/NEW-20b), and `committee.verdict.recorded` (real since
+  NEW-06 — posts ONE workload entry per `CommitteeMember` on the
+  committee, not only the president/secretary named in the event
+  payload). No source event this sprint carries real duration data —
+  every entry posts `unit='act', quantity=1.0`; `unit='hours'` is
+  reserved for a future tutoring source (T5/SPRINT-13) with real
+  start/end timestamps. New router `backend/api/routes/hr.py` (3
+  sub-routers: `/api/hr-positions`, `/api/hr-contracts`, `/api/workload`)
+  and a minimal staff-facing frontend, `OrganicoWorkloadDesk.js`
+  (`/organization/organico-workload`) — positions, contracts, the entry
+  ledger, a compensating-entry form, and the `workload_summary`
+  "mentorship dividend" view (BOOK-07: count of acts per `entry_type`,
+  not hours). 7 new conformance tests against a real disposable Postgres
+  (C22.4 append-only trigger — ORM update + raw delete + the
+  reason-required CHECK constraint; 2 Event Mesh sources posting through
+  the real consumer handlers with hand-built envelopes, no Redis needed;
+  the `workload_summary` mentorship-dividend query, including
+  compensating-entry net-quantity accounting). Fixed one real, pre-
+  existing test as a direct consequence of this sprint's own closed-set
+  change: `test_stx03_event_mesh.py::test_consumer_groups_closed_set`
+  hardcodes the full `CONSUMER_GROUPS` tuple and needed `"hr-workload"`
+  added — confirmed via a stash/restore isolation check that this was
+  the only regression this sprint introduced (the `test_new06_thesis_
+  committee.py` SQLite/UUID-dialect errors seen during the same sweep
+  reproduce identically with every SPRINT-10 change stashed out, so are
+  pre-existing and unrelated). Full regression sweep clean on a
+  genuinely fresh container (Phase1: 104 passed; event mesh unit suite:
+  18/18; conformance: 197/200, the same 3 pre-existing, unrelated
+  `cds_grids`-seed/test-fixture collision documented in SPRINT-09's own
+  entry below).
+
 - **SPRINT-09/NEW-20b — milestone, deliverable, AP, budget (BOOK-22 §2
   Step 3 + BOOK-23 §3-4, closes G18 + G19 completely — T4 and T7 both
   now 9/9 tables)** (2026-07-30, `dlu_builder_tk`): the second and final
