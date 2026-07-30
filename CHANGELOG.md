@@ -2,6 +2,71 @@
 
 ## Unreleased
 
+- **SPRINT-08/NEW-20a — faculty onboarding + authoring-contract signing
+  (BOOK-22 §2 Step 1-2, closes G18 parte 1/2)** (2026-07-30,
+  `dlu_builder_tk`): the first slice of the Course Creation v1.0 faculty
+  pipeline. Step 1 (onboard): register → upload personal_id/career_
+  transcript/fiscal_data → back-office verification (`faculty_document_
+  verifications`, DB-backstopped required rejection reason) →
+  verification-complete auto-activates the real, pre-existing
+  `faculty_profiles` row (new `onboarding_status` column, `active` left
+  untouched). Step 2 (contract): auto-drafted from a JSON-structured
+  `contract_templates` instance (no Jinja/docxtpl anywhere in this
+  codebase — the renderer is a pure, reportlab, byte-identical-on-
+  identical-input function, same discipline as `document_credential_
+  service.py`), ordered multi-party QES signing (university roles
+  `provost`/`cfo` first, then the instructor — enforced via `sequence_
+  order`), execution archives the contract directly on `authoring_
+  engagements` (`executed_pdf_storage_uri`/`content_hash`/
+  `source_snapshot`) rather than `issued_document_credentials` as
+  BOOK-22's own Annex A had assumed — that table is for publicly
+  verifiable credentials (twin_id NOT NULL FK, closed document_type
+  CHECK), a faculty contract is an internal HR/legal record with no such
+  need. `qes_signature_ref` (NEW-12) extended from 2 to 3 mutually
+  exclusive subjects (`dlu_engagement_signature_id`), reusing the real
+  QES submission pipeline (`submit_engagement_signature_for_qes`)
+  instead of forking a parallel one. A decline on any signature returns
+  the engagement to `draft` and resets every other signature row to
+  `pending`; `resubmit_for_signatures` restarts a fresh ordered cycle.
+  C22.5 (every staff read of a `faculty_documents` row is audited) reuses
+  the real, existing generic `platform.audit_logs` table rather than a
+  new dedicated one. New frontend: `pages/faculty/FacultyOnboarding.js`
+  (self-service register/upload/track/sign), `pages/institution/
+  FacultyVerificationQueue.js` (staff document-verification queue +
+  university-side signature actions), and a new `ds/SignatureFlow`
+  component (ordered multi-party signature sequence renderer).
+  **Found and fixed two real bugs during verification, both directly
+  blocking this sprint's own work rather than pre-existing-but-unrelated
+  gaps this program otherwise only discloses:** (1) `platform.faculty_
+  profiles` — a real, actively-used table — had NEVER had an Alembic
+  migration anywhere in this codebase (confirmed via exhaustive grep;
+  only its sibling `faculty_assignments` did), backfilled idempotently as
+  this sprint's own migration's "step 0" (`checkfirst=True` table
+  create); (2) `PlatformAuditLog.ip_address` was declared `String(45)`
+  in the ORM against a REAL Postgres `INET` column — any insert of that
+  model via an async (asyncpg) session crashed with `DatatypeMismatch
+  Error`, even with the field left `NULL`, because asyncpg's explicit
+  per-parameter type cast didn't match the real column type; this was
+  already live for the one other caller of this table
+  (`content_workflow.py`'s section-status audit log), simply never
+  exercised against a real Postgres+asyncpg connection before. Fixed via
+  `String(45).with_variant(INET(), "postgresql")` — no migration needed,
+  the real column was already correct, only the ORM declaration was
+  wrong. Also closed a real authorization gap found while wiring the
+  frontend: the `submit-signature` endpoint originally let ANY
+  authenticated user submit a `provost`/`cfo` signature with no role
+  check at all — now staff-gated (instructor retains self-service via a
+  `FacultyProfile.user_id` identity check). Migration verified via a
+  full upgrade-from-zero + downgrade + re-upgrade round-trip against a
+  real disposable Postgres. Step 3 (`engagement_milestones`/
+  `engagement_deliverables`/`deliverable_reviews`) and T9 (workload
+  ledger) remain target-state, proposed SPRINT-09/NEW-20b. 11 new
+  conformance tests (C22.1/C22.3/C22.5), full regression sweep clean
+  (Phase1: 104 passed; conformance: 209 passed) — a pre-existing,
+  unrelated `platform.legal_holds`/wave2-bootstrap schema-drift bug was
+  found incidentally during the sweep and disclosed, not fixed (out of
+  this sprint's own domain).
+
 - **SPRINT-07/NEW-17d — preval golden-set + eval-harness gate, closes
   C21A.6 (G17, F4 — Milestone M1 functionally complete)**
   (2026-07-30, `dlu_builder_tk`): the last open phase of the credit
