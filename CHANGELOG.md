@@ -2,6 +2,69 @@
 
 ## Unreleased
 
+- **SPRINT-07/NEW-17d — preval golden-set + eval-harness gate, closes
+  C21A.6 (G17, F4 — Milestone M1 functionally complete)**
+  (2026-07-30, `dlu_builder_tk`): the last open phase of the credit
+  pre-evaluation automation program (BOOK-21A §7). Turned an old,
+  audit-only HITL override into a real correction mechanism —
+  `submit_hitl_review` now accepts structured
+  `corrected_units_validated`/`corrected_units_to_integrate`/
+  `corrected_grid_row_ref`/`corrected_rule_invoked` fields and actually
+  mutates `preval_sheets.rows`/`.totals` for the amended row (the exact
+  "amend sheet row" action BOOK-21A's own Annex A had flagged as a
+  prerequisite for its still-open C21A.6 conformance check since
+  SPRINT-04 — closed here as a side effect of building this sprint's own
+  learning loop, not the primary goal). Every HITL-approved
+  `preval_sheets` row becomes a golden `EvalCase` (T11 eval-harness
+  tables, dataset domain `preval_case` — deliberately not the plan's own
+  literal "credit_pre_evaluation" wording, which collides with a
+  different, unrelated, pre-existing system); because the same builder
+  function always reflects a sheet's CURRENT state, a later HITL
+  correction is picked up automatically the next time the learning loop
+  runs, with no separate "override → golden case" code path. The grader
+  replays the deterministic A6 matching engine against each golden
+  case's pinned grid/rule-pack version and scores it against the
+  human-confirmed sheet — composite ECTS accuracy, per-row
+  precision/recall, and HITL escalation/override rates (by rule and by
+  CDS) are real, computed metrics; VRA-outcome-exactness and
+  extraction/SSD component accuracy are honestly reported as `None` — no
+  ground truth exists in this codebase to measure them independently,
+  and no number is fabricated for either. A real CI gate
+  (`scripts/preval_eval_gate.py`) now blocks the actual production image
+  build/push job (`build-push-images.yml`) on a failing composite-
+  accuracy verdict — not a symbolic check, a working dependency in the
+  real deploy pipeline. A weekly report and a per-CDS partial
+  auto-approval threshold config were also built (the latter defaults
+  `enabled=False` and is not wired into the real HITL flow anywhere this
+  sprint — turning it on is explicitly left to a future sprint, once a
+  real, non-provisional certification exists). **Honest, load-bearing
+  caveat, not a footnote**: this environment has zero real historical
+  approved-sheet data (confirmed in pre-flight, matching the plan's own
+  risk register) — the golden set is bootstrap-sized (one demo fixture
+  plus whatever live sprint-02-06 traffic has produced), so today's
+  "pass" verdict certifies the mechanism works, not a mature
+  ~90%-over-a-real-corpus statistical result; the weekly report's own
+  `certification_status` field reports `"provisional"` below 30 golden
+  cases rather than silently "certified." Also independently
+  investigated and ruled out a claim (from one of two parallel agents on
+  this sprint) that this codebase's established rolled-back-transaction
+  test-fixture pattern silently leaks committed rows — reproduced
+  empirically against a fresh Postgres and confirmed the fixture pattern
+  is sound; the agent had conflated its own manual runs of the new,
+  intentionally-persisting CI gate SCRIPT (a different mechanism by
+  design) with the test suite's separate rollback discipline. BOOK-21A
+  bumped to v0.3 (§7/§8/Annex A rewritten with real measured mechanism
+  and honest gaps, not projections). Milestone **M1 (PreEval + Intake)**
+  is functionally complete — every planned feature across SPRINT-02
+  through SPRINT-07 has shipped and is verified — though
+  `BACKLOG_TARGET.xlsx`'s own row-level bookkeeping for M1 still shows
+  17 stale `Da fare`/`In corso` rows from SPRINT-02/03/04/06, a
+  now-3-times-confirmed pre-existing doc-sync gap (rows never actually
+  written despite prior HANDOVER.md entries claiming otherwise) —
+  disclosed again rather than silently backfilled outside this sprint's
+  own scope; a dedicated backlog-bookkeeping cleanup pass is recommended
+  given the pattern's now-repeated recurrence.
+
 - **SPRINT-06/NEW-18 — admission funnel: intake, titles, orientation,
   matriculation (G17)** (2026-07-30, `dlu_builder_tk`): the full
   prospect-to-matriculated pipeline — `admission_intakes` (versioned
