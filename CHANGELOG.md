@@ -2,6 +2,60 @@
 
 ## Unreleased
 
+- **SPRINT-06/NEW-18 — admission funnel: intake, titles, orientation,
+  matriculation (G17)** (2026-07-30, `dlu_builder_tk`): the full
+  prospect-to-matriculated pipeline — `admission_intakes` (versioned
+  requirements, immutable once open) → `admission_applications` (11-state
+  machine, BOOK-21 §4) → `applicant_qualifications`/`qualification_
+  evaluations` (3-tier AI+HITL, mirroring the BOOK-21A engine's own
+  registry-lookup pattern against `equivalence_rules`/
+  `external_syllabus_records` rather than reusing that system's tables
+  directly) → `eligibility_verdicts` (R21.2 explainable, R21.3 human-
+  actor-gated negative verdicts) → `orientation_recommendations` (reuses
+  `preval_workflow_service.compute_instant_estimate` for a zero-
+  persistence, twin-less recognized-credit preview; a simple standalone
+  ETA estimate, honest `null` cost projection — no fee-schedule data
+  exists yet) → `admission_offers`/`admission_acceptances` →
+  `ApplicantMatriculated` (creates a real `users` row directly — neither
+  existing user-creation function fit a passwordless admitted applicant
+  — plus a `student_twins`/`student_dossiers`/first `student_invoices`
+  row, reusing prior sprints' own services rather than reimplementing
+  them). Pre-flight found the plan's assumed "existing admissions/* UI"
+  was actually a separate, pre-existing, broken CRM lead/opportunity-
+  management surface (`crm.py`, never mounted, several response-shape
+  bugs of its own) — left untouched and disclosed as unrelated tech debt;
+  new pages were built instead for the real application funnel. Also
+  found and disclosed (not silently reconciled) two deliberately separate
+  "credit pre-evaluation" systems already coexisting in this codebase
+  (G16/BOOK-14A's `credit_pre_evaluations` vs. G17/BOOK-21A's
+  `preval_requests`, confirmed via the codebase's own "do NOT reuse...
+  vice versa" comments) — this sprint's qualification engine borrows the
+  latter's approach without merging the two, and `ApplicantMatriculated`
+  does not fabricate a hand-off between them. The 4 backend agents
+  building this sprint each owned entirely separate new files (no shared-
+  file conflicts by construction); the coordinating session wrote the
+  10-table model layer and combined migration itself before delegating,
+  letting every agent develop against an already-migrated real schema.
+  Found and closed one real gap after all agents landed: no list endpoint
+  existed for browsing intakes/applications, only single-id lookups —
+  added `list_intakes`/`list_applications` (service + route + frontend
+  wiring) post-hoc. Verified end-to-end against a real, freshly migrated
+  Postgres: a from-scratch fixture test (this sprint's own DoD) walks
+  lead → application → qualification → eligible → orientation → offer →
+  accept → matriculated using only the real production functions across
+  every module, asserting a real `users`/`student_twins`/
+  `student_dossiers`/`student_invoices` row exists at the end — plus the
+  full existing conformance suite (175 tests) and a Phase1 (104 tests)
+  regression sweep, both clean. Along the way, patched three pre-existing,
+  unrelated infrastructure gaps ad hoc for this sprint's own tests only
+  (a CRM-integration migration whose idempotency guard checks the wrong
+  schema and silently no-ops; `external_courses`' migrated schema drifted
+  from its current ORM model) — disclosed, not fixed at the source (out
+  of scope, different domains). BOOK-21 bumped to v0.2 (Annex A refined:
+  funnel → exists, every remaining gap — C21.5's eval-harness gate, full
+  GPS Pareto orientation, program fee data, onboarding-journey/G16 hand-
+  offs — named explicitly).
+
 - **SPRINT-05/NEW-19 — native student AR, unified administrative holds,
   student dossier (G19)** (2026-07-30, `dlu_builder_tk`): native
   receivables register replacing "invoicing lives only in external
