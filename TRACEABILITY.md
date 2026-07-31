@@ -64,6 +64,26 @@ not narrated row-by-row here until each gap actually closes.
 > timestamp come stringa invece che come letterale SQL `NOW()`/`datetime('now')` — asyncpg
 > rifiutava entrambi contro Postgres reale, mai catturato da test mockati/SQLite. `study_missions`/
 > `mission_activities` (T2 restante) target SPRINT-12/NEW-23.
+>
+> **NEW-23 ✅ (2026-07-31, SPRINT-12, BOOK-16/17 agg., T3 + T2 missioni residuo)** — chiude
+> `study_missions`/`mission_activities` (T2 8/8 ora completo) e l'intero T3 (badge automation +
+> knowledge-map snapshot). Un pipeline STX-13 (credenziali/badge) costruito per intero ma MAI
+> collegato — `credential_criteria_service.evaluate_templates_for_event` aveva un solo
+> chiamante (uno script demo), `badge_credit_rule_service.apply_badge_credit_rules` zero
+> chiamanti — colmato da un nuovo consumer group `course-completion` (STX-03, 4 punti di
+> aggancio) che incatena 3 handler reali: `mastery.updated`→snapshot `pre_course`;
+> `assessment_session.published`→emette un nuovo evento `course.achieved` per-studente (query
+> `AssessmentSessionEnrollment`, PASS pubblicato non rifiutato); `course.achieved`→badge
+> automation (bridge `asyncio.run`, stesso pattern di `esse3_credential_consumers.py`) +
+> snapshot `post_course`. `user_badges` (gamification community) e `course_achievements`
+> (pipeline di rivendicazione manuale) sono falsi amici, non toccati. Missioni giornaliere
+> generate da 3 sorgenti (`coach`/`gps`/`self`); nudging riusa `RISK_DETECTED` (percorso di
+> crisi reale già esistente) + `AcademicCognitiveEngine.run_mission` + `NotificationService`
+> reale, nessuna tabella "log dei nudge" nuova. Bug di design reale trovato e corretto dal
+> proprio test avversariale (non introdotto né segnalato dall'utente): la severità del nudge
+> trattava erroneamente "nessuna missione mai completata" come automaticamente critica,
+> corretto con un helper NON finestrato (`_silence_days`) verificato prima e indipendentemente
+> dal conteggio nella finestra recente.
 
 ---
 

@@ -2,6 +2,72 @@
 
 ## Unreleased
 
+- **SPRINT-12/NEW-23 — badge automation, knowledge-map before/after
+  snapshots, study missions & engagement nudging (BOOK-16/17 agg., T3 +
+  T2 8/8 tables now complete)** (2026-07-31, `dlu_builder_tk`): wires up
+  an entire STX-13 credential/badge pipeline that had been fully built
+  but never connected to anything — `credential_criteria_service.
+  evaluate_templates_for_event` had exactly one caller anywhere in the
+  codebase (a demo seed script) and `badge_credit_rule_service.
+  apply_badge_credit_rules` had zero. A genuinely new Event Mesh consumer
+  group `course-completion` (STX-03, 4 touch points) chains 3 real
+  handlers: `mastery.updated` → captures a `pre_course` knowledge-map
+  snapshot (first occurrence per twin+course); `assessment_session.
+  published` → emits a brand-new, per-student `course.achieved` event for
+  every published, non-refused PASS (queried off `AssessmentSession
+  Enrollment`); `course.achieved` → drives BOTH automatic badge issuance
+  (`achievement_badge_issuances`, idempotent, `attempts` capped at 5,
+  retried by a Celery beat sweep) and a `post_course` snapshot. Async
+  criteria-evaluation/issuance calls are bridged from the sync consumer
+  handler via `asyncio.run()` — the same technique `esse3_credential_
+  consumers.py` already used for its own async HTTP call, now extended to
+  an async DB-touching service. Two false-friend names avoided by
+  building under clearly different names instead of overloading them:
+  `user_badges` (unrelated community/gamification badges) and
+  `course_achievements` (a separate, pre-existing manual-claim pipeline)
+  are untouched. `study_missions`/`mission_activities` close out T2 (now
+  8/8 tables): daily missions generated from 3 sources — `coach` (top
+  scored `Recommendation`, concept-level, so `mission_activities.
+  lesson_id` is nullable by design), `gps` (first `PathStep` of the
+  adopted scenario), `self` (student-created) — completed self-service
+  via a new `/api/missions` surface; the student-facing widget is
+  deliberately named `StudyMissionsFeed.js`, distinct from the existing
+  `MissionsFeed.js` (the workspace triad's own ACE HITL queue — "Missions"
+  already meant something else). Engagement nudging
+  (`nudge_service.py`) reuses real machinery end to end, no new
+  mechanism: a disengaged twin gets a proactive `learning_coach` mission
+  (`AcademicCognitiveEngine.run_mission`, same etiquette-gated pattern
+  SPRINT-11 established) plus a real delivered `Notification`; a
+  severely, long-silent twin instead emits `RISK_DETECTED`, reusing the
+  real crisis-escalation pathway (`student_success_consumers.py` →
+  `flag_risk` HITL) rather than building a second one; the opt-out gate
+  reuses the same `behaviour_analytics` consent flag
+  `behaviour_recompute_service.py` already checks; the cooldown is
+  checked against real, already-sent `Notification` rows, no new "nudge
+  log" table. **Found and fixed a real design bug in this sprint's own
+  new code**, caught by its own adversarial test fixtures rather than
+  reported by the user: the first cut of the nudge-severity check treated
+  "no mission ever completed" as automatically crisis-level, wrongly
+  escalating a twin disengaged for only 1-3 days, and gated severity
+  behind the same 7-day recent-window count used for ordinary nudges, so
+  a genuinely severe 23-25-day-old disengagement never even reached the
+  severity check; corrected with a new, deliberately UN-windowed
+  `_silence_days` helper checked first and independently of the recent
+  window, with crisis escalation never suppressed by the nudge cooldown.
+  Branched from SPRINT-11's own branch (real same-file/migration-chain
+  dependency on `models_student_journey.py`), not fresh off `origin/main`.
+  17 new conformance tests (badge automation incl. redelivery idempotency
+  and no-matching-template skip; snapshot capture idempotency and honest
+  unresolved-identity skip; all 3 course-completion consumer handlers;
+  mission generation across all 3 sources incl. daily-idempotency and
+  self-mission duplicate rejection; nudging incl. opt-out, cooldown, and
+  crisis escalation). Full regression sweep clean on a genuinely fresh
+  container (Phase1: 104 passed, 4 skipped; event mesh unit suite: 18/18;
+  conformance: 202 passed, the same 3 pre-existing, unrelated
+  `cds_grids`-seed/test-fixture collision documented in SPRINT-09/10/11's
+  own entries). *(Milestone M2 will be annotated here together with
+  SPRINT-13's own entry, per this sprint's own Doc-sync note.)*
+
 - **SPRINT-11/NEW-22 — student onboarding, diagnostic assessment, key
   objective (BOOK-06 agg., T2 6/8 tables)** (2026-07-31, `dlu_builder_tk`):
   the day-0 onboarding journey that `matriculation_service.py`'s own
