@@ -2,6 +2,70 @@
 
 ## Unreleased
 
+- **SPRINT-16/NEW-27 — dashboard executive + board governance (BOOK-24
+  §3/§5, G20 FULLY CLOSED, T10 3/3 remaining tables)** (2026-07-31,
+  `dlu_builder_tk`): `governance_actions` (ratify/teach_out/freeze/
+  escalate, actor+role+rationale — rationale is ALWAYS required, unlike
+  `ds/AIProposalCard`, which only gates `reject`; a dedicated form was
+  built instead of forcing that component's contract) is the SOLE
+  write-path from executive command surfaces into the domain (C24.1),
+  verified by a static route audit against an explicit allowlist, not
+  just a fixture. `board_meetings` → `board_resolutions` (typed: policy/
+  catalog_ratification/teach_out/budget) — "a resolution without its
+  object reference is invalid" is a REAL DB `NOT NULL` guarantee, proven
+  by a raw ORM-bypass insert (same technique SPRINT-14 used for C24.3's
+  partial unique index), not merely a service-layer check. **Deliberate,
+  disclosed design decision**: SPRINT-14's own `PolicyVersion`/
+  `CatalogEdition` state machines are already terminal (`'approved'`/
+  `'effective'` are already the real, effective states) with no "board"
+  slot anywhere in their closed transition sets — retrofitting an
+  upstream board gate onto already-shipped, tested SPRINT-14 workflows
+  was out of scope; passing a `policy`/`catalog_ratification`/
+  `teach_out` resolution is a DOWNSTREAM ratification/audit record only.
+  The one exception: passing a `budget` resolution DOES advance real
+  domain state (`Budget.status: draft → active`) — the one type among
+  the four with a real, not-yet-otherwise-reachable state to advance to.
+  Every `pass_resolution` call also inserts a linked `governance_actions`
+  row, unifying the write-path whether a decision originates from a
+  standalone action or a board resolution. New events `GOVERNANCE_
+  ACTION_TAKEN`/`BOARD_RESOLUTION_PASSED` (genuinely new constants —
+  unlike `KPI_BREACHED`, neither was pre-reserved anywhere in the
+  taxonomy before this sprint). All 6 role command surfaces (BOOK-24 §3)
+  re-pointed from the OLD `analytics_kpi_*`/`/api/v1/analytics/*` system
+  — which had ZERO frontend consumers of the real T10 KPI layer before
+  this sprint (`executiveAPI.js` is a genuinely new frontend service) —
+  to the real `/api/executive/*` API, and Paper-migrated (`ds/KpiCard`/
+  `ds/AuditTimeline` — antd `KPIGrid`/`TrendChart`/`ConversionFunnel`
+  removed). Several prior widgets were hardcoded sample data (a fake
+  "Enrollment Conversion Funnel," "Collection Health," "System Health,"
+  quality-score gauges) — dropped rather than carried forward as real.
+  Provost Command (was "Rector's Bridge") adds a genuinely new "pending
+  approvals" composite (`GET /api/academic-governance/pending-approvals`
+  — no tenant-wide listing endpoint existed before, only per-id lookups)
+  alongside its pre-existing real program-health/three-economies/red-
+  posture content. Chairman Board Pack and MKO Funnel are genuinely new
+  pages; HR Command adds one additive `ds/KpiCard` to the pre-existing,
+  already-Paper `OrganicoWorkloadDesk.js` (SPRINT-10), never replacing
+  its live ledger UI. **Honest, disclosed gaps, not built this sprint**:
+  "ILO coverage" (Provost Command) — no ILO-level rollup exists anywhere
+  in this codebase (only PLO coverage, SPRINT-14); cash position, AP
+  aging, and the BOOK-23 Ch. 8 planning & control views (CFO Command).
+  **Self-caught mid-sprint**: created a duplicate `financeAPI.js` before
+  noticing `budgetAPI.js` (SPRINT-09/NEW-20b) already provides the exact
+  same `listBudgets`/`getBudget` interface — deleted the duplicate before
+  it shipped, CFO Command reuses the real, existing client. 17 new
+  conformance tests (`test_board_governance.py`): C24.1 route audit;
+  resolution-without-object invalid at both the service AND DB layer;
+  passing a budget resolution advancing state + creating a linked
+  governance action; policy/catalog_ratification/teach_out resolutions
+  passing as downstream-only (no mutation); the E2E DoD chain (alert →
+  acknowledge → governance action → object updated). Full regression
+  sweep clean on a genuinely fresh container (Phase1: 104 passed, 4
+  skipped; event mesh unit suite: 18/18; conformance: 290 passed, the
+  same 3 pre-existing, unrelated `cds_grids`-seed/test-fixture collision
+  documented since SPRINT-09) — zero stray rows verified in all 3 new
+  tables after rollback teardown.
+
 - **SPRINT-15/NEW-26 — KPI layer + executive alerts (BOOK-24 §2, closes
   G20's KPI data-layer half, T10 5/7 tables)** (2026-07-31,
   `dlu_builder_tk`): `kpi_definitions` (catalog, per domain: academic,

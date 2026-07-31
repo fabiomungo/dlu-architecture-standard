@@ -79,6 +79,32 @@ measures, dimensioned). Rules:
 | HR Command | hr lead | positions, contracts, workload ledger, mentorship dividend (BOOK-22) | open positions, flag capacity |
 | MKO Funnel | marketing | intake funnel (BOOK-21), campaign attribution (CRM) | tune campaigns |
 
+> ✅ **IMPLEMENTED (NEW-27, SPRINT-16, 2026-07-31):** all 6 surfaces above are real
+> (`dlu_builder_tk`), re-pointed from the OLD `analytics_kpi_*`/`/api/v1/analytics/*` system
+> (which had ZERO consumers of the T10 KPI layer before this sprint) to the REAL SPRINT-15/16
+> `/api/executive/*` API, and Paper-migrated (`ds/KpiCard`/`ds/AuditTimeline` — antd `KPIGrid`/
+> `TrendChart`/`ConversionFunnel` removed). Several prior widgets were hardcoded sample data
+> (a fake "Enrollment Conversion Funnel," "Collection Health," "System Health," quality-score
+> gauges) — dropped rather than carried forward as real. President Bridge shows the KPI
+> scorecard + open alerts; Provost Command (was "Rector's Bridge") adds a genuinely new
+> "pending approvals" composite (`GET /api/academic-governance/pending-approvals` — no such
+> tenant-wide listing existed before) alongside its pre-existing real program-health/three-
+> economies/red-posture content — **"ILO coverage" is an honest, disclosed gap**: no
+> ILO-level coverage rollup exists anywhere in this codebase (only PLO coverage, via
+> `program_knowledge_maps`, SPRINT-14), and fabricating one without walking a real
+> `ILO`→`PLOtoILO`→`PLO` chain would be exactly the kind of invented number this program never
+> ships; CFO Command shows the 2 real finance KPIs (AR aging, budget utilization) plus
+> read-only budget-line commitment detail (reusing the pre-existing `budgetAPI.js`/
+> `budgets.py`, SPRINT-09) — **cash position, AP aging, and the BOOK-23 Ch. 8 planning &
+> control views are NOT built this sprint**, an honest, disclosed gap (no such computation
+> exists anywhere in this codebase); HR Command is the pre-existing, already-Paper
+> `OrganicoWorkloadDesk.js` (SPRINT-10) with one additive `ds/KpiCard` for the historized
+> mentorship-dividend KPI, never a replacement of its live ledger UI; Chairman Board Pack and
+> MKO Funnel are genuinely NEW pages (§5's board governance + the admissions-funnel-
+> conversion KPI respectively) — neither existed in any form before this sprint. None of the
+> 6 pages has a live navigation entry (URL-only) — a pre-existing condition shared by nearly
+> every dashboard in this codebase, not something this sprint's scope covers.
+
 ## 4. Approval workflows (T6)
 
 **Catalog edition approval (extends G15).** Every `catalog_editions` submission opens a
@@ -116,11 +142,38 @@ resolution without its object reference is invalid.
 > `ai_governance.py`'s prefix (AI Governance & LLM reporting), a real naming collision found
 > while wiring the route, not a pre-flight gap.
 
+> ✅ **IMPLEMENTED (NEW-27, SPRINT-16, 2026-07-31):** "Board governance" above is now real
+> (`dlu_builder_tk`, T10, 3 tables: `governance_actions`, `board_meetings`,
+> `board_resolutions`). `board_resolutions.affected_object_type`/`_id` are a real DB `NOT
+> NULL` guarantee — "a resolution without its object reference is invalid" is structural, not
+> a service-layer check (proven by a raw ORM-bypass insert in the conformance suite, the same
+> technique SPRINT-14 used for C24.3's partial unique index). **Design decision, deliberately
+> conservative**: SPRINT-14's own `PolicyVersion`/`CatalogEdition` state machines are already
+> terminal (`'approved'`/`'effective'` are already the real, effective states) with no "board"
+> slot anywhere in their closed transition sets — retrofitting an upstream board gate onto
+> already-shipped, tested SPRINT-14 workflows was out of scope; passing a `policy`/`catalog_
+> ratification`/`teach_out` resolution is therefore a DOWNSTREAM ratification/audit record
+> only, never an upstream gate. The ONE exception: passing a `budget` resolution DOES advance
+> real domain state (`Budget.status: draft → active`) — the one type among the four with a
+> real, not-yet-otherwise-reachable state to advance to. Every `pass_resolution` call also
+> inserts a linked `governance_actions` row, unifying the write-path (C24.1) whether a
+> decision originates from a standalone governance action or a board resolution.
+
 ## 5. Governance actions
 
 `governance_actions` records every executive act (ratify / freeze / escalate / teach_out)
 with actor, role, rationale, and affected object. Actions are the *only* write path from
 command surfaces into the domain — dashboards remain read-only otherwise.
+
+> ✅ **IMPLEMENTED (NEW-27, SPRINT-16, 2026-07-31):** real (`dlu_builder_tk`). Rationale is
+> ALWAYS required (unlike `ds/AIProposalCard`, which only gates `reject` — a dedicated form
+> was built instead of forcing that component's existing contract). `affected_object_type`/
+> `_id` are an OPTIONAL soft ref here (unlike `board_resolutions`' mandatory one) — some
+> action types (e.g. a broad `freeze`) may legitimately name no single object; when given,
+> existence is validated per type (`program_review`/`policy_version`/`catalog_edition`/
+> `budget`) against the real table, service-layer, same "soft ref, service-validated"
+> discipline as `Invoice.manual_override_by`. C24.1 (no dashboard write outside this path) is
+> verified by a static route audit against an explicit allowlist, not just a fixture.
 
 ## 6. Events (A6-closed)
 
