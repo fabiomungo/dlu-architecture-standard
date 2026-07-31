@@ -2,6 +2,69 @@
 
 ## Unreleased
 
+- **SPRINT-11/NEW-22 — student onboarding, diagnostic assessment, key
+  objective (BOOK-06 agg., T2 6/8 tables)** (2026-07-31, `dlu_builder_tk`):
+  the day-0 onboarding journey that `matriculation_service.py`'s own
+  docstring had flagged as a disclosed gap since SPRINT-06 ("no
+  onboarding-journey row... SPRINT-11/12 territory"). `student_
+  onboarding_journeys`/`onboarding_steps` walk profile → consents →
+  diagnostic → goal, resumable at any point via `current_step`; created
+  by a genuinely new `student-onboarding` Event Mesh consumer group
+  reacting to `applicant.matriculated` (real since SPRINT-06/NEW-18, but
+  had zero consumers until now). The "consents" step reuses the REAL
+  `TwinContextService.set_consent` (already audited + emits `consent.
+  changed`) rather than building a second consent mechanism.
+  `diagnostic_assessments`/`diagnostic_results` implement a lightweight
+  confidence self-check over REAL Knowledge Graph concepts (`KGQueryService
+  .get_concepts`, enumerated via a real `ProgramCourse` program→course
+  mapping) — neither existing "quiz engine" fit: `bloom_quiz_service.py`
+  needs real Lesson+Course rows and emits only placeholder text; the
+  WS06/STX-11 assessment-agent pipeline is for CREDIT-BEARING assessment,
+  wrong per this sprint's own "distinto dal credito: nessun CFU". Answers
+  seed `concept_mastery` (BKT baseline) by reusing `MasteryTrackingService
+  .batch_record_answers` directly — never an `EvidenceRecord`/
+  `StudentCompetency` write (the trust-weighted competency graph stays
+  untouched). `student_key_objectives` (renamed from the target sketch's
+  bare `learning_objectives`, which collides with 4+ unrelated
+  course-content tables/columns of that same name) moves `proposed ->
+  committed -> achieved/revised`, linked to existing `TwinCareerGoal`/
+  `PathScenario` rows; `objective_reviews`' nudge reuses the existing
+  `learning_coach` ACE agent (`AcademicCognitiveEngine.run_mission`) — no
+  new agent. New page `StudentOnboarding.js` (`/student/onboarding`) is a
+  deliberately distinct "day-0" flow, NOT "WS00" (that slot is already
+  Academic Discovery & Student Twin, STX-06) and NOT an extension of
+  `JourneyWorkspace.js` (WS01 Academic GPS — an unrelated "journey"
+  concept); a new "Diagnostic baseline" panel was added to
+  `KnowledgeMapWorkspace.js` (separate from its existing `StudentCompetency`
+  panel, which reads a different, trust-weighted pipeline) and a "Key
+  objective" widget to `CompanionWorkspace.js` (WS00). **Found and fixed 2
+  real, pre-existing bugs** blocking this sprint's own "consents audited"
+  DoD, discovered verifying against a real disposable Postgres (never
+  caught by mocked/SQLite tests): (1) `TwinContextService._audit` — and 3
+  duplicated copies of the same pattern in `ace.py`, `student_twin.py`,
+  `move_policy_service.py` — used the wrong raw-SQL column name
+  (`meta_data` instead of the real `metadata`; the same bug had already
+  been found and fixed once in `audit_service.py`'s own copy by an earlier
+  hardening pass, but never propagated to these other 4); (2) the same 4
+  functions bound `datetime.utcnow().isoformat()` — a STRING — to a
+  timestamptz column, which asyncpg rejects; corrected to the SQL-literal
+  `NOW()`/`datetime('now')` pattern `audit_service.py`/`erasure_service.py`
+  already used correctly. Branched fresh off `origin/main` (not off
+  SPRINT-08/09/10's stacked branches) — this domain has zero structural
+  dependency on faculty/HR/finance. 13 new conformance tests (journey
+  resumability + out-of-order-step rejection; consents-step real audit
+  trail; diagnostic generation/submission incl. the no-program_id and
+  unresolved-identity honest-gap paths; key-objective lifecycle; the
+  `applicant.matriculated` consumer itself, incl. redelivery idempotency).
+  Full regression sweep clean on a genuinely fresh container (Phase1: 104
+  passed; event mesh unit suite: 18/18; conformance: 185/188, the same 3
+  pre-existing, unrelated `cds_grids`-seed/test-fixture collision
+  documented in SPRINT-09/10's own entries below). Confirmed via a
+  stash/restore isolation check that 3 unrelated, pre-existing test files
+  (`test_stx07_academic_gps.py`, `test_stx11_assessment_agent.py`,
+  `test_new03_memory_stores.py`) fail identically with every SPRINT-11
+  change stashed out — not a regression this sprint introduced.
+
 - **SPRINT-10/NEW-21 — HR positions/contracts + the workload ledger
   (BOOK-22 §4, closes G18 completely — T4 and T9 both now 100%)**
   (2026-07-30, `dlu_builder_tk`): the HR/workload backbone half of BOOK-22

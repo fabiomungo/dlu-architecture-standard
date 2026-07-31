@@ -48,6 +48,23 @@ not narrated row-by-row here until each gap actually closes.
 | G20 | No policy/catalog-approval workflow or executive KPI/governance layer | `_dlu/sprint-plan` gap analysis | **24** (Executive Command) | versioned policy + catalog approval chain + historized KPI layer + board governance | **NEW-17f ✅ (2026-07-29, scaffolding only — `models_governance.py`/`models_executive.py` empty, `POLICY_PROMULGATED`/`CATALOG_EDITION_APPROVED`/`KPI_BREACHED` events reserved)**; full closure NEW-25/26/27 (SPRINT-14..16) | — (no producer yet) |
 | G21 | No research workspace (10th persona: Researcher) — reproducibility/provenance, federated RAG, grant→budget/workload links | `_dlu/sprint-plan` gap analysis + "Architetture IA per Ricerca Universitaria" | **25** (Research Workspace) | Renku-2.0-style provenance DAG, Swiss-Data-Custodian-style zero-trust federation, grant/budget/workload integration | not yet started (SPRINT-21/NEW-33) | — |
 
+> **Nota (area Student loop, T2 — non un gap registrato con proprio numero G, target-state
+> ER_MAP_TARGET.md scaffolding SPRINT-01/NEW-17f)**: **NEW-22 ✅ (2026-07-31, SPRINT-11, BOOK-06
+> agg.)** — onboarding studente day-0 (profilo→consensi→diagnostica→goal, riprendibile),
+> diagnostica delle conoscenze (self-check sui concetti reali del Knowledge Graph, enumerati via
+> `ProgramCourse`; inizializza SOLO `concept_mastery`/BKT, mai la competency graph a fiducia
+> pesata NEW-06) e key objective (`student_key_objectives`, rinominata da `learning_objectives`
+> per collisione di naming con tabelle course-content non correlate). Creato dal consumer NUOVO
+> `student-onboarding` reagendo a `applicant.matriculated` (SPRINT-06/NEW-18) — nessun consumer
+> esisteva prima, gap reale colmato non solo segnalato. Trovati e corretti 2 bug pre-esistenti
+> reali (non introdotti da questo sprint, bloccanti per il proprio DoD "consensi auditati"):
+> `TwinContextService._audit` + 3 copie duplicate (`ace.py`, `student_twin.py`, `move_policy_
+> service.py`) usavano il nome colonna raw-SQL sbagliato (`meta_data` invece di `metadata`, stesso
+> bug già corretto in `audit_service.py` da un pass precedente ma mai propagato) e passavano un
+> timestamp come stringa invece che come letterale SQL `NOW()`/`datetime('now')` — asyncpg
+> rifiutava entrambi contro Postgres reale, mai catturato da test mockati/SQLite. `study_missions`/
+> `mission_activities` (T2 restante) target SPRINT-12/NEW-23.
+
 ---
 
 ## 2. A-Register (structural/semantic anomalies) — A1–A12 (all closed)

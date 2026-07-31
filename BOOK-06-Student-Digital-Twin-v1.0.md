@@ -217,6 +217,19 @@ Personas parameterize — they MUST NOT gate capabilities (BOOK-02 Ch. 6):
 | International Student | mobility/compliance dossier, language preference | standard | cross-institution consent prompted explicitly; regional pinning verified |
 | Corporate Learner | employer framework alignment (SFIA), cohort binding | competency-gap driven | employer visibility is consent-scoped and **minimal-disclosure** (status, not detail) |
 
+> ✅ **IMPLEMENTED (NEW-22, SPRINT-11, 2026-07-31):** the New Student row's
+> "diagnostic baseline" is real — `student_onboarding_journeys`/`diagnostic_
+> assessments`/`diagnostic_results` (`dlu_builder_tk`, T2), a day-0 flow
+> (profile → consents → diagnostic → goal) triggered by `applicant.
+> matriculated` at the Enrolled lifecycle state (§4.1), not by the
+> Candidate row above. The diagnostic is a confidence self-check over real
+> Knowledge Graph concepts, seeding ONLY a separate BKT-based `concept_
+> mastery` baseline (`MasteryTrackingService`, reused directly) — it does
+> NOT seed L3/`StudentCompetency` the way the Candidate/Transfer Student
+> rows above describe for prior-learning evidence; those remain a
+> genuinely different, trust-weighted evidence pipeline (NEW-06), never
+> touched by this diagnostic.
+
 ## 4.3 Persona assignment
 
 Proposed by the Discovery Agent from the intake dialogue, confirmed by the learner
