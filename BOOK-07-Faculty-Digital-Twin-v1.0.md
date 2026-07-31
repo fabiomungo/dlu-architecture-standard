@@ -117,6 +117,25 @@ Advisor views over student twins (`purpose=staff_view`, audited — BOOK-06 §5.
 intervention approvals (Success Agent proposals); office hours (F1); CAT-7
 supervision (peer-teaching learners).
 
+> ✅ **IMPLEMENTED (NEW-24, SPRINT-13, 2026-07-31):** human tutoring is now
+> tracked end to end (T5, `dlu_builder_tk`) — `tutoring_sessions`/
+> `tutoring_session_notes` (originating from a real G1 office-hours booking
+> or scheduled/adhoc against a real `AdvisorAssignment`), with a mandatory
+> outcome required to close a session (service guard + a DB CHECK, defense
+> in depth) that posts REAL workload hours to `faculty_workload_entries`
+> (`entry_type="tutoring"`, `unit="hours"` — the first source in this
+> codebase to carry real duration data; `"tutoring"` had been reserved with
+> no producer since SPRINT-10). `intervention_logs` records human-tutor
+> interventions; escalating one emits the REAL `RISK_DETECTED` event
+> (reusing the existing crisis pathway), never a new mechanism. "Advised
+> over student twins (`purpose=staff_view`, audited)" above is now
+> literally true: a NEW, dedicated `twin_access_audits` table (BOOK-22
+> §C22.5's own deliberate first exception to the `platform.audit_logs`-
+> reuse convention) is written on every such read, and — unlike the
+> pre-existing best-effort audit — a write failure here fails the whole
+> read, closing a real, pre-existing gap where IW4's own caseload view
+> produced zero audit rows despite this section's claim.
+
 ---
 
 # Chapter 4 — The Pedagogical Envelope (F4)

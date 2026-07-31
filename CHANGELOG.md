@@ -2,6 +2,64 @@
 
 ## Unreleased
 
+- **SPRINT-13/NEW-24 — human tutoring sessions + twin access audit
+  (BOOK-07 agg. FW4, BOOK-22 C22.5, T5 4/4 tables)** (2026-07-31,
+  `dlu_builder_tk`): tutoring becomes tracked end to end. `tutoring_
+  sessions` originate from a real G1 office-hours booking or scheduled/
+  adhoc against a real `AdvisorAssignment` (STX-06); closing one
+  requires an outcome (a service-level guard backed by a Postgres CHECK,
+  same defense-in-depth discipline as the workload ledger's own
+  compensating-reason constraint) and posts REAL workload hours to
+  `faculty_workload_entries` (`entry_type="tutoring"`, `unit="hours"` —
+  the first source in this codebase with real duration data;
+  `"tutoring"` had sat reserved with no producer since SPRINT-10).
+  `intervention_logs` records human-tutor interventions; escalating one
+  emits the REAL `RISK_DETECTED` event, reusing the existing crisis
+  pathway (`student_success_consumers.py` → `flag_risk` HITL, same
+  technique `nudge_service.py` used in SPRINT-12) — never the per-tenant
+  `CrisisSupportPathway` config row the plan's own language first
+  pointed at (that table has no per-case concept at all). `twin_access_
+  audits` is a genuinely NEW, dedicated table — not a reuse of
+  `platform.audit_logs` (BOOK-22 §C22.5 already flagged this sprint as
+  the first deliberate exception to that reuse convention) — and unlike
+  the pre-existing best-effort twin-read audit (`TwinContextService.
+  _audit()`, silently swallows failures), this write is NOT best-effort:
+  a failure fails the whole read, the only way to literally satisfy this
+  sprint's own DoD ("staff access to a twin without an audit row must be
+  impossible"). **Found and fixed a real, pre-existing gap during
+  verification**: IW4's own `/advisor-workspace` caseload route read
+  twins directly, bypassing `TwinContextService` entirely, so it
+  produced ZERO audit rows despite BOOK-17 documenting that exact view
+  as "advisee twins (purpose=staff_view, audited)" — fixed with the same
+  hard-fail write. New FW4 `Mentorship.js` (`/faculty/mentorship`, T5's
+  own workspace — FW4 didn't exist at all before this sprint, and the
+  only "AdvisorWorkspace.js" in this codebase is actually IW4, a
+  plan-vs-reality naming mismatch corrected in pre-flight); IW4's
+  `AdvisorWorkspace.js` gained a real "tutoring history" action per
+  caseload twin. **Branch decision of note**: this sprint needed BOTH of
+  two previously-independent, still-unmerged sibling PR chains at once —
+  `faculty_workload_entries` existed only on `sprint/NEW-21-hr-workload-
+  ledger` (PR #86), while the real `twin_context_service.py` audit-log
+  bug fixes (SPRINT-11) existed only on the `sprint/NEW-22`/`NEW-23`
+  chain (PRs #87/#88) — so this sprint branched from NEW-23's tip and
+  merged NEW-21 into it (6 conflicts, all in the same additive
+  closed-set registry files both chains independently extend, resolved
+  as a straight union), then added a no-op Alembic merge migration to
+  reconcile the resulting two-head fork. 15 new conformance tests
+  (session lifecycle incl. the DB-level CHECK-constraint bypass test;
+  real workload posting incl. the honest no-`FacultyProfile` skip; the
+  twin-access-audit hard-fail guarantee, including the fixed IW4 route
+  called directly; intervention escalation emitting a real
+  `RISK_DETECTED` row). Full regression sweep clean on the same
+  container (Phase1: 104 passed, 4 skipped; event mesh unit suite:
+  18/18; conformance: 242 passed, the same 3 pre-existing, unrelated
+  `cds_grids`-seed/test-fixture collision documented in SPRINT-09/10/11/
+  12's own entries). **Milestone M2**: now 26/28 backlog items done
+  (BLG-059/060 close here) — `BLG-033` (executive contract/catalog
+  edition as verifiable documents) and `BLG-048` (budget-vs-actual with
+  automatic imputation) remain honestly "Parziale," not yet closed by
+  any landed sprint.
+
 - **SPRINT-12/NEW-23 — badge automation, knowledge-map before/after
   snapshots, study missions & engagement nudging (BOOK-16/17 agg., T3 +
   T2 8/8 tables now complete)** (2026-07-31, `dlu_builder_tk`): wires up
