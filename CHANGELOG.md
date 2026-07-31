@@ -2,6 +2,62 @@
 
 ## Unreleased
 
+- **SPRINT-17/NEW-28 — eval harness completo + preset registry (BOOK-11
+  Ch. 6/7, BOOK-10B, T11)** (2026-07-31, `dlu_builder_tk`): the
+  scenario-bank/rubric-graded GA gate (`backend/evals/harness.py::
+  run_gate`) was already real for all 9 learner-facing ACE agents before
+  this sprint — extended coverage to 3 domains with ZERO eval harness of
+  any kind: `generation` (course factory), `admission_evaluation`, and
+  `nudging`. None are ACE agents with a scenario bank, so the
+  general-purpose T11 golden-set harness (`eval_datasets`→`eval_cases`→
+  `eval_runs`→`eval_case_results`, scaffolded since SPRINT-01/NEW-17f but
+  never exercised beyond a 3-case dummy dataset) is used instead, with a
+  REAL, deterministic decision function per domain: `course_factory_
+  service._sanitize_clo_mlo_proposal` (already pure) and two newly
+  extracted pure decision cores, `qualification_service._compute_tier1_
+  verdict` and `nudge_service._decide_nudge_action` (same "small,
+  DB-free helper, directly testable" rationale `scripts/eval_runner.py`'s
+  own `_exit_code_for_verdict` already established) — 21-22 golden cases
+  per domain, `expected` values computed by the real function itself,
+  never hand-guessed. `eval_runs.gate_run_id` (reserved since SPRINT-01,
+  never wired) now really feeds `agent_gate_runs` (`eval_harness_
+  service.sync_gate_run_from_eval_run`) when a run IS agent-specific — a
+  deliberate no-op otherwise (`AgentGateRun.agent_config_id` is a real DB
+  NOT NULL). A new CI job (`.github/workflows/agent-eval-gate.yml`,
+  `scripts/ci_eval_gate.py`) runs the 3 fixture domains and fails the
+  build on any non-pass verdict — a fixed, explicit domain list, not a
+  dynamic touched-agent detector (out of this sprint's own DoD scope).
+  `preset_versions`/`preset_rollouts` (T11, `dlu_builder_tk`): before
+  this sprint `ai_model_presets` was a flat row mutated in place with NO
+  history at all — every edit now creates an immutable, sequentially-
+  numbered version; a rollout's lifecycle is `draft`→`active` (optional
+  `traffic_pct`, an honest first step toward BOOK-10B's own "canary on a
+  cohort %" — nothing splits live traffic by it yet)→`rolled_back`. A
+  rollout cannot activate without a linked, PASSING `eval_run`
+  (cross-table check, service-layer, proven by a conformance test); at
+  most one active rollout per preset is a REAL DB guarantee (partial
+  unique index, same technique as SPRINT-14's C24.3); activating a new
+  rollout auto-supersedes the previous one, rolling back restores the
+  one it superseded. New "Eval" tab in `AiControlPlane.js` — **found and
+  corrected a real plan-vs-reality mismatch**: the sprint plan named
+  `AiManagementPage.js` literally, but that file is dead, deprecated,
+  orphaned code (its own docstring says so, and a known-broken import);
+  the real, live, routed component is `AiControlPlane.js`, where the new
+  tab was actually added. **Found and corrected two more plan premises**:
+  no `credit_pre_evaluation` T11 dataset was ever "already active since
+  SPRINT-07" as the plan assumed — that work (`preval_eval_builder.py`/
+  `preval_eval_metrics.py`/`preval_eval_gate.py`) is real but sits
+  entirely on an unmerged sibling branch (`sprint/NEW-17d-preval-eval-
+  loop`, PR #83), never integrated into this lineage (already flagged by
+  SPRINT-15's own pre-flight, re-confirmed here); "tutoring/coach" was
+  correctly recognized as NOT a gap (already covered by the real GA
+  gate) rather than given a redundant second dataset. 17 new conformance
+  tests. Full regression sweep clean on a genuinely fresh container
+  (Phase1: 104 passed, 4 skipped; event mesh: 18/18; conformance: 307
+  passed, the same 3 pre-existing, unrelated `cds_grids` failures
+  documented since SPRINT-09) — zero stray rows across all 7 touched
+  tables after rollback teardown.
+
 - **SPRINT-16/NEW-27 — dashboard executive + board governance (BOOK-24
   §3/§5, G20 FULLY CLOSED, T10 3/3 remaining tables)** (2026-07-31,
   `dlu_builder_tk`): `governance_actions` (ratify/teach_out/freeze/
