@@ -2,6 +2,74 @@
 
 ## Unreleased
 
+- **SPRINT-15/NEW-26 — KPI layer + executive alerts (BOOK-24 §2, closes
+  G20's KPI data-layer half, T10 5/7 tables)** (2026-07-31,
+  `dlu_builder_tk`): `kpi_definitions` (catalog, per domain: academic,
+  finance, marketing, hr, ai) → `kpi_targets` (period target + yellow/
+  red thresholds, direction-aware) → `kpi_snapshots` (historized,
+  written ONLY by a scheduled nightly job — R24.1, "dashboards never
+  compute KPIs ad hoc" — is structural: `publish_snapshot_for_kpi`
+  skips a KPI entirely, no fabricated zero, when its compute function
+  has no signal yet). 8 per-domain compute functions
+  (`kpi_compute_service.py`): admissions funnel conversion
+  (`admission_applications`→`admission_offers`→`admission_acceptances.
+  matriculated_at`, a fresh query, no existing funnel precedent to
+  reuse); pre-evaluation turnaround (`preval_requests.created_at`→
+  `preval_sheets.published_at`) and an honest accuracy PROXY (1 − HITL
+  override rate — the certified eval-harness accuracy figure lives
+  only on an unmerged branch, `sprint/NEW-17d-preval-eval-loop`,
+  confirmed absent from this branch and `main`); AR aging over 90 days
+  past due (`student_invoices`, an injectable `as_of` for deterministic
+  tests); budget-vs-actual utilization (`BudgetLine.allocated/
+  committed/spent_amount_cents`, already-real columns, no new schema);
+  workload/mentorship dividend (reuses `hr_service.workload_summary`
+  directly — no duplicated aggregation); AI agent deployment rate
+  (reuses `steward_console_service.compute_steward_console`'s
+  `n_deployed`/`n_agents`, deliberately never its `calibration_drift`,
+  itself an honest, still-open gap with no drift-monitor computation
+  anywhere in this codebase); a deliberately narrow three-economies
+  extraction (`attention.faculty_load_balance.coefficient_of_
+  variation`, the one confirmed-real leaf of `three_economies_service.
+  compute_three_economies` — every other leaf is still `not_yet_
+  available`, no fabricated rollup across them). A snapshot breaching
+  its period's red threshold creates an `ExecutiveAlert` (severity by
+  an overshoot-past-threshold heuristic) and emits the already-reserved
+  `KpiBreached` (R24.2, reserved since SPRINT-01/NEW-17f scaffolding,
+  this sprint is the first to actually emit it); an unacknowledged
+  `critical` alert past `ESCALATION_SLA_DAYS=3` re-emits the SAME event
+  with `escalated: true` — the identical silence-then-emit-
+  unconditionally shape `nudge_service.py` already established for a
+  different domain, deliberately NOT `move_proposal_service`'s Redis
+  TTL auto-expiry (which just makes a record silently vanish, the
+  opposite of escalating). `kpi_snapshot_briefs` is a genuinely NEW
+  table for the templated (not LLM-generated) ACE brief attached to
+  each snapshot — **found a real naming collision the plan's own text
+  ran into**: `ace_session_summaries` looked reusable but is actually a
+  real, unrelated, already-populated per-STUDENT episodic-memory table
+  (BOOK-12 Ch. 2); built the new table instead rather than corrupt that
+  one. New frontend: `ds/KpiCard.js` (a genuinely new "dumb renderer" —
+  no reusable KPI card existed in `ds/`; the antd-coupled `dashboards/
+  KPIGrid.js` is a different, unrelated component outside that
+  directory) — also found and fixed `ds/index.js`'s barrel missing
+  SPRINT-14's own `AuditTimeline` export (it was only ever imported by
+  its direct path) while wiring `KpiCard` into the same file. API
+  mounted at `/api/executive` (verified no collision with the
+  pre-existing, unrelated `/api/v1/analytics/dashboard/executive`). 18
+  new conformance tests covering all 8 compute functions against real
+  fixture data, C24.5 (KPI value recomputability within tolerance from
+  unchanged underlying data), breach→alert→`KpiBreached` emission,
+  alert acknowledgement (incl. cannot-acknowledge-twice), the
+  escalation sweep (incl. a `warning`/recently-created `critical` alert
+  correctly left untouched), and the ACE brief's delta-vs-prior-
+  snapshot narration. `governance_actions`/board governance (§5, T10's
+  remaining 2 tables) stay target — SPRINT-16/NEW-27, per SPRINT-14's
+  own callout. Full regression sweep clean on a genuinely fresh
+  container (Phase1: 104 passed, 4 skipped; event mesh unit suite:
+  18/18; conformance: 273 passed, the same 3 pre-existing, unrelated
+  `cds_grids`-seed/test-fixture collision documented in SPRINT-09
+  through 14's own entries) — zero stray rows verified in all 5 new
+  tables after rollback teardown.
+
 - **SPRINT-14/NEW-25 — academic governance: policy lifecycle, catalog
   approval workflow, program review, program knowledge map (BOOK-24
   §4 + BOOK-08 agg., closes G20's policy/catalog half + G7 fully, T6

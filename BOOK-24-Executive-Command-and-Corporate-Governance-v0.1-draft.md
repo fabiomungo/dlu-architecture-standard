@@ -30,6 +30,44 @@ measures, dimensioned). Rules:
 - R24.4 ACE briefs (`ace_session_summaries`) attach to snapshots as narrative context
   (propose-only; BOOK-10 contract cards apply).
 
+> ✅ **IMPLEMENTED (NEW-26, SPRINT-15, 2026-07-31):** the KPI data layer above is now real
+> (`dlu_builder_tk`, T10, 5/7 tables — `kpi_definitions`→`kpi_targets`→`kpi_snapshots`,
+> `executive_alerts`, `kpi_snapshot_briefs`). 8 per-domain compute functions
+> (`kpi_compute_service.py`) cover admissions funnel conversion, pre-evaluation turnaround
+> and an honest accuracy PROXY (1 − HITL override rate — the certified eval-harness accuracy
+> figure lives only on an unmerged branch, confirmed absent here), AR aging over 90 days,
+> budget-vs-actual utilization, the workload/mentorship dividend (reuses `hr_service.
+> workload_summary` directly), and the AI agent deployment rate (reuses `steward_console_
+> service.compute_steward_console`'s `n_deployed`/`n_agents`, deliberately never its
+> `calibration_drift`, itself an honest, still-open gap with no drift-monitor computation
+> anywhere in this codebase). A single nightly `kpi_publisher_worker.run_nightly` job is the
+> ONLY writer of `kpi_snapshots` — R24.1 ("dashboards never compute KPIs ad hoc") is
+> structural, not a convention: `publish_snapshot_for_kpi` skips a KPI entirely (no
+> fabricated zero) when its compute function has no signal yet. A snapshot breaching its
+> period's red threshold creates an `ExecutiveAlert` (severity by overshoot heuristic) and
+> emits the already-reserved `KpiBreached` (R24.2) — an unacknowledged `critical` alert
+> re-emits the SAME event with `escalated: true` after `ESCALATION_SLA_DAYS`, the identical
+> silence-then-emit shape `nudge_service.py` already established, never suppressed by
+> anything else. R24.3 (three-economy instrumentation publishing into this layer) is honored
+> narrowly and honestly: only the one confirmed-real leaf of `three_economies_service.
+> compute_three_economies` (`attention.faculty_load_balance.coefficient_of_variation`)
+> publishes; every other leaf of that composite is still `not_yet_available` and this sprint
+> does not fabricate a rollup across them. **Found a real naming collision correcting R24.4
+> as written above**: `ace_session_summaries` is NOT reusable for KPI briefs — it is a real,
+> already-populated, per-STUDENT episodic-memory table (BOOK-12 Ch. 2), unrelated to
+> executive KPIs; built the genuinely new `kpi_snapshot_briefs` instead (templated, not
+> LLM-generated — an honest v1 simplification, same discipline `consolidation_service.
+> close_session` already established for that other table). Of §6's event list, only
+> `KpiBreached` is emitted this sprint (it was already reserved since SPRINT-01/NEW-17f
+> scaffolding); `KpiSnapshotTaken`/`AlertAcknowledged`/`GovernanceActionTaken`/
+> `BoardResolutionPassed` are not yet reserved or emitted anywhere — an honest, disclosed
+> gap, not a silent omission. `governance_actions` (§5) and board governance remain target —
+> SPRINT-16/NEW-27, per SPRINT-14's own callout above. Mounted at `/api/executive` (no
+> collision with the pre-existing, unrelated `/api/v1/analytics/dashboard/executive`). C24.4
+> (breach-to-alert latency, escalation) and C24.5 (KPI recomputability within tolerance) are
+> this sprint's own DoD, both verified by 18 new conformance tests; C24.1-C24.3 are T6
+> concerns already closed by SPRINT-14.
+
 ## 3. Role command surfaces (views, not stores)
 
 | Surface | Role | Reads | Acts |
