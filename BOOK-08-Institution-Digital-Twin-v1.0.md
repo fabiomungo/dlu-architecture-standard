@@ -164,6 +164,16 @@ cohort binding (BOOK-04 C3 extension); where CINECA systems are present, the
 ordinamento/OFF.F data is a **driver mirror** (BOOK-07 §6.3 pattern). → BOOK-17
 (institution workspace), BOOK-18 (driver contract).
 
+> ✅ **IMPLEMENTED (NEW-25, SPRINT-14, 2026-07-31):** the regulation-year binding closes
+> here — `ProgramVersion.regulation_year` (a real column now, `dlu_builder_tk`) is the join
+> key `policy_versions.regulation_year` binds to (BOOK-24 §4, T6): a partial unique index
+> allows at most one `'approved'` `PolicyVersion` per `(policy, regulation_year)`, and a
+> student's cohort resolves to their `ProgramVersion` via the existing date-window resolver
+> (`AcademicGPSService._resolve_regulation_version`, reused rather than duplicated) — so
+> "which rules apply to which cohort" is now a real, queryable answer, not just a documented
+> gap. The ministerial ordinamento/OFF.F driver-mirror half of this gap remains target — a
+> separate, undertaken-by-no-sprint-yet driver-integration concern, not touched here.
+
 ---
 
 # Chapter 5 — Capacity & Operations (I4)
@@ -282,7 +292,7 @@ deployment (this Book's driver contract is a soft, not hard, dependency).
 
 | Element | Turnkey asset | Status | Gap |
 |---------|--------------|--------|-----|
-| I1 Structure | `models_institution.py` hierarchy, programs, terms, sections; InstitutionDashboard | ✅ | regulation-year binding (G7) ⚪ |
+| I1 Structure | `models_institution.py` hierarchy, programs, terms, sections; InstitutionDashboard | ✅ | regulation-year binding **✅ closed (NEW-25, SPRINT-14)** — `ProgramVersion.regulation_year` + `policy_versions` cohort binding; ministerial ordinamento/OFF.F driver mirror remains target |
 | I2 Academic health composite | **as of NEW-10 (2026-07-26)**: `program_health_service.py` — design (real, read-time rollup of course-level `OutcomeCoverageMatrix` rows — no code path anywhere writes a genuine `entity_type='program'` row, confirmed, so this is a rollup not a fabricated write), learning (completion real, learning-gain/durability not tracked anywhere), equity (real, n≥`min_n` suppression reusing STX-11's exact floor + `StudentTwin.persona` cohort dimension), demand/delivery (real, via `TeachingSection`), economics (`not_yet_available`, no cost model exists) — every real element carries a drill-down reference; never mutates `Program.active`/`sunset_date` | ✅ **I2 delivered (NEW-10)** | economics dimension; learning-gain/durability tracking |
 | I3 Knowledge indicators | coverage ✅, `ContentRefreshJob` ✅, ontology service ✅ — **as of NEW-10, composed into `three_economies_service.py`'s real `knowledge` key** | ✅ **NEW-10** | grounding-provenance metric ⚪ |
 | I3 Trust indicators | credential service, audit logs — **as of NEW-10, composed into the real `trust` key** (evidence_balance/integrity_incidents/credential_reliability, each caveated as approximate) | ✅ **NEW-10 (approximate)** | verification SLA instrumentation ⚪ (no `verified_at` timestamp exists anywhere to measure against) |

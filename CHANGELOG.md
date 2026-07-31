@@ -2,6 +2,82 @@
 
 ## Unreleased
 
+- **SPRINT-14/NEW-25 — academic governance: policy lifecycle, catalog
+  approval workflow, program review, program knowledge map (BOOK-24
+  §4 + BOOK-08 agg., closes G20's policy/catalog half + G7 fully, T6
+  9/9 tables)** (2026-07-31, `dlu_builder_tk`): `institution_policies`
+  → `policy_versions` (draft→approved→superseded, one per
+  `regulation_year`) → `policy_approvals` (provost decision, audit
+  row). C24.3 ("a student resolves exactly one policy set from their
+  regulation year") is a real DB guarantee — a partial unique index
+  allows at most one `'approved'` `PolicyVersion` per `(policy_id,
+  regulation_year)`, the same technique G7 already used for
+  `program_courses`'s versioned/unversioned split. `program_versions.
+  regulation_year` (a genuinely new column — didn't exist before this
+  sprint) is the join key; the twin-side resolution reuses
+  `AcademicGPSService._resolve_regulation_version`'s existing
+  date-window resolver rather than duplicating it, closing G7 in full
+  (the ministerial ordinamento/OFF.F driver-mirror half remains
+  target, untouched). `catalog_approval_workflows` →
+  `catalog_workflow_steps` (ordered dean→provost→registrar_publish
+  rows, same shape as `EngagementSignature`, sequence enforced the
+  same way `faculty_engagement_service.submit_signature` already
+  does) → `catalog_step_signatures` (optional real QES submission, a
+  4th `qes_signature_ref` subject column added the same mechanical
+  way the prior 3 were). C24.2 ("publishing without a complete
+  workflow must fail") is now structural, not a policy: `publish_
+  edition` (`catalog_edition_service.py`) is UNCHANGED for every
+  existing caller (an additive `initial_status` parameter, default
+  identical to before) — the ONLY path to `'effective'` is the
+  workflow's last step completing, enforced by `CatalogEdition`'s own
+  `before_update` immutability guard, extended with exactly two new
+  allowed transitions (`pending_approval→effective`,
+  `pending_approval→draft` on rejection). `program_reviews` (periodic/
+  teach_out/accreditation) + `review_findings`; a review's
+  `recommended_action` is a plain informational string, deliberately
+  NOT a soft ref to a `governance_actions` row — that's a different
+  domain (T10 Executive Command, SPRINT-16/NEW-27) that doesn't exist
+  yet, nothing here blocks on it or fabricates it. `program_knowledge_
+  maps` computes PLO coverage by walking the REAL `PLO→CLOtoPLO→CLO→
+  ProgramCourse→OutcomeCoverageMatrix` chain — **found and avoided a
+  real, pre-existing bug**: `OutcomeCoverageMatrix.entity_type=
+  'program'` looks supported by its own CHECK constraint but is
+  structurally unusable (`entity_id` is an `Integer`, designed for a
+  course id; `Program.id` is a real `GUID` that can't be honestly
+  stored there) — never written to with that combination. **Found and
+  fixed two more real, pre-existing bugs blocking this sprint's own
+  DoD**, both caught by its own tests rather than reported: (1)
+  `catalog_editions.status` was `String(12)` — too short for
+  `'pending_approval'` (16 characters), silently would have truncated
+  or rejected every real submission; widened to `String(20)` in both
+  the ORM model and the migration; (2) `outcome_coverage_matrix`
+  (`models_learning_outcomes.py`) had never been migrated to real
+  Postgres at all, despite being written to in production by
+  `outcome_alignment_service.py` — added to this sprint's own
+  migration (same "fix a blocking pre-existing gap" precedent as
+  SPRINT-08's `faculty_profiles` backfill); 3 sibling never-migrated
+  tables in that same module are untouched by this sprint and remain
+  a separately-flagged, non-blocking gap. New frontend:
+  `ds/AuditTimeline.js` (a genuinely new generic component — no
+  reusable "AuditTimeline" existed anywhere, despite the plan
+  assuming one did; the closest analog, `EngagementTimeline.js`, is
+  CRM-specific) and `ProgramGovernancePanel.js`, mounted via
+  `ProgramDetail.js`'s `?tab=governance` (the real, live program-scoped
+  integration point — `CurriculumMap.js` is dead code, never routed
+  anywhere, despite the plan assuming it was). API mounted at
+  `/api/academic-governance`, NOT `/api/governance` — that prefix was
+  already `ai_governance.py`'s (AI Governance & LLM reporting, a
+  completely different domain), a real naming collision found while
+  wiring the route. 13 new conformance tests (C24.2 incl. the
+  out-of-order-approval rejection and the stays-pending-until-complete
+  property; C24.3 incl. a raw-bypass proof of the partial unique
+  index; edition reproducibility; program review lifecycle; PLO
+  coverage computed from a real CLO/PLO/course fixture chain). Full
+  regression sweep clean on a genuinely fresh container (Phase1: 104
+  passed, 4 skipped; event mesh unit suite: 18/18; conformance: 255
+  passed, the same 3 pre-existing, unrelated `cds_grids`-seed/test-
+  fixture collision documented in SPRINT-09 through 13's own entries).
+
 - **SPRINT-13/NEW-24 — human tutoring sessions + twin access audit
   (BOOK-07 agg. FW4, BOOK-22 C22.5, T5 4/4 tables)** (2026-07-31,
   `dlu_builder_tk`): tutoring becomes tracked end to end. `tutoring_
