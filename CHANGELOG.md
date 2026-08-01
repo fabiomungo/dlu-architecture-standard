@@ -2,6 +2,60 @@
 
 ## Unreleased
 
+- **SPRINT-19/NEW-31 — AI workforce per persona (BOOK-10A Annex T, Gap:
+  —)** (2026-08-01, `dlu_builder_tk`): 4 of Annex T's 5 planned persona-
+  support agents (Student Companion consolidated, Faculty Assistant,
+  Admin Copilot, CFO Analyst — the 5th, Research Assistant, is a
+  separate later sprint, NEW-33) registered in `ai_agent_configs`
+  (`lifecycle_state="testing"`, same posture as the 9 ACE agents, never
+  auto-promoted this sprint) with a new, structured `contract_card`
+  column (`{purpose, powers, limits, escalation}` — before this sprint
+  a "contract card" was prose in `ace_service.py` comments only, not
+  queryable/publishable data). All 4 are propose-only BY CONSTRUCTION,
+  not just by test: each is a pure, deterministic decision-core function
+  (mirroring SPRINT-17's own "extract a pure decision core" discipline —
+  there was no prior production logic to extract FROM here, so the core
+  IS the real logic) plus a thin wrapper that only ever calls a new,
+  generic `ai_agent_proposal_service.create_proposal` — never a direct
+  domain write. A static AST-based test (`test_ai_workforce_personas.py`)
+  proves none of the 4 new service modules ever calls `db.add`/`.commit()`
+  or a known domain-mutating function itself. New shared table
+  `ai_agent_proposals` (`platform` schema) + service (`create/accept/
+  modify/reject`, `reason` required only on reject) — deliberately NOT
+  the existing `move_proposal_service` (twin-shaped, Redis/TTL, requires
+  a `twin_id`, not reusable for 3 non-twin agents). CFO Analyst never
+  calls `governance_action_service.record_action` itself (`GovernanceAction.
+  actor_user_id` is NOT NULL, human-only) — it only drafts a rationale for
+  the CFO to file via the existing SPRINT-18 "File governance action"
+  button. Envelopes (`envelope_defaults`/`FacultyEnvelope`) are
+  structurally a pedagogical-move-catalog construct — only Student
+  Companion (real `move_bindings`, reading twin context via
+  `TwinContextService.get_context(..., purpose="self")`, bypassing the
+  more restrictive `AGENT_ENTITLEMENTS` matrix) has one; the other 3 have
+  none, an honest non-applicability. Same T11 golden-set eval harness
+  SPRINT-17 built (`domain_agent_fns.py`/`ci_eval_gate.py`/`scripts/
+  eval_datasets/*.jsonl`) extended with 4 more fixture domains (22 cases
+  each, all green) — NOT the twin-bound `harness.py::run_gate` PDDAEL
+  scenario-bank gate, which structurally doesn't fit 3 of these 4
+  agents. `cost_attribution_service.SERVICE_TYPE_ATTRIBUTION` gained 4
+  new `"agent:<slug>"` entries (engine always `ace` per the existing
+  kernel invariant; `process_area` P01/P03/P04/P05 per each agent's real
+  institutional role, BOOK-02 Ch. 2) so the new agents don't surface as
+  "unattributed spend." New shared frontend component
+  `AgentProposalQueue.js` (wraps `ds/AIProposalCard`) wired onto 4
+  surfaces: `CompanionWorkspace.js`, `FacultyTeachingRegister.js`,
+  `PrevalDesk.js` (not `RegistrarDesk.js` — the natural fit, since it
+  already owns the real `PrevalSheet` detail view), and
+  `FinanceAnalyticsDashboard.js`. 21 new conformance tests. Full
+  regression sweep clean on a genuinely fresh container (Phase1: 104
+  passed, 4 skipped; event mesh: 17 passed/1 skipped; conformance: 354
+  passed, same 3 pre-existing, unrelated `cds_grids` failures) — zero
+  stray rows in `ai_agent_proposals`/the 4 new `ai_agent_configs` rows
+  after rollback teardown. Also found and fixed a real regression during
+  the sweep: SPRINT-17's own `test_eval_harness_preset_registry.py` hard-
+  coded the domain set to exactly 3 — extended (not weakened) to assert
+  all 7 real domains.
+
 - **SPRINT-18/NEW-30 — CFO planning & control (BOOK-23 §8, G19 FULLY
   CLOSED, T7 chapter complete)** (2026-08-01, `dlu_builder_tk`): 7 new
   tables (`fee_schedules`/`fee_schedule_lines`, `revenue_forecasts`,
