@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+- **SPRINT-20/NEW-32 — Demo Scenario Pack (BOOK-20 §7b "Demo &
+  Conformance suite", Gap: —)** (2026-08-01, `dlu_builder_tk`): 9
+  persona-driven demo walkthroughs on the `DLU Demo University` tenant
+  (Student, Faculty, Dean, Provost, CFO, HR Lead, Admin University,
+  Admin Tenant, Admin AI Engineering — a 10th, Researcher, deferred to
+  SPRINT-21/NEW-33 per the plan's own condition), each with a real E2E
+  test (`tests/e2e/demo/test_*.py`, 28 tests, 25 passed / 3 skipped —
+  SAML's pre-existing `xmlsec` native-library mismatch, and 2 Redis-
+  backed steps where no Redis is provisioned) driving the real service
+  layer under transaction + rollback against a real Postgres, the same
+  discipline every `tests/conformance/*.py` file already uses rather
+  than a new HTTP/browser harness. `docs/demo/` gained a
+  `SCENARIO-<persona>.md` per persona, a README index, and a
+  reset/execute/teardown RUNBOOK. `backend/scripts/seed_demo.py
+  --scenario=ai_native_demo` extended with 4 new persona users (dean/
+  provost/cfo/hr) and the governance (`InstitutionPolicy`/
+  `CatalogApprovalWorkflow`/`ProgramReview`), finance
+  (`AuthoringEngagement`/`Budget`/`FeeSchedule`), HR (`AdvisorAssignment`/
+  office hours), and quiz-content domains those scenarios need —
+  confirmed idempotent across two consecutive runs against a freshly
+  migrated Postgres. Found and fixed a real, pre-existing bug blocking
+  this sprint's own catalog-governance step, not introduced by it:
+  `platform.course_catalog_items` had never had an Alembic migration
+  despite its ORM model existing since PI-1 —
+  `catalog_edition_service._load_catalog_items_by_linked_course` only
+  avoided crashing because it early-returns on an empty course-ID list,
+  never exercised by any prior `test_governance.py` fixture until this
+  sprint's real `ProgramCourse` rows. Also fixed 2 real, pre-existing
+  frontend bugs in `TenantManagement.js` (wrong `/api/admin/tenants`
+  path, should be `/admin/tenants`; suspend/activate/delete all called
+  the wrong route or verb) — `OrganizationSettings.js`'s own settings-
+  shape mismatch (nested frontend state vs. flat backend response) was
+  found to be deeper than a contained fix and is disclosed, not
+  patched, this sprint. Zero real PII (dedicated scan); two-pass
+  regression sweep unaffected (Phase1 104/4; `tests/conformance/` 354
+  passed + the same 3 pre-existing failures; event-mesh suite 17/1)
+  with zero stray rows left in any shared/reference table.
+
 - **SPRINT-19/NEW-31 — AI workforce per persona (BOOK-10A Annex T, Gap:
   —)** (2026-08-01, `dlu_builder_tk`): 4 of Annex T's 5 planned persona-
   support agents (Student Companion consolidated, Faculty Assistant,

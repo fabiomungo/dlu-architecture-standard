@@ -85,6 +85,25 @@ not narrated row-by-row here until each gap actually closes.
 > corretto con un helper NON finestrato (`_silence_days`) verificato prima e indipendentemente
 > dal conteggio nella finestra recente.
 
+> **Nota (Demo Scenario Pack — non un gap registrato con proprio numero G, cross-
+> cutting demo/QA artifact come NEW-28/NEW-31)**: **NEW-32 ✅ (2026-08-01,
+> SPRINT-20, BOOK-20 §7b "Demo & Conformance suite")** — 9 walkthrough persona-
+> driven (Student/Faculty/Dean/Provost/CFO/HR Lead/Admin University/Admin
+> Tenant/Admin AI Engineering; il 10° persona Ricercatore resta SPRINT-21/
+> NEW-33 per condizione del piano stesso), ciascuno con un vero test E2E
+> (`tests/e2e/demo/test_*.py`, 28 test, 25 passed/3 skipped ambiente-dipendenti)
+> che guida i servizi reali via service layer (stessa disciplina `tests/
+> conformance/`), e `docs/demo/SCENARIO-<persona>.md` + README + RUNBOOK.
+> `backend/scripts/seed_demo.py --scenario=ai_native_demo` esteso (4 nuovi
+> utenti-persona, dominio governance/finance/HR/quiz), confermato idempotente
+> su due run consecutive. Trovato e corretto un bug reale pre-esistente
+> (bloccante, non introdotto da questo sprint): `platform.course_catalog_items`
+> non aveva MAI avuto una migration reale nonostante il modello ORM esistesse
+> da PI-1 — `catalog_edition_service._load_catalog_items_by_linked_course`
+> evitava il crash solo grazie a un early-return su lista vuota, mai esercitato
+> da nessuna fixture `test_governance.py` prima d'ora. Zero dati PII reali
+> (scan dedicato).
+
 ---
 
 ## 2. A-Register (structural/semantic anomalies) — A1–A12 (all closed)
