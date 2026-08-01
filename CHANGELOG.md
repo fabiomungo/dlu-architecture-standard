@@ -2,6 +2,55 @@
 
 ## Unreleased
 
+- **SPRINT-18/NEW-30 — CFO planning & control (BOOK-23 §8, G19 FULLY
+  CLOSED, T7 chapter complete)** (2026-08-01, `dlu_builder_tk`): 7 new
+  tables (`fee_schedules`/`fee_schedule_lines`, `revenue_forecasts`,
+  `cashflow_projections`, `financial_scenarios`, `period_closes`,
+  `variance_analyses`) close BOOK-23 Ch. 8, which had sat target-state
+  since v0.2. **Closes R23.1 for real**: `ApplicantMatriculated` (a real
+  event since SPRINT-06/NEW-18 — BOOK-23's own v0.3/v0.4 text wrongly
+  claimed it didn't exist yet, corrected in v0.5) now prices and
+  auto-issues the applicant's first tuition invoice via
+  `fee_schedule_service.create_tuition_invoice_from_fee_schedule`,
+  resolving the program/academic-year's effective fee schedule instead
+  of the prior honest `amount_cents=0` matriculation placeholder —
+  raising `FeeScheduleError` (never fabricating a price) when none
+  resolves (C23.6). `period_closes` locks AR actuals via a real
+  `Invoice` `before_update` event guard (`InvoicePeriodClosedError`,
+  same raw-connection-SELECT shape as SPRINT-14's `CatalogEdition`
+  guard) keyed off `issued_at` falling inside a closed window (C23.7).
+  `revenue_forecasts` pins the exact `as_of`/funnel counts/fee-schedule
+  id used in `detail`, so recomputing with the same `as_of` reproduces
+  byte-for-byte regardless of funnel activity added afterward (C23.8).
+  `financial_scenarios.run_scenario` is a pure compute — zero rows ever
+  persisted by a preview run, only `save_scenario` persists (taken
+  literally from "zero-persistenza degli scenari non salvati").
+  `variance_analyses` (±15% threshold) links to `governance_actions` by
+  widening the shared `VALID_GOVERNANCE_OBJECT_TYPES` tuple (+=
+  `variance_analysis`, both CHECK constraints in one migration) rather
+  than overloading the existing `budget` type — a breach is recorded
+  and emits `VarianceFlagged` but is never auto-filed as a governance
+  action, always a human `governance_action_service.record_action`
+  call. New KPI `budget_variance_breach_pct` (domain `finance`, `None`
+  until a tenant's first variance analysis exists). New API router
+  `backend/api/routes/finance_planning.py` (`/api/finance-planning`).
+  CFO Command (`FinanceAnalyticsDashboard.js`) gains 5 additive
+  planning/control sections below its existing SPRINT-16 KPI/budget
+  sections, reusing the same `executiveAPI.createGovernanceAction` path
+  to escalate a breach. **Found and corrected two more stale BOOK-23
+  claims** while updating this same file for Ch. 8: the AR chapter (§2)
+  had also wrongly said no `ApplicantMatriculated` event existed, and
+  the dossier chapter (§5) had wrongly tied dossier auto-creation to
+  that same non-gap — both were already real since SPRINT-06/NEW-18,
+  neither gated on this sprint's own work; fixed rather than left to
+  compound further. BOOK-23 bumped v0.4→v0.5. 22 new conformance tests
+  (`tests/conformance/test_cfo_planning_control.py`). Full regression
+  sweep clean on a genuinely fresh container (Phase1: 104 passed, 4
+  skipped; event mesh: 17 passed/1 skipped; conformance: 329 passed,
+  the same 3 pre-existing, unrelated `cds_grids` failures documented
+  since SPRINT-09) — zero stray rows across all 7 new tables after
+  rollback teardown.
+
 - **SPRINT-17/NEW-28 — eval harness completo + preset registry (BOOK-11
   Ch. 6/7, BOOK-10B, T11)** (2026-07-31, `dlu_builder_tk`): the
   scenario-bank/rubric-graded GA gate (`backend/evals/harness.py::
