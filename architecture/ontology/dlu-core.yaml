@@ -160,3 +160,13 @@ event_nouns:
   # shared,countersigned} — the admissions-funnel case workflow, distinct
   # from "preevaluation" above (see event_taxonomy.py's own comment).
   - preval_case
+  # SPRINT-21/NEW-33 (_dlu/sprint-plan, BOOK-25, T13 Research Workspace &
+  # Open Science) — genuinely new registration, not a T1-T10-style
+  # pre-reserved slot (T13 was never part of SPRINT-01/NEW-17f's
+  # scaffolding).
+  - research_project
+  - research_dataset
+  - provenance
+  - research_output
+  - grant
+  - federated_query

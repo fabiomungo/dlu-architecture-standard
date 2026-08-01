@@ -2,6 +2,65 @@
 
 ## Unreleased
 
+- **SPRINT-21/NEW-33 — Research Workspace & Open Science (BOOK-25, gap
+  G21, T13)** (2026-08-01, `dlu_builder_tk`): the 10th and final
+  persona — Researcher. 13 new tables (`research_projects`→
+  `research_members`/`research_datasets`+`dataset_versions`/
+  `research_environments`/`provenance_records`/`research_outputs`/
+  `grants`+`grant_budget_links`/`federated_kb_scopes`/`research_
+  compliance_assessments`, plus `research_compute_jobs`/`research_kb_
+  chunks` — disclosed additions beyond BOOK-25's own literal "11
+  tables"). R25.1 (every output resolves to its exact code sha/dataset
+  version/container digest) is structurally enforced via a hard NOT
+  NULL FK, not just a service-layer check. Neither pre-existing RAG
+  path fit "reused with project scopes" as BOOK-25 assumed — `RAGAgent`
+  is course-scoped only, `ReferenceDocument`'s retrieval is a declared
+  placeholder that always returns `[]` — built a real, minimal,
+  project-scoped chunk+embedding store instead (`research_kb_
+  service.py`, same `text-embedding-3-small` mechanism `rag_agent.py`
+  already uses in production, real OpenAI calls, no mocked client).
+  Federated RAG fan-out (`federated_research_service.py`) built from
+  scratch — `FederationService` (STX-06) was pure CRUD+heartbeat, zero
+  query fan-out existed to extend — scoped to 2 mock instances in the
+  SAME database (not a real network call), per the DoD's own "test con
+  2 istanze mock" condition; zero-trust (R25.2) verified: an out-of-
+  scope instance is refused (`granted=False`, empty results), BOTH the
+  granted and refused attempts are audited. The Research Assistant
+  (BOOK-10A Annex T row 5 — the roster's final agent, now 29/29
+  delivered) uses the T11 golden-set eval harness (22 real golden
+  cases, `research_assistant.jsonl`), NOT the twin-shaped PDDAEL
+  scenario-bank gate — resolved by cross-referencing BOOK-10A against
+  BOOK-25's own ambiguous "GA gate" wording; its citation decision core
+  (`_match_claims_to_citations`) never fabricates a citation below the
+  0.75 similarity floor, marking a claim honestly `unsupported` instead.
+  `grant_budget_links` is a real junction table (a grant can fund
+  several budget lines), a deliberate deviation from the simpler 1:1-FK
+  pattern used elsewhere in this program. `entry_type='research'`
+  required a real migration extending a Postgres CHECK constraint, not
+  just a Python tuple. Compute broker (BOOK-25 §5, "minimo") follows the
+  same `MOCK-DRIVER-{id}` opaque-reference posture `ap_service`'s
+  payment-run driver already established. New frontend page
+  `ResearchWorkspace.js` (`/organization/research-workspace`, `ds/
+  WorkQueue`+`ds/DetailSplit`+`ds/AIProposalCard`, `researcher`/`admin`
+  RBAC) and 3 new KPIs (active projects, outputs, grant success rate).
+  Found and fixed a real, pre-existing, never-exercised bug in
+  `rag_agent.py`: `_index_chunks` passes a bracketed-STRING
+  `_vec_literal(embedding)` to the pgvector ORM constructor, which
+  fails (`numpy.asarray` can't parse a string) — never caught because
+  no existing RAG test drives real indexing against a real, pgvector-
+  enabled Postgres; fixed only in this sprint's own new code (a raw
+  Python list, not the string helper), `rag_agent.py` itself untouched
+  (pre-existing, independent, out of this sprint's own charter).
+  Extended (not weakened) 2 pre-existing conformance tests that
+  hardcoded a 4-agent/7-domain set to the real 5/8, same discipline
+  SPRINT-19 used for these exact tests when it first populated them.
+  Adds the Researcher persona to the Demo Scenario Pack
+  (`docs/demo/SCENARIO-researcher.md`, `tests/e2e/demo/
+  test_researcher.py`) — the 10th persona SPRINT-20 deferred here.
+  Two-pass regression sweep unaffected (Phase1 104/4; `tests/
+  conformance/` 361 passed + the same 3 pre-existing failures;
+  event-mesh suite 17/1) with zero stray rows in any shared table.
+
 - **SPRINT-20/NEW-32 — Demo Scenario Pack (BOOK-20 §7b "Demo &
   Conformance suite", Gap: —)** (2026-08-01, `dlu_builder_tk`): 9
   persona-driven demo walkthroughs on the `DLU Demo University` tenant

@@ -289,7 +289,7 @@ demand of the kernel foundations.*
 
 ---
 
-## Annex T (target additions, v0.2 — sprint NEW-31)
+## Annex T (target additions, v0.3 — sprints NEW-31, NEW-33)
 
 Five persona-support agents extend the roster (24 → 29). All are ACP-composed
 (a row in `ai_agent_configs` + linked skills/MCP/presets — no separate
@@ -319,13 +319,23 @@ existing `governance_actions` "File governance action" flow (BOOK-24 §3),
 never filed by the agent itself. **Row 5 (Research Assistant) belongs to a
 separate, later sprint (NEW-33)** — untouched by NEW-31.
 
+**NEW-33 (SPRINT-21) implements row 5** — same `lifecycle_state="testing"`
+posture, same `contract_card` shape, same T11 golden-set mechanism
+(`research_assistant.jsonl`, 22 real golden cases) — resolved as the
+correct eval mechanism for this row too (not `harness.py::run_gate`,
+which structurally doesn't apply here either — no `scenario_bank/
+research_assistant.yaml` exists; SPRINT-21.md "Correzioni al piano" #10).
+Its "citation" decision core (`_match_claims_to_citations`) is pure/no-I/O,
+same discipline the other 4 rows' cores already established. Roster is now
+**29/29** — Annex T fully delivered.
+
 | Agent | Persona | Scope | Surfaces |
 |---|---|---|---|
 | Student Companion (consolidated) ✅ NEW-31 | Student | missions, nudging, objectives, admission/pre-eval status; twin context `purpose=self` | Companion Workspace |
 | Faculty Assistant ✅ NEW-31 | Teacher | teaching-ops drafts (register G4, milestone-deliverable review reminders); authoring-suggestion (FEX/CLO-MLO) scope from the original plan narrowed to teaching-ops this sprint (disclosed) | Faculty Teaching Register |
 | Admin Copilot ✅ NEW-31 | Back-office | explains pre-eval sheets and applied rules (deterministic summary of already-decided `PrevalSheet` facts, never re-decides a tier/verdict); dossier/checklist assistance and certificate drafts (G9) remain target | Preval Desk |
 | CFO Analyst ✅ NEW-31 | CFO | ranks variance breaches / cash alerts and drafts a rationale; every actual filing still routes via `governance_actions`, always a human `record_action` call, never this agent | CFO Command (BOOK-24) |
-| Research Assistant (NEW-33) | Researcher | literature review with verifiable citations (every claim resolves to a source chunk), structured extraction from corpora, drafting support; no writes to project state | Research Workspace (BOOK-25) |
+| Research Assistant ✅ NEW-33 | Researcher | literature review with verifiable citations (every claim resolves to a source chunk), structured extraction from corpora, drafting support; no writes to project state | Research Workspace (BOOK-25) |
 
 Also part of NEW-31: the uniform "AI proposal" affordance (accept / modify /
 reject with reason, `ds/AIProposalCard` + new shared `AgentProposalQueue`),
