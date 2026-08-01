@@ -1,5 +1,5 @@
 # BOOK-25 — Research Workspace & Open Science
-### DAS v0.1-draft · Layer: Intelligence / Institution · Status: DRAFT (target-state extension)
+### DAS v0.1-draft · Layer: Intelligence / Institution · Status: IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01 — the intro below already said ✅ IMPLEMENTED, only this status line was stale)
 
 > ✅ **IMPLEMENTED (NEW-33, SPRINT-21, 2026-08-01):** the full domain
 > model below (§2, 13 tables — 11 + `research_compute_jobs` +

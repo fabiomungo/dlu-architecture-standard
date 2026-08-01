@@ -2,6 +2,139 @@
 
 ## Unreleased
 
+- **SPRINT-22/NEW-29 — Guardrail tenant, hardening, GA suite (BOOK-19, T12)
+  — the 22nd and FINAL sprint of this program** (2026-08-01, `dlu_builder_tk`):
+  per-tenant configurable policy for 5 governed surfaces (`egress`/
+  `rate_limit`/`data_residency`/`pii`/`model_allowlist`), one row per
+  `(tenant_id, policy_type)` (`tenant_guardrail_policies`), with a full
+  audit trail recording BOTH allow and block decisions
+  (`guardrail_audit_events`). Live-wired, not a standalone config
+  surface: `egress` parameterizes `ace_service.py`'s previously-hardcoded
+  auto-throttle constants (backward-compatible fallback); `data_residency`
+  governs `federated_research_service.py`'s zero-trust query serving
+  (T13, fulfilling BOOK-25 §3's own promise). `rate_limit`/`pii`/
+  `model_allowlist` enforcement functions are real and independently
+  callable but deliberately NOT retrofitted into `llm_usage_service
+  .check_quota_soft_block`'s existing "MVP: never hard-blocks" behavior
+  — a disclosed scope cut to avoid unbounded regression risk across
+  every LLM call site, not an oversight. Staff UI: new "Guardrails" tab
+  on `TenantManagement.js` (5 editable policy panels + recent audit-event
+  table).
+
+  **Honest close-out of a 15-sprint-old false claim, not a lighter
+  correction**: pre-flight discovered TRACEABILITY.md/BOOK-21A had
+  claimed C21A.6/C21A.7 "✅ closed, real, CI-enforced" since SPRINT-07/
+  NEW-17d — but `git merge-base --is-ancestor sprint/NEW-17d-preval-
+  eval-loop HEAD` proved that branch (PR #83) was orphaned, never
+  merged into the real development chain, the entire time. Given the
+  choice between a lighter "correct the doc, don't rebuild" fix and a
+  full re-implementation, chose to rebuild for real: `preval_eval_
+  builder.py` (golden-case builder from HITL-approved sheets), `preval_
+  eval_metrics.py` (grader — composite ECTS accuracy/precision/recall),
+  `preval_eval_report.py` (weekly report, honest "provisional" cert
+  below 30 cases), `scripts/preval_eval_gate.py` (CI gate, genuinely
+  wired into `build-push-images.yml`'s new `preval-eval-gate` job,
+  blocking image build/push on failure — verified). Materially improved
+  vs. NEW-17d's own reported design: `replay_case` is a pure, instant,
+  zero-I/O replay against the deterministic engine's OWN frozen resolved
+  inputs (captured at golden-case-build time), not a replay of the full
+  production pipeline (which always makes a real, non-idempotent LLM
+  call) — cleanly separating "does the engine still reproduce this"
+  from "does the LLM still extract the same way." `submit_hitl_review`
+  extended with structured `corrected_*` fields that actually mutate a
+  sheet's rows/totals (closing C21A.6 for real). TRACEABILITY.md G17 and
+  `BOOK-21A` (renamed v0.3→v0.4-draft) both carry the full correction
+  inline, not a silent rewrite of the historical record. **G17 is now
+  FULLY CLOSED for real.**
+
+  **2 real, pre-existing conformance bugs found and fixed**: (1) the
+  `_seed_grid` stale-fixture collision in `test_admission_orientation.py`
+  /`test_admission_e2e_fixture.py` — disclosed as a known, unrelated
+  failure since SPRINT-09's own CHANGELOG entry (see above, Milestone
+  M2), never actually fixed until now — root cause: `scripts/import_
+  cds_grid.py` running unconditionally before the suite permanently
+  commits the same natural key the tests' own blind INSERT collided
+  with; fixed via get-or-create, matching `import_cds_grid.py`'s own
+  idempotent-upsert discipline. (2) a SECOND bug this fix exposed,
+  previously masked by bug (1) always failing first: `test_admission_
+  e2e_fixture.py`'s own DoD fixture never seeded a `FeeSchedule`, and
+  R23.6 correctly refuses to issue a matriculation tuition invoice
+  without one — fixed by seeding one, matching `tests/e2e/demo/
+  test_student.py`'s own real pattern.
+
+  **Doc corrections** (BOOK-21 C21.5: was "⚠ not implemented," actually
+  satisfied since SPRINT-17/NEW-28 registered the `admission_evaluation`
+  eval domain — text was just stale; BOOK-23 C23.5: marked N/A, was
+  never anything but an unrelated separate compliance doc; BOOK-24
+  C24.4: behavior already covered, added the missing ID citation).
+  `scripts/count_tables.py` (new — first real, reproducible table-count
+  script this program has ever had) found the real count is **419**
+  tables, not the self-contradictory "308"/"396" `ER_MAP.md` had been
+  carrying; both `ER_MAP.md` and `ER_MAP_TARGET.md` corrected, T10/T11/
+  T13 sections corrected from stale 🆕 to ✅ (all were already
+  implemented — SPRINT-15/16, SPRINT-01/07/17, SPRINT-21 respectively —
+  headers just never updated), `ER_MAP_TARGET.md` retitled
+  "REALIZZATO" now that T1-T13 are all ✅. `MASTERBOOK-INDEX.md` lists
+  BOOK-21 through BOOK-25 for the first time (previously entirely
+  absent); BOOK-24/25's own status lines corrected from bare "DRAFT" to
+  "IMPLEMENTED" (both had real, fully-closed gaps — G20, G21 — the
+  status line just hadn't caught up).
+
+  **Load test**: new `scripts/load_test_das_hotpaths.py` (asyncio+httpx
+  worker-pool, same real pattern as `load_test_multitenancy.py`, NOT
+  Locust) targets the plan's own named hot paths against REAL, currently
+  -mounted routes (`GET/{id} /api/admissions/applications`, `POST /api/
+  preval-requests/instant-estimate`, `GET /api/badges/issuances`) —
+  the two pre-existing load-test scripts predate this program and only
+  ever exercised old-generation `/api/courses` routes. Verified
+  end-to-end against a real running server: 3,475 requests, 99.97%
+  success, p95 44ms. Found and disclosed (not fixed — pre-existing, out
+  of this sprint's scope) a real ~0.1-0.2% flake: `RuntimeError: No
+  response returned.` from Starlette `BaseHTTPMiddleware` under
+  concurrent load, a known failure mode when several
+  `BaseHTTPMiddleware`-based middlewares are chained (this app chains
+  7) — documented in `scripts/LOAD_TESTING_README.md`'s new section
+  with a recommendation for a future sprint (migrate to pure ASGI
+  middleware).
+
+  **UI legacy sweep, honestly bounded and honestly measured**: safe,
+  individually-verified cleanup of redundant `var(--token, #hex)`
+  fallbacks across 29 CSS files — but ONLY for the 23 tokens with a real
+  global definition elsewhere; a first, blind attempt at this same fix
+  was caught and reverted after discovering 28 DIFFERENT custom
+  properties (`--bg-hover`, `--primary-color`, `--text-secondary`, …)
+  have NO global definition anywhere — their "token" is a shell, the
+  real color always came from the hardcoded fallback, a worse problem
+  than plain hex sprawl and disclosed, not fixed, in `UI_AUDIT.md`'s new
+  §6. 3 real, reachable pages (`RecognitionCouncilDesk.js`,
+  `RegistrarDesk.js`, `VerificationDesk.js`) migrated from ad-hoc antd
+  `<Tag color={DICT}>` to `ds/StatusBadge`. Verified with a real
+  `npm run build`, not just lint. Numbers reported honestly: hex colors
+  in CSS 367→364 (essentially flat — the "447" cited in an earlier
+  sprint note was not reproducible with this same method and was
+  discarded), files-with-hex 152→140, CSS file COUNT unchanged at 263
+  (232 baseline — a real, unresolved regression, not claimed fixed).
+
+  **Full regression sweep, container recreated fresh + migrated + `cds_
+  grids` reseeded**: Phase1 (container-off, SQLite fallback) 104
+  passed/4 skipped; event-mesh unit suite (container-off) 17 passed/1
+  skipped; full `tests/conformance/` suite **376 passed, 0 failed**
+  (was 373 + 3 known-failing before this sprint's fixture fixes). An
+  earlier same-day run against the NOT-yet-recreated container had
+  surfaced 3 stray-committed-row failures from this sprint's own earlier
+  manual script runs (`preval_eval_gate.py` standalone, real commits) —
+  confirmed as contamination, not a service bug, by the clean recreated-
+  container run; zero stray rows verified afterward in every new
+  SPRINT-22 table.
+
+  **Milestone M3 — Programme Complete (22/22 sprints)**: this is the
+  last sprint of the DAS target-state plan (`sprint-plan/PLAN.md`).
+  BLG-104/BLG-105 close here. Per this programme's own established
+  precedent since HO-015, `BACKLOG_TARGET.xlsx` itself is not edited —
+  completion is verified conceptually against the real code/tests
+  documented in each sprint's own CHANGELOG entry, not tracked in the
+  spreadsheet in practice.
+
 - **SPRINT-21/NEW-33 — Research Workspace & Open Science (BOOK-25, gap
   G21, T13)** (2026-08-01, `dlu_builder_tk`): the 10th and final
   persona — Researcher. 13 new tables (`research_projects`→

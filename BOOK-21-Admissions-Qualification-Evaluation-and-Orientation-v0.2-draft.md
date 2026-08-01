@@ -113,11 +113,13 @@ table exists yet). The simulation persists nothing but the recommendation record
   the syllabus version used — `syllabus_version_pinned` pins `external_syllabus_records
   .source_edition_year` (the real versioning column; no `.version` string column exists on
   that table, corrected from this check's original wording).
-- C21.5 ⚠ **Not implemented this sprint** Admission evaluation agents pass the eval harness GA
-  gate (BOOK-11; `eval_datasets` domain `admission_evaluation`, T11) — no such eval dataset
-  domain was created; `qualification_service.run_tier1_evaluation`'s institution-matching
-  heuristic (via `external_courses.source_institution_name`, case-insensitive exact-then-
-  substring match) is explicitly disclosed as a heuristic, not a GA-gated evaluator.
+- C21.5 ✅ **Satisfied — SPRINT-17/NEW-28** (this book's own text was stale; corrected
+  SPRINT-22.md "Correzioni al piano" #9). Admission evaluation agents pass the eval harness GA
+  gate (BOOK-11; `eval_datasets` domain `admission_evaluation`, T11): `backend/evals/
+  domain_agent_fns.py::admission_evaluation_agent_fn` calls the REAL, extracted pure decision
+  core — `qualification_service._compute_tier1_verdict` — against the real golden dataset
+  `scripts/eval_datasets/admission_evaluation.jsonl`, registered and gate-verified by
+  `tests/conformance/test_eval_harness_preset_registry.py`.
 
 Fixture E2E (this sprint's own DoD, verified end-to-end against a real Postgres,
 `tests/conformance/test_admission_e2e_fixture.py`): lead → application → qualification →
@@ -128,7 +130,7 @@ eligible → orientation preview → offer → accept → matriculated, with a r
 
 | Element | Exists today | Target |
 |---|---|---|
-| Admission funnel ✅ (NEW-18) | `admission_intakes`/`admission_requirements`/`admission_applications`/`applicant_qualifications`/`qualification_documents`/`qualification_evaluations`/`eligibility_verdicts`/`orientation_recommendations`/`admission_offers`/`admission_acceptances` (`backend/database/models_admission.py`), `admission_service.py`, `qualification_service.py`, `orientation_service.py`, `matriculation_service.py`, `lead_conversion_service.py` | eval-harness GA gate (C21.5), full GPS Pareto orientation, program fee/cost data |
+| Admission funnel ✅ (NEW-18) | `admission_intakes`/`admission_requirements`/`admission_applications`/`applicant_qualifications`/`qualification_documents`/`qualification_evaluations`/`eligibility_verdicts`/`orientation_recommendations`/`admission_offers`/`admission_acceptances` (`backend/database/models_admission.py`), `admission_service.py`, `qualification_service.py`, `orientation_service.py`, `matriculation_service.py`, `lead_conversion_service.py`; eval-harness GA gate ✅ (C21.5, SPRINT-17/NEW-28) | full GPS Pareto orientation, program fee/cost data |
 | CRM leads/opportunities | `CRMLeadMapping`/`CRMOpportunityMapping` (`crm_lead_mapping`/`crm_opportunity_mapping`, Frappe-sync mapping tables — no first-class DLU lead entity), read directly by `lead_conversion_service` | `backend/api/routes/crm.py` itself stays unmounted/broken (pre-existing, disclosed, unrelated CRM-sync domain bug — out of scope) |
 | Credit pre-evaluation | `credit_pre_evaluations`/`pre_evaluation_service.py` (G16/BOOK-14A) — genuinely separate from, and never bridged with, `preval_requests`/`preval_workflow_service.py` (G17/BOOK-21A) — confirmed deliberate via explicit "do NOT reuse... vice versa" comments already in the codebase | automatic hand-off from `ApplicantMatriculated`'s orientation preview (blocked on a course-id-mapping gap, see §4 R21.4) |
 | Equivalence data | `equivalence_rules`, `external_syllabus_records` — real, though `external_courses`' own migrated schema has drifted from its current ORM model (pre-existing, unrelated gap, patched ad hoc in this sprint's own tests) | shared store, drift-pinned — ✅ `syllabus_version_pinned` (C21.4) |

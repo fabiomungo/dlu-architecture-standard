@@ -85,6 +85,14 @@ existing roles only at small scale, never absent.
    crisis F7 mishandling, security breach); paging paths; regulatory clocks
    (GDPR 72h breach notification); every AI incident feeds the scenario bank
    (BOOK-11 — the immune system).
+7. **Tenant guardrails (T12, NEW-29):** per-tenant configurable policy —
+   `egress`, `rate_limit`, `data_residency`, `pii`, `model_allowlist` — one
+   row per `(tenant_id, policy_type)`, every decision (allow AND block)
+   recorded to a dedicated audit trail. Live-governs existing enforcement
+   points rather than existing as a parallel config surface: tenant-
+   configurable egress thresholds replace previously-hardcoded module
+   constants in the ACE auto-throttle; data-residency policy gates the
+   federated research zero-trust query path (T13/BOOK-25 §3).
 
 ---
 
@@ -366,6 +374,7 @@ Register now **G1–G16**.
 | Identity verification (G13) | `identity_verification_policies` live-resolved per tenant + versioned disclosure in the twin's `consent_flags` **✅ (NEW-13, 2026-07-31)** | ✅ | — |
 | Engagement/attendance | xAPI classes | ✅ | Title IV engagement mapping doc 🔵 |
 | Compliance calendar | compute-on-read, never materialized **✅ (NEW-13, 2026-07-31)** — surfaced in I5; DR-exercise row also populated **✅ (NEW-15, 2026-08-02)** via `compliance_calendar_service`'s `dr_exercise` schedule entry | ✅ | — |
+| Tenant guardrails (T12) | `tenant_guardrail_policies`/`guardrail_audit_events` (`guardrail_service.py`) **✅ (NEW-29, 2026-08-01, this program's final sprint)** — 5 governed policy types per tenant (`egress`/`rate_limit`/`data_residency`/`pii`/`model_allowlist`); every decision (allow AND block) audited. Live-wired, not standalone config: `egress` parameterizes `ace_service.py`'s auto-throttle; `data_residency` governs `federated_research_service.py`'s zero-trust query serving (T13) | ✅ | `rate_limit`/`pii`/`model_allowlist` enforcement functions are real but NOT retrofitted into `llm_usage_service.check_quota_soft_block`'s existing MVP soft-block behavior 🟡 (disclosed scope cut, not an oversight) |
 
 ---
 

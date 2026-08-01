@@ -1,7 +1,10 @@
 # DLU Architecture Standard — Masterbook Index
 ### The Master Document of the DLU AI-Native University · DAS v1.0-draft
 
-> 21 volumes + apparatus. **BOOK-00 v2.0 is the root**: it defines conformance
+> 21 stabilized volumes (BOOK-00 through BOOK-20) + 6 target-state extension
+> volumes (BOOK-21 through BOOK-25, added SPRINT-22 doc-sync, 2026-08-01 —
+> this index had never listed them before, a genuine gap closed here for the
+> first time) + apparatus. **BOOK-00 v2.0 is the root**: it defines conformance
 > (DAS-Core / DAS-Intelligent / DAS-Certified), the Seven Canonical Questions,
 > the normative language, and the lineage rules every other volume obeys.
 > Reference implementation: **DLU Builder Turnkey** (`dlu_builder_tk`) — every
@@ -37,6 +40,27 @@
 | [18](BOOK-18-Technical-Architecture-and-Turnkey-Integration-v1.0.md) | Technical Architecture & Turnkey Integration | engine→code mapping, driver catalog (ESSE3 keystone), refactoring map, phases K1–K5 | Delivery |
 | [19](BOOK-19-Governance-Security-and-Compliance-v1.0.md) | Governance, Security & Compliance | RACI, security, AI Act mapping, Italian profile (incl. G14 DE/DI), US distance-ed profile (G12/G13) | Governance |
 | [20](BOOK-20-Implementation-Blueprint-v1.0.md) | Implementation Blueprint | sprint catalog with verification cards, conformance suites, KPI plan, execution rules for AI agents | Delivery |
+
+### Target-state extension volumes (BOOK-21–25)
+
+Added after BOOK-00's original 20-book plan, one per persona/gap the initial plan didn't cover
+(TRACEABILITY.md gaps G17/G19/G20/G21 + T12 guardrails). Listed here for the first time in this
+index (SPRINT-22 doc-sync, 2026-08-01) — all 6 are real, sprint-implemented volumes, not
+placeholders. Version/status strings kept as each book's own file states (some still carry
+"-draft" in the filename as this sub-program's own maturity marker, independent of whether
+specific chapters are implemented — see each book's own Status line for what's actually built).
+
+| # | Title | One-line scope | Status |
+|---|-------|----------------|--------|
+| [21](BOOK-21-Admissions-Qualification-Evaluation-and-Orientation-v0.2-draft.md) | Admissions, Qualification Evaluation & Orientation | full funnel: application→eligibility→orientation→offer→matriculation (G17) | IMPLEMENTED (SPRINT-06/NEW-18) |
+| [21A](BOOK-21A-Credit-Pre-Evaluation-Operations-and-Automation-v0.4-draft.md) | Credit Pre-Evaluation: Operations & Automation (annex) | CDS extraction/matching engine, rule packs, golden-set eval loop (G17) | IMPLEMENTED (SPRINT-02..04/07/22 — F1-F4 all real; C21A.6/C21A.7 corrected + closed for real SPRINT-22) |
+| [22](BOOK-22-Faculty-Lifecycle-Contracting-and-Workforce-v0.4-draft.md) | Faculty Lifecycle, Contracting & Human Workforce | onboarding, QES-signed authoring contracts, milestone/deliverable gates, HR/workload ledger (G18) | IMPLEMENTED (SPRINT-08/09/10 — G18 FULLY CLOSED) |
+| [23](BOOK-23-Financial-Operations-and-Administrative-Backbone-v0.5-draft.md) | Financial Operations & Administrative Backbone | native AR/AP, holds, student dossier, financial planning & control (G19) | IMPLEMENTED (SPRINT-05/09/18 — G19 FULLY CLOSED) |
+| [24](BOOK-24-Executive-Command-and-Corporate-Governance-v0.1-draft.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED (SPRINT-14/15/16 — G20 FULLY CLOSED) |
+| [25](BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
+
+Guardrail tenant policies (T12, BOOK-19 §7 extension, SPRINT-22/NEW-29 — the program's final
+sprint) live inside **BOOK-19** itself (Governance, Security & Compliance), not a standalone book.
 
 **Apparatus:** [TRACEABILITY.md](TRACEABILITY.md) (registers → Books → sprints →
 checks) · [GLOSSARY.md](GLOSSARY.md) (unified normative glossary) ·

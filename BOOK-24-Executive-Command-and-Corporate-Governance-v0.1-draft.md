@@ -1,5 +1,5 @@
 # BOOK-24 — Executive Command & Corporate Governance
-### DAS v0.1-draft · Layer: Institution / Governance · Status: DRAFT (target-state extension)
+### DAS v0.1-draft · Layer: Institution / Governance · Status: IMPLEMENTED (SPRINT-14/25 policy+catalog-approval, SPRINT-15/26 KPI layer, SPRINT-16/27 board governance — G20 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01 — see TRACEABILITY.md G20)
 
 > Closes **G20** (role-grade command dashboards for Provost / President / Chairman / CFO,
 > a historicized KPI layer, board governance, and the formal catalog/policy approval
@@ -187,8 +187,12 @@ command surfaces into the domain — dashboards remain read-only otherwise.
 - C24.2 Fixture: catalog edition published without completed approval workflow → MUST fail.
 - C24.3 Property: a student's applicable policy set resolves uniquely from
   (cohort, regulation_year) — G7 routing constraint test extended.
-- C24.4 Alert SLO: breach-to-alert latency bounded; unacknowledged critical alerts
-  escalate per policy.
+- C24.4 ✅ **Verified SPRINT-15/NEW-26** (citation was missing, behavior already covered —
+  corrected SPRINT-22.md "Correzioni al piano" #9) Alert SLO: breach-to-alert latency bounded
+  (by construction zero — the same transaction that writes the breaching snapshot creates the
+  alert); unacknowledged critical alerts escalate per policy —
+  `tests/conformance/test_kpi_executive_alerts.py::test_breach_creates_alert_and_emits_event` +
+  `::test_escalation_sweep_escalates_stale_critical_unconditionally`.
 - C24.5 KPI reproducibility: any snapshot recomputes from the event mesh within
   tolerance (event sourcing discipline, `domain_events`).
 

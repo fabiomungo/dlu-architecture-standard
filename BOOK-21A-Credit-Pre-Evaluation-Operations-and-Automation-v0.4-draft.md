@@ -1,7 +1,27 @@
 # BOOK-21A — Credit Pre-Evaluation: Operations & Automation (annex)
-### DAS v0.3-draft · Layer: Intelligence / Intake · Status: DRAFT (annex to BOOK-21)
+### DAS v0.4-draft · Layer: Intelligence / Intake · Status: IMPLEMENTED (F1-F4 all real, G17/C21A.6/C21A.7 FULLY CLOSED — SPRINT-22 correction, see v0.4 note below)
 
-> **v0.3 (2026-07-30, NEW-17d/SPRINT-07)**: F4 (golden set + eval loop) implemented — the last
+> **v0.4 (2026-08-01, NEW-29/SPRINT-22) — IMPORTANT CORRECTION to the v0.3 note below**: the
+> v0.3 claim that C21A.6/C21A.7 were closed by "NEW-17d/SPRINT-07" was **never actually true**.
+> `git merge-base --is-ancestor sprint/NEW-17d-preval-eval-loop HEAD` (checked against this
+> program's real development chain, since nothing across all 22 sprints has yet merged to
+> `main`) proved that branch (PR #83) was orphaned — never merged — the entire time this v0.3
+> note has existed. `preval_eval_builder.py`/`preval_eval_metrics.py`/`preval_eval_gate.py` did
+> not exist in the actual running codebase until SPRINT-22 rebuilt them fresh (found during
+> SPRINT-22/NEW-29 pre-flight; the user chose full re-implementation over a lighter
+> correction-only fix). The rebuild uses a materially improved design vs. what v0.3 describes
+> below: `replay_case` is a PURE, instant, zero-I/O replay against the deterministic engine's OWN
+> frozen resolved inputs (captured at golden-case-build time), not a replay of the full
+> production pipeline (which always makes a real, non-idempotent LLM call, as F4's original
+> design implied). Verified for real this time — `tests/conformance/test_preval_eval_loop.py`
+> (6 tests, real migrated Postgres) and `preval_eval_gate.py` genuinely wired into
+> `.github/workflows/build-push-images.yml` (`needs: [test-gate, preval-eval-gate]`, confirmed).
+> Everything else the v0.3 note and the rest of this document describe below (module names,
+> mechanism, the honest PROVISIONAL certification caveat) is technically accurate — only the
+> sprint/date attribution was wrong. **G17 is NOW FULLY CLOSED for real** (TRACEABILITY.md G17).
+
+> **v0.3 (2026-07-30, NEW-17d/SPRINT-07)** — retained for the historical record, see v0.4
+> correction above: F4 (golden set + eval loop) implemented — the last
 > open phase. §7/§8/Annex A updated with real measured numbers and mechanism, not projections.
 > **C21A.6 closed** as a side effect of building this sprint's own row-correction capability
 > (not the primary goal — see §7's own note). **C21A.7 real and CI-wired**, but the

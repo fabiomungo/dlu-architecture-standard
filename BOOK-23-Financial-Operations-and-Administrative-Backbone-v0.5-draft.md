@@ -142,8 +142,11 @@ remains target; no certificate-generation code reads `student_dossiers`/`dossier
   evaluation reads" is NOT implemented — the GPS does not consume `administrative_holds` yet.
 - C23.4 ⚠ Not implemented (certificate generation does not read the dossier yet, §5 above):
   any certificate regenerates byte-identically from dossier state at issuance time.
-- C23.5 Multi-region compliance posture per `UNIVERSITY_PLATFORM_COMPLIANCE_MULTIREGION.md` —
-  unaffected by this sprint, not (re-)checked here.
+- C23.5 **N/A** (SPRINT-22.md "Correzioni al piano" #9). Multi-region compliance posture per
+  `UNIVERSITY_PLATFORM_COMPLIANCE_MULTIREGION.md` — a real, separate document (confirmed
+  present in the repo root) covering a distinct compliance domain this sprint's own scope
+  (tenant guardrails, preval eval-loop) never touches; formally out of scope rather than
+  merely "unaffected/not re-checked."
 
 ## 8. Financial Planning & Control (the CFO cycle)
 
