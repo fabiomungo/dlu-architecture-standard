@@ -1,10 +1,10 @@
 # DLU Architecture Standard — Masterbook Index
 ### The Master Document of the DLU AI-Native University · DAS v1.0-draft
 
-> 21 stabilized volumes (BOOK-00 through BOOK-20) + 6 target-state extension
-> volumes (BOOK-21 through BOOK-25, added SPRINT-22 doc-sync, 2026-08-01 —
-> this index had never listed them before, a genuine gap closed here for the
-> first time) + apparatus. **BOOK-00 v2.0 is the root**: it defines conformance
+> 21 stabilized volumes (BOOK-00 through BOOK-20) + 7 target-state extension
+> volumes (BOOK-21 through BOOK-26, BOOK-21–25 added SPRINT-22 doc-sync,
+> 2026-08-01; BOOK-26 added AVA doc-sync, 2026-08-05) + apparatus. **BOOK-00
+> v2.0 is the root**: it defines conformance
 > (DAS-Core / DAS-Intelligent / DAS-Certified), the Seven Canonical Questions,
 > the normative language, and the lineage rules every other volume obeys.
 > Reference implementation: **DLU Builder Turnkey** (`dlu_builder_tk`) — every
@@ -41,14 +41,15 @@
 | [19](BOOK-19-Governance-Security-and-Compliance-v1.0.md) | Governance, Security & Compliance | RACI, security, AI Act mapping, Italian profile (incl. G14 DE/DI), US distance-ed profile (G12/G13) | Governance |
 | [20](BOOK-20-Implementation-Blueprint-v1.0.md) | Implementation Blueprint | sprint catalog with verification cards, conformance suites, KPI plan, execution rules for AI agents | Delivery |
 
-### Target-state extension volumes (BOOK-21–25)
+### Target-state extension volumes (BOOK-21–26)
 
 Added after BOOK-00's original 20-book plan, one per persona/gap the initial plan didn't cover
-(TRACEABILITY.md gaps G17/G19/G20/G21 + T12 guardrails). Listed here for the first time in this
-index (SPRINT-22 doc-sync, 2026-08-01) — all 6 are real, sprint-implemented volumes, not
-placeholders. Version/status strings kept as each book's own file states (some still carry
-"-draft" in the filename as this sub-program's own maturity marker, independent of whether
-specific chapters are implemented — see each book's own Status line for what's actually built).
+(TRACEABILITY.md gaps G17/G19/G20/G21/G22 + T12 guardrails). BOOK-21–25 listed here since
+SPRINT-22 doc-sync (2026-08-01); **BOOK-26 added AVA doc-sync, 2026-08-05** — all 7 are real,
+sprint-implemented volumes, not placeholders. Version/status strings kept as each book's own file
+states (some still carry "-draft" in the filename as this sub-program's own maturity marker,
+independent of whether specific chapters are implemented — see each book's own Status line for
+what's actually built).
 
 | # | Title | One-line scope | Status |
 |---|-------|----------------|--------|
@@ -58,6 +59,7 @@ specific chapters are implemented — see each book's own Status line for what's
 | [23](BOOK-23-Financial-Operations-and-Administrative-Backbone-v0.5-draft.md) | Financial Operations & Administrative Backbone | native AR/AP, holds, student dossier, financial planning & control (G19) | IMPLEMENTED (SPRINT-05/09/18 — G19 FULLY CLOSED) |
 | [24](BOOK-24-Executive-Command-and-Corporate-Governance-v0.1-draft.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED (SPRINT-14/15/16 — G20 FULLY CLOSED) |
 | [25](BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
+| [26](BOOK-26-Accreditation-Quality-Assurance-and-DM1154-Compliance-v0.1-draft.md) | Accreditation, Quality Assurance & DM 1154/2021 Compliance | faculty-requirement engine, Art. 3/4 accreditation lifecycle, Allegato E indicators, SUA-CdS/SMA tracking, Auditor/CEV persona, evidence registry, alert engine, Allegato C judgment workflow (G22, 11th/12th personas) | IMPLEMENTED (AVA-01…12 — G22 FULLY CLOSED) |
 
 Guardrail tenant policies (T12, BOOK-19 §7 extension, SPRINT-22/NEW-29 — the program's final
 sprint) live inside **BOOK-19** itself (Governance, Security & Compliance), not a standalone book.
@@ -83,7 +85,7 @@ sprints) → `dlu_builder_tk/CLAUDE.md` (binding engineering guardrails).
 | Enterprise / solution architect | 00 → 03 → 04 → 05 → 13 → 18 |
 | AI architect / engineer | 00 (Ch. 6) → 09 → 10 → 11 → 12 → 06 (Ch. 5–6) |
 | Product / UX | 00 → 17 → 06 → 14 (Ch. 7) → 16 (Ch. 5–6) |
-| Registrar / QA / Compliance | 00 → 15 → 16 → 19 → 08 (Ch. 6) |
+| Registrar / QA / Compliance | 00 → 15 → 16 → 19 → 08 (Ch. 6) → 26 (periodic accreditation, DM 1154/2021) |
 | Integration engineer (Italy) | 18 (Ch. 3–4) → 19 (Ch. 5) → 15 (Ch. 5, 8) → 16 (Ch. 8) |
 | Implementation agent (Claude/RooCode) | 20 (Ch. 12 first — execution rules) → sprint refs per card |
 

@@ -289,20 +289,58 @@ demand of the kernel foundations.*
 
 ---
 
-## Annex T (target additions, v0.1-draft — sprint NEW-31)
+## Annex T (target additions, v0.3 — sprints NEW-31, NEW-33)
 
-Five persona-support agents extend the roster (24 → 29). All are ACP-composed,
-**propose-only** (no autonomous acts on careers, money, or grades), carry contract
-cards, run under envelopes where applicable, and pass the eval-harness GA gate
-(BOOK-11) with a dedicated dataset (≥20 golden cases each).
+Five persona-support agents extend the roster (24 → 29). All are ACP-composed
+(a row in `ai_agent_configs` + linked skills/MCP/presets — no separate
+"composition" machinery), **propose-only** (no autonomous acts on careers,
+money, or grades), carry contract cards, and pass a dedicated eval-harness
+dataset (≥20 golden cases each, BOOK-11 Ch. 6's T11 golden-set gate — see
+below for the one correction to this annex's own original text). Envelopes
+apply only where the agent actually has pedagogical moves to scope (Student
+Companion) — `envelope_defaults`/`FacultyEnvelope` are both structurally a
+move-catalog construct (BOOK-09 Ch. 3), not a generic per-agent policy knob;
+the other 3 have no pedagogical moves at all, so "run under envelopes" does
+not apply to them (an honest non-applicability, not a gap).
+
+**NEW-31 (SPRINT-19) implements the first 4 rows below** — all registered
+`lifecycle_state="testing"` (same posture as the 9 ACE agents, never
+auto-promoted this sprint), each with a populated `contract_card`
+(`{purpose, powers, limits, escalation}`, `platform.ai_agent_configs.
+contract_card`) and a passing T11 golden-set dataset
+(`backend/evals/domain_agent_fns.py` + `scripts/eval_datasets/*.jsonl` —
+the SAME SPRINT-17 mechanism used for `generation`/`admission_evaluation`/
+`nudging`, not the twin-bound `harness.py::run_gate` PDDAEL scenario-bank
+gate, which structurally does not fit 3 of these 4 non-twin agents).
+Persistence is via a new, generic `ai_agent_proposals` table
+(`ai_agent_proposal_service.py`) — never a direct domain write; a CFO
+Analyst proposal is a drafted rationale for a human to file via the
+existing `governance_actions` "File governance action" flow (BOOK-24 §3),
+never filed by the agent itself. **Row 5 (Research Assistant) belongs to a
+separate, later sprint (NEW-33)** — untouched by NEW-31.
+
+**NEW-33 (SPRINT-21) implements row 5** — same `lifecycle_state="testing"`
+posture, same `contract_card` shape, same T11 golden-set mechanism
+(`research_assistant.jsonl`, 22 real golden cases) — resolved as the
+correct eval mechanism for this row too (not `harness.py::run_gate`,
+which structurally doesn't apply here either — no `scenario_bank/
+research_assistant.yaml` exists; SPRINT-21.md "Correzioni al piano" #10).
+Its "citation" decision core (`_match_claims_to_citations`) is pure/no-I/O,
+same discipline the other 4 rows' cores already established. Roster is now
+**29/29** — Annex T fully delivered.
 
 | Agent | Persona | Scope | Surfaces |
 |---|---|---|---|
-| Student Companion (consolidated) | Student | missions, nudging, objectives, admission/pre-eval status; twin context `purpose=self` | Companion Workspace |
-| Faculty Assistant | Teacher | authoring suggestions (FEX/CLO-MLO), teaching-ops drafts (register G4, appelli/office-hours reminders), engagement/milestone status | Faculty workspace |
-| Admin Copilot | Back-office | explains pre-eval sheets and applied rules, dossier/checklist assistance, certificate drafts (G9), governed standard notices | Registrar/Preval Desk |
-| CFO Analyst | CFO | variance/forecast/cash narratives, KPI drill-down explanations, period-close draft commentary; every action routes via `governance_actions` | CFO Command (BOOK-24) |
-| Research Assistant (NEW-33) | Researcher | literature review with verifiable citations (every claim resolves to a source chunk), structured extraction from corpora, drafting support; no writes to project state | Research Workspace (BOOK-25) |
+| Student Companion (consolidated) ✅ NEW-31 | Student | missions, nudging, objectives, admission/pre-eval status; twin context `purpose=self` | Companion Workspace |
+| Faculty Assistant ✅ NEW-31 | Teacher | teaching-ops drafts (register G4, milestone-deliverable review reminders); authoring-suggestion (FEX/CLO-MLO) scope from the original plan narrowed to teaching-ops this sprint (disclosed) | Faculty Teaching Register |
+| Admin Copilot ✅ NEW-31 | Back-office | explains pre-eval sheets and applied rules (deterministic summary of already-decided `PrevalSheet` facts, never re-decides a tier/verdict); dossier/checklist assistance and certificate drafts (G9) remain target | Preval Desk |
+| CFO Analyst ✅ NEW-31 | CFO | ranks variance breaches / cash alerts and drafts a rationale; every actual filing still routes via `governance_actions`, always a human `record_action` call, never this agent | CFO Command (BOOK-24) |
+| Research Assistant ✅ NEW-33 | Researcher | literature review with verifiable citations (every claim resolves to a source chunk), structured extraction from corpora, drafting support; no writes to project state | Research Workspace (BOOK-25) |
 
-Also part of NEW-31: the uniform "AI proposal" affordance (accept / modify / reject
-with reason) — rejections feed the eval datasets.
+Also part of NEW-31: the uniform "AI proposal" affordance (accept / modify /
+reject with reason, `ds/AIProposalCard` + new shared `AgentProposalQueue`),
+wired onto all 4 surfaces above — "modify" resubmits the same payload this
+sprint (no payload-editing UI yet, disclosed); rejections are durably
+recorded with their reason on the `ai_agent_proposals` row itself (feeding
+the eval datasets is aspirational per this annex's original text — not
+literally wired this sprint, an honest correction).

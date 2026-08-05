@@ -86,6 +86,23 @@ governance machine.
    evaluates templates (BOOK-10 card) → eligible → auto-issue or HITL queue →
    issue → `credential.issued` → wallet + n8n → institutional record
    (ERPNext/ESSE3).
+
+   > ✅ **IMPLEMENTED (NEW-23, SPRINT-12, 2026-07-31):** the "course badge"
+   > row of Ch. 3's table was fully built (`credential_criteria_service.
+   > evaluate_templates_for_event`, `credential_issuance_service.
+   > issue_or_propose`, signing, wallet) but had exactly ONE caller anywhere
+   > in the codebase — a demo seed script — and `badge_credit_rule_service.
+   > apply_badge_credit_rules` had zero callers. `dlu_builder_tk`'s
+   > `badge_automation_service.py` now closes this: a new Event Mesh
+   > consumer group `course-completion` (STX-03) emits a real, new
+   > `course.achieved` event per student from `assessment_session.
+   > published` (queried via `AssessmentSessionEnrollment`, PASS +
+   > published + not refused), which drives both auto-issuance
+   > (`achievement_badge_issuances`, idempotent, `attempts` capped at 5,
+   > retried by a Celery beat sweep) and `apply_badge_credit_rules` for the
+   > first time. Async-DB-touching criteria/issuance calls are bridged from
+   > the sync consumer handler via `asyncio.run()`, the same technique
+   > `esse3_credential_consumers.py` already used for its own async call.
 3. **Signing (the P3 this Book specifies):** W3C Data Integrity proofs;
    **one DID per issuing institution** (`did:web` recommended initially —
    resolvable, no ledger dependency), key custody per BOOK-19 (KMS path,

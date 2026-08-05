@@ -2,6 +2,185 @@
 
 ## Unreleased
 
+- **AVA-01…AVA-12 — Accreditation, Quality Assurance & DM 1154/2021
+  Compliance (BOOK-26, new) — a 12-sprint program, opened and closed in
+  one continuous pass, G22 FULLY CLOSED** (2026-08-03→2026-08-05,
+  `dlu_builder_tk`): 19 new `platform`-schema tables, 5 new services, 8
+  new API route files, 4 new Design-System-only frontend pages, one
+  Celery-beat alert engine, closing a gap none of BOOK-08's G8 or
+  BOOK-19's G14 actually covered (each a narrow adjacent slice — ANS/
+  SUA-CdS completeness monitoring, the DE/DI telematic ledger — neither
+  faculty-requirement math, the Art. 3/4 lifecycle, the indicator
+  catalog, the external Auditor/CEV persona, or the Allegato C judgment
+  workflow). Sourced from a user-requested standalone analysis of
+  `docs/AVA_DM1154_2021_REQUIREMENTS.md` (a product-design summary of
+  the decree, not the full 26-page legal text) — every "exact" figure
+  in BOOK-26 is cited to that summary; every figure it doesn't
+  enumerate is a disclosed placeholder, never invented.
+
+  **Faculty-requirement engine (Allegati A/D, AVA-02/03)**: Dtot/Ttot —
+  `Dtot = Dr·(1+W)`, `Ttot = Tr·(1+0.75·W)`, `W=0` unless real
+  `num_students`/`max_size` says otherwise. `FacultyRequirementRulePack`/
+  `StudentNumerosityBand` are governed, versioned, institution-scoped-
+  with-global-fallback config (same shape as `ItemCalibrationParams`,
+  BOOK-11) — a recalibration is a new version row, never a rewrite.
+  `count_available_faculty` joins the REAL curriculum (`ProgramCourse`→
+  `TeachingSection`→`FacultyAssignment`→`FacultyProfile`); tenure
+  inferred from `FacultyProfile.rank` (no literal tenure flag exists).
+  Confirmed `Enrollment.program_id` is `Integer` against a `GUID`
+  `programs.id` with **no DB FK at all** — a genuine, pre-existing,
+  still-open schema break that makes real per-program enrollment
+  counting structurally impossible today; `num_students` stayed an
+  explicit caller parameter throughout this program rather than
+  derived and silently wrong.
+
+  **Accreditation lifecycle (Art. 3-4, AVA-01/04)**: `accreditation_
+  bodies`/`accreditation_records`/`accreditation_reviews`/`compliance_
+  deadlines` (migration-only AVA-01, round-trip verified). `compute_
+  site_outcome` (pure): the suppression check (≥50% not-satisfactory)
+  evaluated FIRST, short-circuiting the rest of the Art. 3 ladder; then
+  ≥75%→5y no mid-term, ≥50%→5y with mid-term, else→conditional 1-2y.
+  `check_decadence` (pure): every fact (missing activation, 2-year
+  suspension, 30/11 faculty verification, >2% achievement-plan cap,
+  ISEF) is an explicit caller-supplied parameter — none has a real data
+  source anywhere in this schema. Disclosed judgment call: ISEF read as
+  `> 1` per the requirements doc's own explicit framing ("ISEF > 1
+  (statali)"), not the sprint prompt's literal, ambiguous-without-
+  context "≤ 1".
+
+  **Allegato E indicator catalog + computation (AVA-05/06)**: 23
+  indicators seeded verbatim from the requirements doc §5 (a disclosed
+  representative subset, not the full ministerial annex);
+  `ava_indicator_values` append-only and immutable (`before_update`/
+  `before_delete` reject unconditionally) — a recompute always inserts,
+  never overwrites. Of the 6 D-domain indicators the plan named for
+  automatic computation, a grounded audit found only **two** genuinely
+  computable: AVA-D4 (% ore docenza t.i. — real confirmed
+  `TeachingRegisterSession` hours, not merely scheduled ones) and
+  AVA-D2 (% CFU I anno — real GOVERNED denominator via BOOK-14A's
+  `rulepack-it-cfu`, caller-supplied numerator). The other four (D1
+  laureati in corso, D3 prosecuzione II anno, D5 CFU estero, D8
+  docenti su SSD) raise a typed `AvaIndicatorInsufficientDataError`
+  naming the exact schema/infra gap (the same Enrollment type break;
+  an unmigrated, unwired `backend/domains/mobility/`; no SSD column
+  anywhere on `FacultyProfile`/`ProgramCourse`) — kept structurally
+  distinct from a second `AvaIndicatorExternalSourceError` (AlmaLaurea/
+  VQR/mq) so a schema bug is never misreported as "not our data to
+  have." The Celery worker deliberately deviates from the sprint
+  prompt's literal "sync session" phrasing — genuinely `AsyncSession`-
+  in-`asyncio.run()`, the dominant ~20-file convention this codebase
+  actually uses (`kpi_publisher_worker.py`'s own shape); `get_sync_db()`
+  isn't even a real context manager here.
+
+  **SUA-CdS/SMA/Riesame ciclico tracking (Allegato A/a Art. 5,
+  AVA-07)**: completeness computed on READ (`compute_completeness`,
+  pure) — never stored, so it can never drift from the data it
+  describes. Annual compliance-deadline registration encodes the real
+  Italian academic-calendar convention: 30 November faculty
+  verification falls in the FIRST calendar year of an a.a. label, the
+  15 April SUA-CdS deadline in the SECOND.
+
+  **Auditor/CEV RBAC, scoped access & audit trail (AVA-08, corrected
+  AVA-10/12)**: 3 new `UserRole` entries (`auditor_mur`/`auditor_
+  anvur`/`cev_expert`); `require_scoped_ava_read`/`reject_auditor_
+  write` applied across all 17 AVA-03/04/07 routes; exact-ID-list
+  scope only (`{sites, programs}`), never a wildcard; a real `audit_
+  logs` row written on every successful auditor read, none on a
+  rejected one — verified live against a real row count, not asserted.
+  **A real overgeneralization found and corrected live**: the
+  requirements doc's own persona table (§2, P-B) makes the CEV
+  expert's entire job "compilazione griglia punti di attenzione con
+  fasce di giudizio" — a real write, unlike Auditor MUR/ANVUR's
+  genuinely read-only P-A profile. AVA-08's first-pass blanket
+  "auditors never write" was too broad; a new, narrowly-scoped and
+  separately-tested `require_cev_or_staff_for_outcome` now allows ONLY
+  `cev_expert` through for outcome-application and judgment-recording
+  — `auditor_mur`/`auditor_anvur` remain blocked at both, no
+  equivalent carve-out.
+
+  **Immutable evidence registry (AVA-09)**: `AvaDashboardSnapshot` has
+  no `updated_at` column at all — stricter than `CatalogEdition`'s own
+  constrained-transition shape (BOOK-08/24 precedent); signing is
+  decided at capture time or never, an already-created unsigned
+  snapshot is never signed after the fact. `sign_snapshot_payload`
+  checks `QesSettings.configured` and raises honestly rather than
+  attempting a real network call to an unreachable TSP — same posture
+  the ESSE3 driver already established for undelivered external
+  integrations.
+
+  **4 DS-only frontend dashboards (AVA-10)**: AuditorDashboard,
+  QualityAssuranceDashboard, CourseAccreditationPanel, CevFascicolo —
+  all pure `components/ds/*`, no antd (matching `ExecutiveDashboard.js`'s
+  cleanest-precedent template). **A REAL Playwright browser
+  walkthrough** against a live scratch backend + two seeded users
+  (admin, `auditor_mur`) — not just typechecking, per this program's
+  own "run the app" discipline — found and fixed 2 real bugs a unit
+  test alone would have missed: `attach_watermark` returned a
+  DIFFERENT response shape (bare array vs. `{items, _watermark}`)
+  depending on the caller's role on the SAME endpoint; the indicator-
+  value endpoint required a raw GUID no frontend caller would ever
+  hold (now takes the human-readable code). Also confirmed live that
+  `auditor_mur` correctly receives a 403 attempting to apply an
+  outcome — the CEV-only carve-out proven end-to-end, not only
+  asserted by a mocked test.
+
+  **Alert / early-warning engine (§7 catalog, AVA-11)**: all 10 codes
+  (AL-DOC-01/02, AL-DEAD-01/02, AL-SUA-01, AL-DECAY-01, AL-KPI-01/02,
+  AL-AQ-01, AL-COND-01) as pure `check_al_*` functions (facts in,
+  alert-or-`None` out — same shape as `check_decadence`), each with a
+  genuinely SYNC (`sync_session_factory`, psycopg2) sweep — the one
+  AVA sprint whose own verification bar explicitly checked for it.
+  `get_or_create_alert` keeps one open alert per (tenant, code,
+  subject); a still-triggered condition updates severity in place
+  without re-notifying every beat tick; a cleared condition
+  auto-resolves. AL-DECAY-01/AL-COND-01 are real, fully tested
+  functions deliberately NOT wired into the automatic sweep — no query
+  in this schema can honestly supply their inputs today. Recipient
+  roles map onto the nearest existing `UserRole` (dean~Coordinatore
+  CdS, provost~PQA/direzione, admin~leadership) since none of those
+  four personas has a dedicated role string yet. "Digest" batches
+  every alert newly fired in one sweep run into a single combined
+  notification per recipient — a real, tested interpretation, not an
+  integration with `NotificationFrequency.DAILY/WEEKLY`, which is
+  declared on the model but has no batching implementation anywhere in
+  this codebase (confirmed via grep before claiming otherwise).
+
+  **Attention points, judgments & the closed loop (Allegato C,
+  AVA-12)**: 15 points seeded across ambiti A-E (disclosed
+  representative subset). `QualityJudgment.band` deliberately reuses
+  `AccreditationRecord.outcome_band`'s own vocabulary, so `aggregate_
+  judgment_distribution` (pure) turning a record's judgments into
+  `compute_site_outcome`'s two inputs is a direct count, never a
+  remapping table — `recompute_outcome_from_judgments` hands that real
+  distribution straight to the ALREADY-real `apply_site_outcome`,
+  duplicating no outcome logic. The migration retroactively adds the
+  REAL foreign key `accreditation_evidence.attention_point_id` AVA-09
+  always intended but couldn't add (the referenced table didn't exist
+  yet) — closing that disclosed gap the moment both sides exist.
+  Closed-improvement-action efficacy (AVA-07's own lifecycle) feeds
+  indicator AVA-C4 ("Efficacia azioni post-SMA") via AVA-05's real
+  value store — disclosed as tenant-wide, since `quality_improvement_
+  actions` carries no subject scoping of its own. Full 96-test AVA
+  regression suite re-run clean after this sprint's own extension to
+  an already-committed shared module (`ava_accreditation_service.py`)
+  — zero regressions.
+
+  **Doc-sync**: new `BOOK-26-Accreditation-Quality-Assurance-and-
+  DM1154-Compliance-v0.1-draft.md`; `MASTERBOOK-INDEX.md` lists it for
+  the first time; `TRACEABILITY.md` adds **G22** (full 12-sprint
+  narrative, same density as G17-G21); `GLOSSARY.md` adds 10 new terms
+  (AVA, Dtot/Ttot, Auditor MUR/ANVUR, CEV, NUV, PQA, SUA-CdS, SMA,
+  Riesame ciclico, Attention point); `ALBERO_FUNZIONALITA_TARGET.xlsx`
+  adds Area 26 (new `Riepilogo Aree` formula row); `BACKLOG_TARGET.xlsx`
+  adds new `BLG-1xx` rows for AVA-01…12 (Stato avanzamento = Fatto) — the
+  pre-existing SPRINT-08…22 status-column staleness (already
+  3×-confirmed before this program even started, see SPRINT-07 commit
+  `00a3f15`) is left exactly as stale as found, disclosed rather than
+  silently backfilled; `ER_MAP.md`/`ER_MAP_TARGET.md` add **T14**
+  (19 tables). `HANDOFF.md` rewritten — its prior content dated back to
+  early K3/STX-08 and had never been updated through the 22-sprint
+  program, the demo-pack work, or any of AVA-01…12.
+
 - **SPRINT-22/NEW-29 — Guardrail tenant, hardening, GA suite (BOOK-19, T12)
   — the 22nd and FINAL sprint of this program** (2026-08-01, `dlu_builder_tk`):
   per-tenant configurable policy for 5 governed surfaces (`egress`/

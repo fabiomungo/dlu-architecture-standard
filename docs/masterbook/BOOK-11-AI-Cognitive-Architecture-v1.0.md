@@ -186,6 +186,31 @@ mode — the pattern Turnkey already used for the gateway cutover); drift alarms
 on rubric score, grounding fidelity, deferral rate, calibration (BOOK-09 Ch. 7.4);
 weekly steward digest; incidents feed the bank (6.1).
 
+> ✅ **IMPLEMENTED (NEW-28, SPRINT-17, 2026-07-31):** the scenario-bank/rubric-graded
+> harness above (§6.1-6.3) was already real for all 9 learner-facing ACE agents
+> (`backend/evals/harness.py::run_gate`, `agent_gate_runs`) before this sprint. This sprint
+> extends coverage to 3 domains that had ZERO eval harness of any kind — `generation`
+> (course factory), `admission_evaluation`, and `nudging` — none of which are ACE agents
+> with a scenario bank, so a lighter, general-purpose T11 golden-set harness
+> (`eval_datasets`→`eval_cases`→`eval_runs`→`eval_case_results`, already scaffolded since
+> SPRINT-01/NEW-17f) is used instead, with a REAL, deterministic decision function per
+> domain (never a re-implementation that could drift): `course_factory_service._sanitize_
+> clo_mlo_proposal` (already pure), and two newly-extracted pure decision cores,
+> `qualification_service._compute_tier1_verdict` and `nudge_service._decide_nudge_action`
+> (same "small, DB-free helper, directly testable" rationale this sprint's own `scripts/
+> eval_runner.py` had already established for its `_exit_code_for_verdict`). 21-22 golden
+> cases per domain, each with an `expected` value computed by the real function itself (never
+> hand-guessed). `eval_runs.gate_run_id` — reserved since SPRINT-01/NEW-17f as a "🔧
+> extension" link, never wired before this sprint — now really feeds `agent_gate_runs`
+> (`eval_harness_service.sync_gate_run_from_eval_run`) whenever a run IS agent-specific;
+> `AgentGateRun.agent_config_id` is a real DB NOT NULL, so a non-agent-specific run (all 3
+> new domains) is honestly a no-op here, not an error. A new CI job
+> (`.github/workflows/agent-eval-gate.yml`, `scripts/ci_eval_gate.py`) runs these 3 domains
+> and fails the build on any non-`'pass'` verdict — demonstrated on this fixed, explicit
+> domain list (not a dynamic touched-agent detector, out of scope for this sprint's own DoD
+> wording). "tutoring/coach" (`subject_tutor`/`learning_coach`) already had real §6.1-6.3
+> coverage and was deliberately NOT given a redundant second T11 dataset.
+
 ---
 
 # Chapter 7 — Model and Prompt Management
@@ -204,6 +229,23 @@ weekly steward digest; incidents feed the bank (6.1).
 4. **Model changes** (provider swap, preset retune, new model version) run the
    full harness before rollout; A/B only within governed experiments with
    guardrail metrics (BOOK-01 Ch. 10).
+
+> ✅ **IMPLEMENTED (NEW-28, SPRINT-17, 2026-07-31):** point 2's "any layer edit is a
+> release" is now a real, versioned guarantee for `ai_model_presets` — before this sprint
+> it was a flat row, mutated in place with NO history at all (`ai_agent_service.
+> update_preset`, verified in pre-flight). Every edit now creates an immutable,
+> sequentially-numbered `preset_versions` row (`dlu_builder_tk`, T11); a `preset_rollouts`
+> row is the deployment lifecycle of one version (`draft`→`active`, optional
+> `traffic_pct`→`rolled_back`). Point 4's "run the full harness before rollout" is a real,
+> enforced gate: a rollout cannot activate without a linked `eval_run` whose `verdict ==
+> 'pass'` (service-layer cross-table check — Postgres CHECK constraints can't reference
+> another table — proven by a conformance test, not just asserted). At most one active
+> rollout per preset is a REAL DB guarantee (partial unique index, same technique as
+> SPRINT-14's C24.3). Activating a new rollout auto-supersedes the previous one; rolling
+> back restores the immediately-preceding rollout it superseded. A new "Eval" section in
+> `AiControlPlane.js` (the real, live AI-management panel — **not** the literally-named
+> `AiManagementPage.js`, which is dead, deprecated, orphaned code, verified unreachable from
+> any route) surfaces run history and preset version/rollout history together.
 
 ---
 

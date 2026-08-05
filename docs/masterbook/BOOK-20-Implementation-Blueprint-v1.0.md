@@ -383,6 +383,36 @@ as NEW-11/NEW-17's own `degree`/`preevaluation` additions); design
 system showcase page renders all 8 components; hex lint tested against
 a deliberate fixture (fails red) and a clean diff (passes).
 
+### NEW-32 — Demo & Conformance suite (Demo Scenario Pack)
+*Deliver:* 9 persona-driven demo walkthroughs on the `DLU Demo
+University` tenant — Student, Faculty, Dean, Provost, CFO, HR Lead,
+Admin University (Tech Admin Institution), Admin Tenant (System
+Admin), Admin AI Engineering (a 10th persona, Researcher, deferred to
+SPRINT-21/NEW-33 per the plan's own condition). Each scenario ships a
+real E2E test (`dlu_builder_tk/tests/e2e/demo/test_*.py`, 28 tests, 25
+passed / 3 skipped on environment-dependent steps — SSO's `xmlsec`
+native-library mismatch, and Redis-backed steps where no Redis is
+provisioned) that drives the real service layer under transaction +
+rollback against a real Postgres — the same discipline every `tests/
+conformance/*.py` file already uses, not a new HTTP/browser harness —
+plus a `docs/demo/SCENARIO-<persona>.md` write-up, a README index, and
+a reset/execute/teardown runbook. `backend/scripts/seed_demo.py
+--scenario=ai_native_demo` extended with 4 new persona users
+(dean/provost/cfo/hr) and the governance/finance/HR/quiz domains those
+scenarios need, confirmed idempotent across two consecutive runs
+against a freshly migrated Postgres.
+*Verify:* `pytest tests/e2e/demo -q` green (25 passed, 3 honestly
+skipped); seed idempotency confirmed; zero-PII scan clean; two-pass
+regression sweep unaffected (Phase1 104/4, `tests/conformance/` 354
+passed + the same 3 pre-existing failures, event-mesh suite 17/1) with
+zero stray rows left in any shared/reference table. Found and fixed a
+real, pre-existing bug blocking this sprint's own catalog-governance
+step: `platform.course_catalog_items` had never had an Alembic
+migration despite its ORM model existing since PI-1 — every prior
+`test_governance.py` fixture happened to avoid it via an early-return
+on an empty course list, never exercised until this sprint's real
+`ProgramCourse` rows.
+
 ---
 
 # Chapter 8 — Conformance Suites

@@ -104,6 +104,24 @@ the learner *feels* the differentiator).
 | WS07 | Credential Wallet (Achieve) | credentials, document credentials, DS, sharing controls, verify links | Credential | claim; export; share; import external | *"my degree explains itself — and employers can verify it in one click"* |
 | WS08 | Engagement & Success (Grow) | community, cohorts, belonging, wellbeing-respectful progress | Success/Coach | join groups; peer-teach (CAT-7); re-engage | *"someone noticed — and it was a person"* (BOOK-02 Ch. 6: the intervention is human) |
 
+> ✅ **IMPLEMENTED (NEW-23, SPRINT-12, 2026-07-31):** WS03 (Grow) gained a
+> real, self-service **Study Missions** stream — daily-generated missions
+> from three sources (`coach`: top scored `Recommendation`, concept-level;
+> `gps`: first `PathStep` of the adopted scenario; `self`: student-created)
+> — deliberately a DIFFERENT, distinctly-named component
+> (`StudyMissionsFeed.js`) from the workspace triad's own "Missions" HITL
+> stream (`MissionsFeed.js`), which already means the ACE propose-tier
+> queue; the two coexist side by side, never merged. WS03's canvas also
+> gained a **before/after knowledge-growth panel** (`knowledge_map_
+> snapshots`, captured at first `mastery.updated` for a course and at
+> `course.achieved`), and WS07's wallet now receives **auto-issued course
+> badges with zero human intervention** — closing a fully-built but
+> never-wired STX-13 credential pipeline (BOOK-16 Ch. 4, item 2 callout).
+> Nudging (disengagement detection) reuses the SAME etiquette-gated
+> `learning_coach` mission pattern plus real delivered notifications — a
+> severely disengaged twin escalates via the real crisis pathway
+> (`RISK_DETECTED`, BOOK-07 FW4), never a new mechanism.
+
 **Catalog Explorer (G15 — pre-auth + WS00/WS01 surface) — ✅ implemented
 (NEW-16, 2026-07-27):** the published
 CatalogEdition renders as an explorable space — programs, courses (codes,

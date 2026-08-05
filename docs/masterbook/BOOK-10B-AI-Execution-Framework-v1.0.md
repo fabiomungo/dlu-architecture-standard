@@ -209,6 +209,19 @@ draft ──T1-T3──► testing ──T4 gate + steward sign──► deploye
    promotion moves bundles, never hand-edits; per-tenant enablement flags let
    institutions adopt releases on their own cadence within support windows.
 
+> ✅ **IMPLEMENTED, partially (NEW-28, SPRINT-17, 2026-07-31):** point 2's "gate artifacts
+> attach to the release row" now has a preset-scoped equivalent — `preset_rollouts.
+> eval_run_id` (`dlu_builder_tk`, T11) requires a linked, PASSING `eval_run` before a
+> rollout can activate, the exact "missing artifacts make the transition impossible" rule
+> point 2 already names, applied to preset versioning specifically (see BOOK-11 Ch. 7's own
+> IMPLEMENTED callout for the full mechanism). `preset_rollouts.traffic_pct` is an honest,
+> disclosed FIRST STEP toward point 3's "canary on a cohort %" — it records an intended
+> traffic percentage, but no runtime code anywhere in this codebase actually SPLITS live
+> traffic by it yet; a future sprint's job, not fabricated here. Chapter 6's T4 row
+> (scenario bank + gates) gains a sibling, lighter-weight T11 golden-set harness for 3
+> non-ACE-agent domains (generation/admission_evaluation/nudging) with its own CI gate job
+> — see BOOK-11 Ch. 6's own IMPLEMENTED callout for the full detail.
+
 ---
 
 # Chapter 8 — Production Observability: the Unified Execution Record
