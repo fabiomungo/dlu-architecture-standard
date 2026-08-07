@@ -1,5 +1,16 @@
 # BOOK-22 — Faculty Lifecycle, Contracting & Human Workforce
-### DAS v0.4-draft · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger — G18 fully closed)
+### DAS v0.4-draft · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger — G18 fully closed) · **amendment pending: v0.5 proposed, RFC-0001**
+
+> **⚠ v0.5 amendment proposed (RFC-0001, 2026-08-07) — read §11 before implementing
+> anything in this Book.** A process reconciliation against STU's real contracting
+> practice (*STU Digital Faculty Onboarding, Contracting and Course-Creation Process
+> v2.1*) found this Book normatively correct in shape but wrong in four particulars and
+> incomplete in six others — including the assumption that every author is an external
+> independent contractor, which fails for faculty seconded from a federated university
+> (§11.5). G18 stays closed for what was delivered; six successor gaps **G18.1–G18.6**
+> carry the remainder. See
+> [`architecture/rfc/RFC-0001-course-lifecycle-console-integration.md`](architecture/rfc/RFC-0001-course-lifecycle-console-integration.md)
+> and [`architecture/adr/ADR-0015-gate-numbering-reconciliation.md`](architecture/adr/ADR-0015-gate-numbering-reconciliation.md).
 
 > Closes **G18** (teacher onboarding, authoring contractualization with digital signature,
 > and the HR/workload backbone are absent from the Turnkey baseline). Normativizes the
@@ -178,5 +189,221 @@ covers positions, contracts, the entry ledger, and the mentorship-dividend summa
 | FEX packages | `course_fex.py` is an unrelated domain ("Final Course Examination", not exchange format — corrected TWICE now, SPRINT-08.md #5 and SPRINT-09.md #2, a recurring false-friend in this Book's own drafts) — the real exchange-format code is `course_exchange_service.py`, FEX v1.3 | `authoring_engagements.fex_format_version` + `engagement_deliverables.content_ref_type/_id` — both SOFT references only, never validated against that service |
 | Document credentials | `issued_document_credentials` (G9/G10 ✅) | **corrected, SPRINT-08/NEW-20a**: executed contracts are NOT archived here — see §2/§6 correction notes above; archived directly on `authoring_engagements` instead |
 | New tables | ✅ 9/9 real: `faculty_onboarding_journeys`, `faculty_documents`, `faculty_document_verifications`, `contract_templates`, `authoring_engagements`, `engagement_signatures` (SPRINT-08/NEW-20a); `engagement_milestones`, `engagement_deliverables`, `deliverable_reviews` (SPRINT-09/NEW-20b); ✅ `hr_positions`, `hr_contracts`, `faculty_workload_entries` (SPRINT-10/NEW-21) | T4 + T9 both 100% — nothing remains target in this Book |
-| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2); ✅ **SPRINT-09/NEW-20b** (milestone/deliverable/review, Step 3); ✅ **SPRINT-10/NEW-21** (T9 HR & workload ledger) | none |
-| Register | ✅ **G18** added to TRACEABILITY, now marked **fully closed** (T4 + T9 both complete, SPRINT-10/NEW-21) | none |
+| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2); ✅ **SPRINT-09/NEW-20b** (milestone/deliverable/review, Step 3); ✅ **SPRINT-10/NEW-21** (T9 HR & workload ledger) | **FW6-01…FW6-08 proposed (RFC-0001)** |
+| Register | ✅ **G18** added to TRACEABILITY, now marked **fully closed** (T4 + T9 both complete, SPRINT-10/NEW-21) | **G18.1–G18.4 opened (RFC-0001) — successors, not a re-opening of G18** |
+
+---
+
+## 11. Amendment note — v0.5 proposed (RFC-0001, 2026-08-07)
+
+This section records what a reconciliation against STU's real contracting practice
+found. It is written here, in the Book's own correction idiom, so that no
+implementer reads §1–§10 without it. Nothing below retracts delivered work:
+SPRINT-08/09/10 built what this Book specified, and it works. What follows is
+where this Book *specified the wrong thing*, or specified nothing.
+
+### 11.1 Four corrections to this Book's own normative text
+
+**(1) §2 Step 2 — signature order is wrong for the real institution.** This Book
+states "the university signs first (roles `provost` and/or `cfo` per institution
+policy, T6), then the instructor e-signs", and the implementation hardcodes
+`ENGAGEMENT_SIGNER_ROLES = {"provost", "cfo"}`. STU's actual, documented protocol
+is the reverse and has a third party: the course developer e-signs first, the
+Corporate Secretariat then **verifies the file against institutional procedure**
+(a governance act, not a signature), and only then does the **Chairman** — the
+sole executing signatory — sign. The sanitised sample IISA in circulation is
+signed by a Dean, which is a third variant again. The order is therefore not a
+constant to be hardcoded but an institution-scoped, versioned **signing policy**
+(RFC-0001 §4.4), following the rule-pack discipline CLAUDE.md §20 already
+mandates. The `default` policy preserves today's behaviour byte-for-byte.
+
+**(2) §2/§3 — two required roles do not exist.** `UserRole` carries no `chairman`
+and no `secretariat`; `VALID_SIGNER_ROLES` is `("provost", "cfo", "instructor")`.
+A governance step that is *not* a signature (the Secretariat's verification) also
+has no representation — `EngagementSignature` can only be `pending|signed|declined`.
+Both are additive widenings (`step_kind ∈ ('signature','verification')`), never a
+drop.
+
+The Chairman *persona* is not new to the standard: BOOK-24 §3 already lists a
+"Chairman Board Pack" command surface and SPRINT-16/NEW-27 shipped it, with the
+persona mapped onto admin-tier roles. That mapping is acceptable for a read-only
+dashboard and unacceptable for a signature — an executed instrument must name who
+signed. Two related findings, recorded here rather than lost: `AppRoutes.js:350`
+attributes this limitation to "BOOK-24 Annex A's own documented v1 limitation",
+and **BOOK-24 contains no such disclosure** (a live breach of the BOOK-00 sync
+rule, to be corrected in the same change set as FW6-01).
+
+**(3) §2 Step 1 — the document taxonomy is too narrow to onboard anyone.**
+`VALID_FACULTY_DOCUMENT_TYPES = ("personal_id", "career_transcript",
+"fiscal_data")`. The real intake requires, additionally: a CV (the primary
+evidence for academic qualification), degree certificates, professional licences,
+a *typed* tax form (W-9 vs W-8BEN vs W-8BEN-E — the type is what determines
+whether the International Contractor Addendum of §8.3 applies), a
+contractor-classification statement supporting the §1 independent-contractor
+position, and work-authorisation documentation. `fiscal_data` as one
+undifferentiated bucket cannot carry the treaty position. The old value is kept;
+new ones are added.
+
+**(4) §2 Step 1 — document verification is not qualification.** This Book's
+Step 1 ends with "back-office verifies each document before any contract is
+drawn". That is a completeness act. It is not, and cannot substitute for, the
+academic judgement of whether this person is qualified to develop *this course* —
+which at STU belongs to the sponsoring Dean, with Provost endorsement where
+required, and which is the decision the whole engagement rests on. There is no
+model for it. A `faculty_qualification_decisions` aggregate (immutable, one row
+per act, with the evidence set and reasons) is required, together with a
+Provost-authority transcript waiver for practitioner faculty whose qualification
+rests on a terminal professional credential rather than a transcript.
+
+### 11.2 Four things this Book does not specify at all
+
+**(5) No usable consent, certification or acknowledgment registry.** The Course
+Developer Consent, Certification and Acknowledgment Form — ten items, nine
+mandatory, item 10 tri-state — has no model. A `ConsentRecord` class *does* exist,
+in `backend/domains/marketing/` — an orphan domain never registered in
+`api/main.py`, shaped for GDPR marketing consent (channel/status per email or
+phone) and structurally unable to carry per-item contractual certifications.
+Reusing it would recreate, in reverse, the incompatible-concepts problem
+`administrative_holds` had to unify; the new table is therefore named
+`faculty_consent_records` and both are documented as distinct in `ER_MAP.md`.
+Two of the form's items are not
+administrative niceties: item 6 is a **generative-AI disclosure** obligation that
+BOOK-19 treats as an AI Act matter, and item 10 governs whether the developer's
+CV and photograph may be published — which the sanitised IISA §15 simultaneously
+asserts as a granted right. That internal contradiction is currently resolved on
+paper, per developer, by whoever notices. Contract generation must read item 10
+and emit §15 conditionally.
+
+**(6) No catalogue reservation.** `authoring_engagements.course_id` is an
+unconstrained soft Integer reference. Nothing prevents two Deans commissioning the
+same course; nothing surfaces that a course is already spoken for. STU's own
+Corporate Secretariat protocol names allocation error as the specific
+embarrassment the digital process exists to eliminate. A unique partial index on
+an active reservation makes it structurally impossible rather than merely
+discouraged.
+
+**(7) Exhibit A and Exhibit B are not modelled.** This Book's §2 Step 3 table
+describes the two milestones' *content* in prose. The real instruments carry:
+a module structure, a deliverable taxonomy at course and module level (61 discrete
+items in the PHA 500 reference case, a figure that should be **computed**, never
+typed), per-deliverable acceptance criteria, a ten-business-day review window, a
+two-round revision cap beyond which a written amendment is required, and a
+**tolling** rule under which University delay suspends the developer's deadlines.
+None of this exists as data, so none of it can be enforced or even reported. The
+30/70 split is additionally hardcoded as exactly two milestones; Exhibit B is the
+authoritative statement of the split and may define more.
+
+Note also that "ten business days" is unarguable only once a single institutional
+business calendar is named — with a globally distributed developer pool, the
+counterparty's calendar is not STU's.
+
+**(8) The deliverable review checklist is decorative.** §2's own SPRINT-09
+correction already discloses this — `deliverable_reviews.checklist` is "a
+free-form JSON dict a reviewer fills in manually, not a computed check against
+real course structure" — but the consequence has not been drawn: **every
+milestone approved to date rests on a hand-typed assertion.** The adjacent
+`course_workflow.blueprint_readiness` proves the computed form is achievable; it
+simply checks a different, smaller set (MLO/media/assessment presence per module).
+An **STU Course Content Standard** service must wrap and extend it with the checks
+the instruments actually promise: CLO count 3–8 with Bloom variety, ≥1 MLO per
+section, section count matching the Exhibit A module count, the 12–15 hour
+envelope, a feedback-bearing activity at least every two hours of instruction,
+assessment weights summing to 100 %, a transcript on every video component
+(WCAG 2.1 AA), and a final examination with a title and ≥1 verification method
+when enabled. `release_deliverable` must refuse when it fails.
+
+### 11.3 One correction to retract
+
+**R22.2 becomes true.** §2's SPRINT-09 correction (2) records that R22.2 is *not*
+literally event-driven: `MilestoneApproved` is emitted but nothing subscribes, and
+`supplier_invoices` generation is an explicit follow-up call. RFC-0001 sprint
+FW6-05 registers the subscriber (idempotent on replay), at which point the
+correction is retracted in the same change set rather than left standing.
+
+### 11.4 Gate vocabulary
+
+Four incompatible gate vocabularies are in production use (`CourseWorkflowState`,
+FEX v1.3 `checkpoint_type`, `ReviewCheckpoint`'s own CHECK set, and the
+institutional Gates 1/1b/2/3/4 printed in the IISA). They are mutually offset by
+one, and every statement of the form "the course is at Gate 2" is currently
+ambiguous. Settled by **ADR-0015**: institutional names are canonical for humans
+and the ontology, no wire value is renamed, one alias module owns the mapping, and
+FEX v1.4 removes the collision at the next format change.
+
+### 11.5 One engagement type is not enough (added second pass, 2026-08-07)
+
+**(9) Every author is assumed to be an external independent contractor paid by
+STU.** §1 says "every course authored by an external or internal subject-matter
+expert MUST flow through one digital pipeline" — the *pipeline* claim is right,
+the *instrument* claim is not. A course developer who is already faculty at a
+**federated university** (eCampus, Unilink, …) differs in three ways that no
+amount of configuration on the existing tables can express:
+
+- their academic credentials are already verified, by an institution with more
+  standing to verify them than STU has;
+- their work may be covered by an inter-institutional agreement, so no
+  consideration flows to the individual at all;
+- most importantly, **the IISA is the wrong instrument**. Its §1 asserts the
+  signer is not an employee, partner or agent. Issuing it to a person who *is*
+  an employee — of someone else — is a misclassification risk, and its §6
+  work-for-hire assignment takes title the individual may not hold, because it
+  may vest in their employer.
+
+`authoring_engagements` therefore gains an `engagement_type`
+(`independent_contractor` — the default, every existing row — `federated_faculty`,
+and `internal_staff` reserved), and the federated route uses a **Framework
+Agreement** (institution↔institution, signed once) plus a lightweight
+**Assignment Order** per course. RFC-0001 §4.7 carries the full design,
+including the `ip_regime` enumeration the renderer must obey and the three
+settlement sub-cases.
+
+Two things the simplification must not touch, stated here because they are
+where this kind of feature usually goes wrong:
+
+- **Gates 2, 3 and 4 are unchanged.** They judge the course, not the author and
+  not who paid for it. The same content standard, the same review windows, the
+  same revision caps.
+- **Seven of the ten consents remain personal** (e-communications, accuracy,
+  originality, generative-AI disclosure, accessibility, confidentiality,
+  agreement to review). Only credential verification and privacy/data
+  processing may be satisfied at framework level — and are *recorded* as
+  satisfied by a named agreement, never simply absent. Item 10 (name, image,
+  voice) stays personal in both routes: personality rights are not an
+  employer's to grant.
+
+Trust tiering follows BOOK-16's own precedent rather than inventing one: BOOK-16
+Ch. 6 records that verifying externally-issued credentials "needs an external
+issuer trust registry — not built", and STX-13 shipped wallet import at the
+unverified tier only. The federated route accepts a human-verified institutional
+attestation now (Tier 1) and upgrades to a signed verifiable credential when
+that registry exists (Tier 2), with `trust_tier` present from the start so the
+upgrade is a data change.
+
+**(10) — and the reason this cannot ship alone.** `FacultyProfile` carries **no
+affiliation marker**, and `ava_faculty_requirement_service.count_available_faculty`
+counts every profile assigned to a `TeachingSection`, inferring tenure from
+`rank` alone. Onboarding federated authors without a marker makes them count
+toward STU's DM 1154 Dtot/Ttot — the same professor satisfying two universities'
+faculty requirements simultaneously, which is exactly what the docente-di-
+riferimento rule exists to prevent. A feature meant to *reduce* paperwork would
+silently inflate an accreditation posture.
+
+`FacultyProfile.affiliation_type ∈ ('own','federated','visiting')` (default
+`own`, so nothing existing changes) and an affiliation-aware count are therefore
+a **hard prerequisite**, not a follow-up: FW6-10 may ship before or with FW6-09,
+never after. This is a BOOK-26 concern surfaced by a BOOK-22 feature, and is
+recorded in both.
+
+### 11.6 Disposition
+
+| Successor gap | Covers | Sprint |
+|---|---|---|
+| G18.1 | corrections (1)(2) — signing policy, chairman/secretariat roles | FW6-01 |
+| G18.2 | omission (5) — consent registry | FW6-02 |
+| G18.3 | corrections (3)(4) + omission (6) — documents, qualification gate, reservation | FW6-03, FW6-04 |
+| G18.4 | omissions (7)(8) + retraction (11.3) — Exhibit A/B, content standard, review clock | FW6-05, FW6-06 |
+| G18.5 | omission (9) — engagement types, federation registry, framework agreement | FW6-09 |
+| G18.6 | omission (10) — affiliation marker + DM 1154 accreditation guard (**gates G18.5**) | FW6-10 |
+
+The UI that surfaces all of this is **FW6 — Engagement Desk**, a new faculty
+workspace in BOOK-17 Ch. 4. It owns no state.
