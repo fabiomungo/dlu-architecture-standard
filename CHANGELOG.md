@@ -2,6 +2,187 @@
 
 ## Unreleased
 
+- **SPRINT-23 — Provost persona pass (BOOK-24 §3/§5 extension, G20 "ILO
+  coverage" gap closed)** (2026-08-07, `dlu_builder_tk`): a user-supplied
+  brief of the Provost's six real-world responsibilities (set ILOs and
+  PLOs with Deans; choose Deans; set the Academic Catalogue's courses and
+  reference credits per school; define the Academic Calendar; represent
+  the institution before the Government Education System; own the
+  academic KPI dashboard) revealed that almost none of it required new
+  architecture — Provost was already a well-established persona (BOOK-00/
+  02/07/08/15/19/22) with a real dashboard/governance feature-set built in
+  SPRINT-14/15/16, but a handful of access-control gaps kept the actual
+  `provost@demo.dlu` account locked out of routes that structurally
+  already belonged to it.
+
+  **The one high-leverage fix**: `institution.py`'s single shared
+  `_require_admin` helper — gating ILO/PLO/CLO↔PLO/PLO↔ILO-alignment/
+  `AcademicTerm`/College-School-Department (incl. dean/director/chair
+  appointment)/`ProgramCourse` writes — allowed `dean` but never
+  `provost`. One line unlocked the backend for five of the six
+  responsibilities at once.
+
+  **Frontend access fixes** (same scoped-additive pattern already used
+  for `PROGRAM_GOVERNANCE_ROLES`/`ORGANICO_WORKLOAD_ROLES`): a new
+  `ACADEMIC_STRUCTURE_ROLES` constant opens `/organization/academic-
+  structure`, `/organization/terms`, and `/organization/institution-
+  dashboard` to `provost` (all three were `ORG_MANAGER_ROLES`-only); a
+  new nav entry was added for `/organization/rector-bridge` ("Provost
+  Command"), which had ZERO nav-menu entry anywhere despite already being
+  role-accessible.
+
+  **Dean appointment completeness**: appointing a College's
+  `dean_user_id` never actually granted that user the `dean` role — the
+  FK and the functional role were disconnected. A new `_ensure_user_has_
+  role` helper closes that; confirmed live (professor@demo.dlu's roles
+  went from `["instructor"]` to `["instructor", "dean"]` on appointment).
+
+  **New: Academic Catalogue authoring** (`ProgramCoursesEditor.js`,
+  reached via a new "Courses & Credits" tab on `ProgramDetail.js`) — the
+  `ProgramCourse` model and its `GET/POST` routes already existed, but no
+  frontend anywhere rendered them, and no `PATCH` route existed at all to
+  edit an existing course's credits/curriculum category once added (added
+  `PATCH /api/programs/{program_id}/courses/{course_id}`, mirroring the
+  neighboring PLO `PATCH` route exactly).
+
+  **New: Catalog Certification** — a `certify_catalog` action type added
+  to the existing `governance_actions` (BOOK-24 §5, additive — no new
+  subsystem, no new frontend API method needed: `createGovernanceAction`
+  already handled arbitrary action types). A new `GET /api/academic-
+  governance/catalog-editions/certifiable` composite lists `effective`
+  editions not yet certified. This is the durable, audited artifact of
+  record standing in for "represents the university before the
+  Government Education System" — honestly scoped as an internal
+  certification, not a fabricated external Ministry integration.
+
+  **"ILO coverage" gap CLOSED** — the one KPI BOOK-24 §3 named and
+  explicitly deferred as an honest, disclosed gap (`RectorBridge.js`'s
+  own code comment; `TRACEABILITY.md` G20). New `compute_ilo_coverage_
+  pct` (`kpi_compute_service.py`) reuses the exact PLO↔ILO alignment-
+  query shape already proven in `compliance_posture_service._claim_
+  outcome_alignment_chain`, registered under the `academic` KPI domain.
+  Confirmed live: 0.0%, `status='breached'` on the demo tenant today (0
+  of 4 ILOs have an aligned PLO yet) — a real, honest number, not a
+  fabricated one.
+
+  **Correction, found during recording-prep verification**: the plan
+  originally assumed `ilo_coverage_pct` needed no frontend change since
+  `/api/executive/kpis?domain=academic` already had a consumer — that
+  consumer turned out to be `ChairmanBoardPack.js`, a URL-only page
+  unrelated to Provost Command, not `RectorBridge.js` itself (whose own
+  header comment still claimed the gap unbuilt). Added a small
+  "Institution KPIs" section directly to `RectorBridge.js` (reuses
+  `executiveAPI.listKpis('academic')`, already used elsewhere) and
+  corrected the stale header comment — ILO coverage is now genuinely
+  visible on Provost Command itself, not just reachable via a hidden URL.
+
+  **Second real, pre-existing UX gap found and fixed**:
+  `ProgramGovernancePanel.js`'s catalog-workflow section only ever held a
+  just-submitted-this-session workflow in React state, with no way to
+  reload an already-submitted workflow on a fresh page load. Dean
+  approves Monday, Provost tries to approve Tuesday in a separate
+  session: the "Catalog approval workflow" section silently showed the
+  "submit a new edition" form instead of the pending Provost step,
+  because nothing ever re-fetched the existing workflow by program.
+  Fixed with a new `GET /api/academic-governance/programs/{program_id}/
+  catalog-workflow` route (`catalog_governance_service.get_latest_
+  workflow_for_program`, ordered by `submitted_at` descending) and a
+  `loadWorkflow()` call added to the panel's mount effect. This affects
+  Dean's own scenario too — `SCENARIO-dean.md` never surfaced it only
+  because its steps 4 and 5 happen to run back-to-back in one recording
+  session.
+
+  **Third real, pre-existing bug found and fixed**: `course_access.py`'s
+  `visible_course_ids` — reused by `GET /api/courses`, the very endpoint
+  `ProgramCoursesEditor.js`'s "add a course" dropdown depends on — scopes
+  dean/provost visibility through `platform.role_scopes`, a table with
+  literally no writer anywhere in this codebase (confirmed by grep), so
+  every dean/provost saw ZERO courses, always, regardless of tenant data.
+  The model's own docstring already states the intended scope
+  structurally ("a Dean is scoped to a College or School; a Provost is
+  institution-wide") and both are fully derivable from data this
+  codebase DOES maintain: `College.dean_user_id`/`School.director_
+  user_id` (set by the Dean-appointment fix above) and `Institution.
+  tenant_id` (single institution per tenant, the same assumption
+  `AcademicStructure.js`/`TermManager.js` already make). `_governed_
+  scopes` now derives from that data, unioned with any explicit
+  `RoleScope` rows. A second, related fix: `_scoped_course_ids`'s two
+  existing paths only ever surfaced courses ALREADY linked to some
+  program — a genuine chicken-and-egg gap for "define the Academic
+  Catalogue," since a brand-new, not-yet-catalogued course could never
+  appear in the "add a course" dropdown. For provost specifically
+  (institution-wide scope), it now also includes every course in the
+  tenant, linked or not.
+
+  **Fourth real, pre-existing bug found and fixed**: `GET /api/admin/
+  users` — the endpoint `AcademicStructure.js`'s dean/director/chair
+  appointment dropdown depends on — is registered TWICE, in both
+  `admin.py` and `admin_enhanced.py`, each with its OWN independent copy
+  of an `ALLOWED_USER_LIST_ROLES` set missing `provost`; `admin.py`'s
+  router is included first in `main.py` so its copy is the one that
+  actually serves the route (fixing only `admin_enhanced.py`'s copy —
+  the more obviously "current" one — silently changed nothing). Both
+  copies now include `provost`; without this, appointing a Dean had a
+  College create/update endpoint that already accepted the request but a
+  completely empty user dropdown to pick anyone from.
+
+  **Fifth real, pre-existing bug found and fixed — the biggest one**:
+  neither the PLO→ILO mapping grid (`PLOEditor.js`) nor the CLO→PLO grid
+  (`CurriculumMapGrid.js`) has EVER actually persisted an alignment,
+  for ANY persona, since whenever they were built. Both call
+  `institutionAPI.js`'s `alignments.createCloPlo`/`createPloIlo` with
+  friendly field names (`clo_id`/`plo_id`/`ilo_id`), but `programs.py`'s
+  shared `AlignmentCreate` schema expects generic `source_id`/`target_id`
+  — every attempt 422'd, silently swallowed by the caller's `catch` block
+  reverting the optimistic UI update with no error shown. Discovered
+  while verifying the recording's own "align a PLO to an ILO" step
+  (confirmed via direct `curl`: the exact payload the UI sends 422s;
+  `source_id`/`target_id` succeeds with 201). Fixed at the API-client
+  boundary (`institutionAPI.js` now translates the friendly names to
+  `source_id`/`target_id` internally) rather than touching either grid
+  component, so both call sites keep their more readable field names.
+
+  **Sixth real, pre-existing bug found and fixed**: `POST/PATCH
+  /api/institution/terms` 500'd on EVERY call through the real UI —
+  `AcademicTerm.start_date`/`end_date` are `TIMESTAMP WITHOUT TIME ZONE`,
+  but `TermManager.js` sends `Date.toISOString()` strings (always tz-
+  aware/`Z`-suffixed), and Pydantic parses those into tz-aware `datetime`
+  objects that asyncpg flatly refuses to insert into a naive column
+  (`DataError: can't subtract offset-naive and offset-aware datetimes`).
+  This means "define the Academic Calendar" — one of the six named
+  responsibilities — had never actually worked for anyone; the existing
+  "Fall 2026" demo term could only have been seed-inserted directly, not
+  created through the form. Found while recording this same use case on
+  camera: the recording script clicked through and moved on, but a
+  post-recording DB check showed neither new term had actually been
+  created — the form had 500'd and, per `TermManager.js`'s own error
+  handling, shown a form error banner and stayed open, which the
+  script's blind click sequence didn't check for. Fixed with a
+  `_to_naive_utc` helper applied to both `create_term` and `update_term`;
+  re-ran the recording afterward and confirmed both terms now persist.
+
+  **Two more real, pre-existing bugs found and fixed while verifying**:
+  (1) `GET /api/institution/dashboard` had NO server-side role check at
+  all — any authenticated tenant user, any role, could read the
+  institution's academic KPIs (query was already tenant-scoped, so no
+  cross-tenant leak, but a real within-tenant access-control gap);
+  (2) `research`-domain KPIs (`research_active_projects`/`research_
+  outputs_count`/`research_grant_success_rate_pct`, added SPRINT-21/
+  NEW-33) were registered in `kpi_publisher_service.KPI_REGISTRY` but
+  `research` was never added to `kpi_definitions.domain`'s `VALID_KPI_
+  DOMAINS`/DB check constraint — `publish_all_for_tenant` 500'd on the
+  first research KPI it reached, silently blocking publication of every
+  KPI ordered after it too, for every tenant.
+
+  Two new Alembic migrations (`20260909_0900_provost_catalog_
+  certification`, `20260910_0900_kpi_domains_add_research`), both
+  additive `DROP CONSTRAINT`/`ADD CONSTRAINT` pairs with real
+  `downgrade()`s. Out of scope, left as an honest, disclosed gap (not one
+  of the six requested responsibilities): policy promulgation still has
+  no frontend (`academicGovernanceAPI.js`'s policy-lifecycle functions
+  remain uncalled). Re-recorded `docs/demo/recordings/NEW_PROVOST.mp4`
+  and rewrote `docs/demo/SCENARIO-provost.md` to match.
+
 - **AVA-01…AVA-12 — Accreditation, Quality Assurance & DM 1154/2021
   Compliance (BOOK-26, new) — a 12-sprint program, opened and closed in
   one continuous pass, G22 FULLY CLOSED** (2026-08-03→2026-08-05,

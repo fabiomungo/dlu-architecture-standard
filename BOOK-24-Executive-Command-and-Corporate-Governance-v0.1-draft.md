@@ -1,5 +1,5 @@
 # BOOK-24 — Executive Command & Corporate Governance
-### DAS v0.1-draft · Layer: Institution / Governance · Status: IMPLEMENTED (SPRINT-14/25 policy+catalog-approval, SPRINT-15/26 KPI layer, SPRINT-16/27 board governance — G20 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01 — see TRACEABILITY.md G20)
+### DAS v0.1-draft · Layer: Institution / Governance · Status: IMPLEMENTED (SPRINT-14/25 policy+catalog-approval, SPRINT-15/26 KPI layer, SPRINT-16/27 board governance — G20 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01; Provost persona pass — SPRINT-23, 2026-08-07 — closed the "ILO coverage" gap and added Catalog Certification — see TRACEABILITY.md G20)
 
 > Closes **G20** (role-grade command dashboards for Provost / President / Chairman / CFO,
 > a historicized KPI layer, board governance, and the formal catalog/policy approval
@@ -74,7 +74,7 @@ measures, dimensioned). Rules:
 |---|---|---|---|
 | President Bridge | president/rector | full scorecard, three economies, red postures | ratify teach-outs, governance actions |
 | Chairman Board Pack | chairman/board | resolutions pipeline, risk register, compliance posture (BOOK-19) | convene, resolve |
-| Provost Command | provost | academic health, pending approvals (catalog, policies), ILO coverage | approve, promulgate |
+| Provost Command | provost | academic health, pending approvals (catalog, policies), ILO coverage, Catalog Certification | approve, promulgate, certify catalog |
 | CFO Command | cfo | AR/AP aging, cash, budget-vs-actual, **planning & control views: forecasts, cash-flow projections, scenarios, period closes, variances (BOOK-23 Ch. 8)**, engagement commitments; narrative support by the propose-only CFO Analyst agent (BOOK-10A Annex T) | approve payment runs, sign engagements, close periods, act on variances |
 | HR Command | hr lead | positions, contracts, workload ledger, mentorship dividend (BOOK-22) | open positions, flag capacity |
 | MKO Funnel | marketing | intake funnel (BOOK-21), campaign attribution (CRM) | tune campaigns |
@@ -89,11 +89,28 @@ measures, dimensioned). Rules:
 > scorecard + open alerts; Provost Command (was "Rector's Bridge") adds a genuinely new
 > "pending approvals" composite (`GET /api/academic-governance/pending-approvals` — no such
 > tenant-wide listing existed before) alongside its pre-existing real program-health/three-
-> economies/red-posture content — **"ILO coverage" is an honest, disclosed gap**: no
-> ILO-level coverage rollup exists anywhere in this codebase (only PLO coverage, via
-> `program_knowledge_maps`, SPRINT-14), and fabricating one without walking a real
-> `ILO`→`PLOtoILO`→`PLO` chain would be exactly the kind of invented number this program never
-> ships; CFO Command shows the 2 real finance KPIs (AR aging, budget utilization) plus
+> economies/red-posture content.
+>
+> ✅ **CLOSED (Provost persona pass, SPRINT-23, 2026-08-07):** "ILO coverage" — a real
+> `compute_ilo_coverage_pct` KPI (`academic` domain, `kpi_compute_service.py`) walks the exact
+> `ILO`→`PLOtoILO`→`PLO` chain this note originally deferred, reusing the alignment-query shape
+> already proven in `compliance_posture_service._claim_outcome_alignment_chain` — a real,
+> honest number (0.0% on the demo tenant today, never fabricated). The same pass also gave
+> Provost genuine write access to the six responsibilities a real Provost holds — set ILOs,
+> co-author PLOs with Deans (`PLOEditor.js`, already built, just never role-permitted for
+> `provost`), choose Deans (`AcademicStructure.js`'s `dean_user_id` appointment, now also
+> genuinely grants the `dean` role, not just the FK), define the Academic Calendar
+> (`TermManager.js`), author the Academic Catalogue's course list and reference credits (a
+> genuinely new `ProgramCoursesEditor.js` tab — modeled and readable via `ProgramCourse`
+> before this pass, but with no editor anywhere), and a new formal **Catalog Certification**
+> action (`certify_catalog`, an additive `governance_actions` type, BOOK-24 §5) — the durable,
+> audited artifact standing in for representing the institution before the Government
+> Education System, honestly scoped as an internal certification record, not a fabricated
+> external Ministry integration. `GET /api/institution/dashboard` also had no server-side role
+> check at all before this pass — a real, independent access-control gap, fixed alongside.
+> See `docs/demo/SCENARIO-provost.md` (`dlu_builder_tk`) for the full, re-recorded walkthrough.
+>
+> CFO Command shows the 2 real finance KPIs (AR aging, budget utilization) plus
 > read-only budget-line commitment detail (reusing the pre-existing `budgetAPI.js`/
 > `budgets.py`, SPRINT-09) — **cash position, AP aging, and the BOOK-23 Ch. 8 planning &
 > control views are NOT built this sprint**, an honest, disclosed gap (no such computation
