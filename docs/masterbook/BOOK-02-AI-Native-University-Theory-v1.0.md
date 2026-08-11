@@ -421,3 +421,12 @@ Status legend as in BOOK-00 Annex A.
 
 *BOOK-02 v1.0 — awaiting review. Next per dependency order: BOOK-03 (Academic
 Operating System).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Cross-cutting alignment only. See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

@@ -1,0 +1,56 @@
+asyncapi: 3.0.0
+info:
+  title: DLU EKG Event Contract
+  version: 1.1.0
+  description: Kafka event catalog for EKG integration.
+defaultContentType: application/json
+channels:
+  academic.course.changed:
+    address: dlu.academic.course.v1
+    messages: {CourseChanged: {$ref: '#/components/messages/CourseChanged'}}
+  learning.activity.completed:
+    address: dlu.learning.activity.v1
+    messages: {LearningActivityCompleted: {$ref: '#/components/messages/LearningActivityCompleted'}}
+  assessment.evidence.recorded:
+    address: dlu.assessment.evidence.v1
+    messages: {EvidenceRecorded: {$ref: '#/components/messages/EvidenceRecorded'}}
+  mastery.updated:
+    address: dlu.mastery.updated.v1
+    messages: {MasteryUpdated: {$ref: '#/components/messages/MasteryUpdated'}}
+  credit.recognition.requested:
+    address: dlu.credit.recognition.v1
+    messages: {CreditRecognitionRequested: {$ref: '#/components/messages/CreditRecognitionRequested'}}
+  mapping.external.updated:
+    address: dlu.mapping.external.v1
+    messages: {ExternalMappingUpdated: {$ref: '#/components/messages/ExternalMappingUpdated'}}
+operations:
+  consumeLearningActivity:
+    action: receive
+    channel: {$ref: '#/channels/learning.activity.completed'}
+  publishMastery:
+    action: send
+    channel: {$ref: '#/channels/mastery.updated'}
+components:
+  messages:
+    CourseChanged: {name: CourseChanged, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+    LearningActivityCompleted: {name: LearningActivityCompleted, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+    EvidenceRecorded: {name: EvidenceRecorded, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+    MasteryUpdated: {name: MasteryUpdated, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+    CreditRecognitionRequested: {name: CreditRecognitionRequested, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+    ExternalMappingUpdated: {name: ExternalMappingUpdated, payload: {$ref: '#/components/schemas/EventEnvelope'}}
+  schemas:
+    EventEnvelope:
+      type: object
+      required: [specversion, id, type, source, subject, time, tenantId, data]
+      properties:
+        specversion: {const: '1.0'}
+        id: {type: string}
+        type: {type: string}
+        source: {type: string}
+        subject: {type: string}
+        time: {type: string, format: date-time}
+        tenantId: {type: string}
+        correlationId: {type: string}
+        causationId: {type: string}
+        schemaVersion: {type: string}
+        data: {type: object}

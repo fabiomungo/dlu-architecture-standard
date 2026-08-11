@@ -355,3 +355,12 @@ path for it to be capped away from.
 *BOOK-15 v1.0 — awaiting review. G-register: G2/G5/G6 closed here. Next:
 BOOK-16 (Credential & Trust Architecture — owner of G3 and consumer of
 everything this Book certifies).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Normative rule: a conversational **turn is an informal signal**; only **qualified evidence** updates high-stakes mastery. `TutorEvidence` is a distinct evidence source that **cannot override authoritative grades**. Adopt the Course Format v2.0 assessment→item→rubric→evidence model.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

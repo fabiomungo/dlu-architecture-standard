@@ -344,3 +344,12 @@ sprint (no payload-editing UI yet, disclosed); rejections are durably
 recorded with their reason on the `ai_agent_proposals` row itself (feeding
 the eval datasets is aspirational per this annex's original text — not
 literally wired this sprint, an honest correction).
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add tutor strategies/skills to the MCP/skills catalog; each tutor action is a governed capability with an explicit pedagogical strategy.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

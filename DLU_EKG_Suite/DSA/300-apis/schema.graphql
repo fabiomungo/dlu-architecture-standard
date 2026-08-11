@@ -1,0 +1,63 @@
+scalar DateTime
+scalar JSON
+
+type Query {
+  program(id: ID!): Program
+  course(id: ID!): Course
+  studentMastery(studentId: ID!, asOf: DateTime): MasteryState!
+  concept(id: ID!): Concept
+  prerequisites(conceptId: ID!, depth: Int = 3): [ConceptEdge!]!
+  skillGap(studentId: ID!, jobRoleId: ID!): SkillGapResult!
+  learningPath(studentId: ID!, target: LearningTargetInput!, constraints: LearningConstraintsInput): LearningPath!
+  accreditationTrace(programId: ID!, outcomeId: ID): AccreditationTrace!
+}
+
+type Mutation {
+  registerEvidence(input: EvidenceInput!): Evidence!
+  recomputeMastery(studentId: ID!, scope: MasteryScopeInput): MasteryJob!
+  approveMapping(mappingId: ID!, decision: MappingDecision!, note: String): Mapping!
+  requestCreditRecognition(input: CreditRecognitionInput!): CreditRecognitionCase!
+  tutorAsk(input: TutorQueryInput!): TutorAnswer!
+}
+
+type Program { id: ID!, tenantId: ID!, code: String!, title: String!, ects: Float!, eqfLevel: Int, courses: [Course!]! }
+type Course { id: ID!, code: String!, title: String!, ects: Float!, clos: [Outcome!]!, modules: [Module!]! }
+type Module { id: ID!, code: String!, title: String!, mlos: [Outcome!]!, lessons: [Lesson!]! }
+type Lesson { id: ID!, title: String!, concepts: [Concept!]!, learningResources: [LearningResource!]! }
+type Outcome { id: ID!, type: OutcomeType!, statement: String!, bloomLevel: BloomLevel, targetMastery: Float, mappings: [ExternalMapping!]! }
+type Concept { id: ID!, label: String!, description: String, prerequisites: [ConceptEdge!]!, skills: [Skill!]! }
+type ConceptEdge { source: Concept!, target: Concept!, relation: ConceptRelation!, strength: Float, provenance: Provenance }
+type Skill { id: ID!, label: String!, externalMappings: [ExternalMapping!]! }
+type ExternalMapping { id: ID!, framework: String!, externalUri: String!, relation: MappingRelation!, confidence: Float!, status: MappingStatus! }
+type LearningResource { id: ID!, title: String!, uri: String!, mediaType: String, version: String }
+type MasteryState { studentId: ID!, asOf: DateTime!, items: [MasteryItem!]! }
+type MasteryItem { targetId: ID!, targetType: String!, mastery: Float!, confidence: Float!, evidenceCount: Int!, lastObservedAt: DateTime, modelVersion: String! }
+type SkillGapResult { studentId: ID!, jobRoleId: ID!, gaps: [SkillGap!]! }
+type SkillGap { skill: Skill!, required: Float!, mastery: Float!, confidence: Float!, gap: Float!, priority: Float!, prerequisiteGaps: [SkillGap!]! }
+type LearningPath { id: ID!, rationale: String!, items: [LearningPathItem!]!, expectedCoverage: Float! }
+type LearningPathItem { order: Int!, nodeId: ID!, nodeType: String!, reason: String!, estimatedMinutes: Int, targetOutcomes: [Outcome!]! }
+type AccreditationTrace { programId: ID!, paths: [AccreditationPath!]!, uncoveredOutcomes: [Outcome!]!, orphanAssessments: [ID!]! }
+type AccreditationPath { outcome: Outcome!, mlos: [Outcome!]!, assessments: [ID!]!, evidenceCount: Int! }
+type Evidence { id: ID!, studentId: ID!, artifactUri: String!, evidenceType: String!, createdAt: DateTime!, provenance: Provenance! }
+type Mapping { id: ID!, status: MappingStatus!, confidence: Float!, externalUri: String! }
+type MasteryJob { jobId: ID!, status: String! }
+type CreditRecognitionCase { id: ID!, status: String!, proposedCredits: Float, rationale: String }
+type TutorAnswer { answer: String!, confidence: Float!, citations: [TutorCitation!]!, graphFacts: [JSON!]!, policyFlags: [String!]! }
+type TutorCitation { sourceId: ID!, title: String!, uri: String, fragment: String }
+type Provenance { sourceSystem: String!, sourceId: String, actorId: String, observedAt: DateTime, modelVersion: String }
+
+enum OutcomeType { CLO MLO }
+enum BloomLevel { REMEMBER UNDERSTAND APPLY ANALYZE EVALUATE CREATE }
+enum ConceptRelation { PREREQUISITE_OF PART_OF RELATED_TO IS_A USES IMPLEMENTS EXTENDS CONTRASTS_WITH DEPENDS_ON }
+enum MappingRelation { EXACT_MATCH CLOSE_MATCH BROADER_MATCH NARROWER_MATCH RELATED_MATCH }
+enum MappingStatus { SUGGESTED APPROVED REJECTED DEPRECATED }
+enum MappingDecision { APPROVE REJECT }
+
+input EvidenceInput { studentId: ID!, assessmentId: ID!, artifactUri: String!, evidenceType: String!, rubricScores: [RubricScoreInput!], provenance: ProvenanceInput! }
+input RubricScoreInput { criterionId: ID!, score: Float!, maxScore: Float!, evaluatorType: String!, evaluatorId: String }
+input ProvenanceInput { sourceSystem: String!, sourceId: String, actorId: String, observedAt: DateTime, modelVersion: String }
+input MasteryScopeInput { courseIds: [ID!], conceptIds: [ID!], outcomeIds: [ID!] }
+input LearningTargetInput { type: String!, id: ID! }
+input LearningConstraintsInput { maxHours: Float, deadline: DateTime, excludedResourceIds: [ID!], accessibilityProfile: JSON, language: String }
+input CreditRecognitionInput { studentId: ID!, targetProgramId: ID!, sourceEvidence: [JSON!]!, policyVersion: String! }
+input TutorQueryInput { studentId: ID!, courseId: ID, message: String!, sessionId: ID, retrievalPolicy: String = "GRAPH_PLUS_VECTOR" }

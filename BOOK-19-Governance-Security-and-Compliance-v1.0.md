@@ -54,6 +54,37 @@ Staffing rule (BOOK-02 §3.2): Learning Engineer, AI Pedagogy Steward and
 Evidence Registrar are **accountabilities that MUST exist**, merged into
 existing roles only at small scale, never absent.
 
+## 1.2 Persona × EKG-usage / RKG-maintenance RACI (RFC-0002, ADR-0021)
+
+The EKG platform subsystem (ADR-0019) has two operational planes, not two
+graphs: **EKG usage** (read/query, via the governed Lenses of ADR-0020) and
+**RKG** — the governance/maintenance plane (Ontology Registry versioning,
+`MappingAssertion` stewardship, `PolicyVersion` approval, tenant guardrails,
+evidence audit; ADR-0021 gives this the durable definition — never a second
+graph). Every persona named across BOOK-06/07/08/17/24/25/26 gets an explicit
+cell on both planes:
+
+| Persona | EKG usage (Lens) | RKG maintenance duty |
+|---|---|---|
+| Student | `STU-01…12`, tutor `STU-13…15` (BOOK-17 Ch. 3) | Open Learner Model dispute/contest only (BOOK-06 Ch. 8) |
+| Faculty | `FAC-01…08` (BOOK-17 Ch. 4) | Course-authoring writes (Course Format v2.0 binds fields to ontology ids); `PolicyVersion` academic-review sign-off (ADR-0016); course-scoped evidence review |
+| Dean | `DEA-01…06` (BOOK-17 Ch. 5, new row — RFC-0002 §4.3) | Program-level `MappingAssertion` escalation review; curriculum-graph design-gate sign-off |
+| Provost | `PRO-01…05` + BOOK-24 Provost Command | Institution-wide `PolicyVersion` approval; Catalog/Ontology Certification (extends `certify_catalog`, BOOK-24 §5); RFC/ontology-change sign-off (Architecture Board, Ch. 1 table above) |
+| Registrar / Evidence Registrar | `XRO` cross-role tools + IW2 | Evidence supersession review (append-only, never edited); credential graph-object issuance |
+| Advisor | Career/gap views (`GapObservation`, IW4) | none beyond the existing Intervention RACI above |
+| QA Officer | Coverage/traceability queries (feeds BOOK-26/AVA) | Conformance-check verification against graph invariants |
+| AI Pedagogy Steward | Agent/`PolicyVersion` scorecards (IW5) | `PolicyVersion` canary/rollback authority (ADR-0016) — same Steward accountability the staffing rule above already requires to exist |
+| Platform Operator ("Admin") | Cross-tenant anonymized aggregates (IW6) | **Primary RKG maintainer**: Ontology Registry version approval, tenant guardrails (Ch. 2.7, already built), Neo4j tenancy hardening, mapping-pipeline operations |
+| Researcher | Federated zero-trust query path (T13, BOOK-25 §3) | none new |
+| Auditor / CEV expert | Read-only evidence/coverage audit (BOOK-26) | none — read-only by design (P-A profile) |
+| President / Chairman / CFO / HR | BOOK-24 command surfaces (thin) | none new |
+
+The Platform Operator's RKG-maintenance duty absorbs the Suite's own
+`GOVERNANCE.md` "Knowledge/Graph Architect" and "Solution/Platform Architect"
+roles into this existing seat rather than inventing a new one — folding Suite
+governance into the Standard's own apparatus, per `DAS_EKG_INTEGRATION_PLAN.md`
+§1 risk #4 ("governance duplication").
+
 ---
 
 # Chapter 2 — Security Architecture
@@ -355,8 +386,11 @@ calendar route or workspace.
 | **G14 DE/DI telematic regime** (Masterbook Review R2) | **owned here, ✅ engineered in part NEW-13 (2026-07-31)**: DE/DI classification + ledger + under-quota alerting (Ch. 5.1) — tutor mapping, FEX v1.4 formal item, and CEV evidence NOT yet built, an honest carry-forward |
 | **G15 catalog as legal contract + explorer** (stakeholder review) | governance hook here: edition publication is a governed act (Senate/board approval → effective); consumer-protection reading — the pinned edition is the enforceable promise (misrepresentation guard applies to explorer content); resolution in 04/14/16/17, sprint NEW-16 |
 | **G16 credit pre-evaluation + rule packs** (stakeholder review) | governance hooks here: rule-pack changes are governed acts (DM 931/2024 caps, PLA/residency parameters — versioned, effective-dated, G7-aware); Tier-1 estimates carry the non-binding marker (misrepresentation guard); Tier-2 adjudication is council HITL (Committee, G6); prospect-document retention limits + `career_processing` consent; PLA-fee and portability disclosures (G13 discipline); resolution in BOOK-14A, sprint NEW-17 |
+| **G23 EKG persona integration & RKG governance** (RFC-0002) | governance hooks here: the §1.2 persona×EKG-usage/RKG-maintenance RACI table above is the normative register; sub-gaps G23.1 (ontology registry never populated — closed, `EKG-W6-01`) / G23.2 (no persona RACI — closed by §1.2, `EKG-W6-03`) / G23.3 (BOOK-17 missing Dean/executive Lens wiring, `EKG-W6-04`) / G23.4 (no RKG-maintenance UI for any persona, `EKG-W6-04`+Turnkey `EKG-W6-08`) / G23.5 ("RKG" undefined — closed by ADR-0021); full detail and conformance checks (C19.1/C19.2) in `TRACEABILITY.md` |
 
-Register now **G1–G16**.
+Register now **G1–G16, G23** (see `TRACEABILITY.md` for the full G1–G22 register this
+chapter has not been kept current against — G23 is added directly to the authoritative
+register there, per that file's own header rule).
 
 ---
 
@@ -405,3 +439,12 @@ G1–G14. Next and last: BOOK-20 (Implementation Blueprint).*
 [UniFI — SPID per i servizi di Ateneo](https://www.unifi.it/it/ateneo/spid-sistema-pubblico-di-identita-digitale) ·
 [ANVUR — Accreditamento periodico Università Telematiche (finalità e procedure)](https://www.anvur.it/sites/default/files/2025-02/2_AVA1_Finalit%C3%A0%20e%20procedure_Telematiche.pdf) ·
 [Linee guida DE/DI — esempio attuativo](https://ava.unipegaso.it/quadri/2021/file/DE-DI-Linee-guida-didattica-erogativa-e-interattiva_LINK_B1D.pdf)
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add **pedagogical-policy governance**: Draft→simulation→shadow→A/B→academic review→approved→canary→production→monitor→rollback; policy versions are auditable. Memory/retrieval are tenant/learner-authorised. Adaptive steering is an EU-AI-Act high-risk function — extend the risk register.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

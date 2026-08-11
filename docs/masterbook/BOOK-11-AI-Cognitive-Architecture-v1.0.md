@@ -305,3 +305,12 @@ scenario (6.1) — **the university's immune system learns**.
 
 *BOOK-11 v1.0 — awaiting review. Next per dependency order: BOOK-12 (Memory
 Architecture).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add the **GraphRAG tutor pipeline** (retrieval policies) and the **Tutor Evaluation Framework**: offline counterfactual evaluation, calibrated propensity logging, contextual-bandit gating for low-risk choices; RL only under governance with a constrained action space.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

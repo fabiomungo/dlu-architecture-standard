@@ -332,3 +332,12 @@ in BOOK-17, drivers in BOOK-18).
 *BOOK-16 v1.0 — awaiting review. G-register: G3 boundary specified; G9/G10/G11
 added and resolved. Next: BOOK-17 (Experiences — owner of G1/G4 and all
 workspace surfaces).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Core unchanged; add the Course Format v2.0 credential / Open Badges 3.0 export path from the authored course.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

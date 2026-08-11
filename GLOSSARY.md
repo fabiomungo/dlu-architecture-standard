@@ -161,3 +161,37 @@
 | Two products | Mastery signal (fast) + evidence (durable) per assessment interaction | 15 |
 | Viva dossier | AI-prepared examination brief targeting weakest evidence links | 15 |
 | "Why?" affordance | Universal trace-opening control on AI-derived elements | 17 |
+
+
+## ATA / EKG v1.1 additions (2026-08-08)
+| Term | Definition |
+|------|------------|
+| Adaptive Tutor Architecture (ATA) | Cross-cutting slice (DKA/DXA/DSA/DPA) delivering a scalable adaptive tutor that personalises from the learner's knowledge state, goals and evidence and improves a versioned pedagogical policy. |
+| Next Best Learning Action (NBLA) | The action the Pedagogical Policy Engine selects for the learner's current state; the LLM renders it. |
+| Pedagogical Policy Engine | The versioned decision component that chooses the NBLA from an explicit strategy set; the LLM does not own pedagogy. |
+| PolicyVersion | An immutable, auditable version of the pedagogical policy; changes require offline evaluation + controlled rollout. |
+| Student Learning Digital Twin | The tutor-facing projection of the learner: goals, mastery (≠confidence), misconceptions and memory. |
+| Misconception | A modelled learner error/state that interventions remediate; suggested by tutor evidence. |
+| LearningIntervention / LearningStrategy | A tutor action instance and its explicit pedagogical strategy (e.g. WORKED_EXAMPLE, SCAFFOLD). |
+| TutorEvidence | Evidence produced by a tutor turn; an informal signal that may support a MasteryObservation but cannot override authoritative grades. |
+| Course Exchange Format v2.0 | EKG-aligned authoring/exchange format (Course→Module→Lesson→Resource; first-class outcomes/concepts/skills; assessment→evidence); authoritative EKG projection source; v1.3 via adapter. |
+
+## RFC-0002 / ADR-0021 additions (2026-08-08)
+| Term | Definition |
+|------|------------|
+| EKG usage | The read/query plane of the EKG platform subsystem (ADR-0019), surfaced only through governed Lenses (ADR-0020); every `STU/FAC/DEA/PRO/XRO` screen in the DXA catalog is an EKG-usage surface. |
+| RKG (RKG maintenance) | The governance/maintenance plane of the same EKG platform subsystem — **not a second graph** (ADR-0021): Ontology Registry versioning, `MappingAssertion` stewardship, `PolicyVersion` approval, tenant guardrails, evidence audit. Never a graph node type or label. |
+| RKG Governance Console | The named UI (BOOK-17 IW6) closing the DXA screen catalog's gap for RKG-maintenance personas: ontology-registry admin, mapping-review queue, PolicyVersion approval workflow, tenant-guardrail configuration. Specced, not yet built (Turnkey `EKG-W6-08`). |
+| Persona × EKG-usage/RKG-maintenance RACI | The BOOK-19 §1.2 table assigning every named persona (Student…President) an explicit EKG-usage Lens and RKG-maintenance duty (or "none new"). |
+
+## EKG core platform additions (2026-08-09)
+| Term | Definition |
+|------|------------|
+| MasteryObservation | A single graph-recorded evidence point toward a learner's mastery of a Concept/MLO/CLO/Skill; the durable ledger the mastery engine's `LearningState` gauge is snapshotted from. |
+| LearningState | The mastery engine's per-(learner, competency) durability gauge (`mastery >= 0.75` = durable), recomputed from `MasteryObservation` rows, never hand-edited. |
+| MappingAssertion | A proposed link between a Course Format v2.0 outcome/concept/skill and an ontology node, held in a review queue (stewardship pipeline) until approved — never auto-applied to the graph. |
+| Named query template | A parameterised, access-controlled Cypher query in `named_query_templates.py` — the only sanctioned way EKG code reads Neo4j; ad-hoc Cypher is disallowed and CI-scanned (`ekg_cypher_tenant_scope_scan.py`). |
+| Context pack | The fenced, provenance-tagged bundle of retrieved passages the GraphRAG tutor assembles before generation — the boundary enforcing "data, not instructions" against prompt injection from graph content. |
+| EKG Postgres/Neo4j tenancy policy | The explicit per-table (Postgres) and per-tenant-database (Neo4j) classification governing which tenant a row/graph belongs to and how RLS/database routing enforces it (`ekg_postgres_tenancy_policy.py`, `neo4j_tenancy_policy.py`). |
+| EKG Production DoD Assessment | The EKG-scoped (not platform-wide) Definition-of-Done verdict closing the EKG-W0…W5 program (`docs/EKG_PRODUCTION_DOD_ASSESSMENT.md`, `dlu_builder_tk`); deliberately distinct from, and never a substitute for, BOOK-20 §8.3's own platform-wide DAS-Certified verdict. |
+| Gateway cost report | Read-only aggregation over `platform.llm_usage_logs` giving EKG's per-engine and per-learner LLM spend (`ekg_gateway_cost_report.py`); discloses, rather than hides, that GraphRAG's embedding calls bypass the gateway (pre-existing debt). |

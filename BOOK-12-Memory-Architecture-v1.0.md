@@ -218,3 +218,12 @@ BOOK-11 Ch. 8) are Review-Board items. The scenario bank includes memory cases
 
 *BOOK-12 v1.0 — awaiting review. The AI spine (09–12) is complete; next per
 dependency order: BOOK-13 (Academic Knowledge Network).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Adopt **Tutor Memory Semantics**: working / episodic / preference memory with salience and expiry; all memory access is tenant- and learner-authorised; retrieved content is data, not instructions.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

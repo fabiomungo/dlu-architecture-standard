@@ -318,3 +318,12 @@ BOOK-20 scope note: Chapter 2/3/4 land inside **STX-06** (ACE runtime) and
 
 *BOOK-10B v1.0 — awaiting review. With 10A (what) and 10B (how) approved, the
 K1 prompt pack generation has its complete intelligent-layer specification.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Tutor execution runs through the governed LLM gateway; policy chooses the action, the model renders it; every response is explainable and audited.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

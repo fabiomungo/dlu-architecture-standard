@@ -338,3 +338,12 @@ scenario history retained for audit (retention-classed).
 *BOOK-14 v1.0 — awaiting review. The intelligence spine (13–14) is complete;
 next per Chapter 16 order: BOOK-15 (Assessment & Evidence Architecture — owner
 of ESSE3 gaps G2/G5/G6).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Distinguish **LearningPlan** (tutor-sequenced interventions) from the deterministic **LearningPath** (GPS-optimised). GPS plans the route; the Policy Engine sequences the next intervention within it. `LearningPlan RECOMMENDS LearningIntervention`.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

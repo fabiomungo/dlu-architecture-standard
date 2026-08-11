@@ -285,3 +285,23 @@ schema_version — reproducibility discipline as everywhere.
 
 *BOOK-13 v1.0 — awaiting review. Next per dependency order: BOOK-14 (Academic
 Intelligence Navigator — the GPS, the AKN's primary computational client).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+**RKG maintenance lives here (RFC-0002, ADR-0021, BOOK-19 §1.2):** the graph-governance
+mechanisms this Book already specifies (mapping stewardship, ontology versioning) ARE the
+RKG-maintenance plane described in ADR-0021 — RKG is not a new mechanism on top of this Book's
+governance chapter, it is that chapter, named and assigned to personas. The **Platform Operator**
+is the primary maintainer (Ontology Registry version approval, mapping-pipeline operations);
+Dean/Provost hold narrower, scoped escalation/sign-off duties (BOOK-19 §1.2 table).
+
+Overlay the ATA nodes/edges on the Knowledge Network: `TutorEvidence SUPPORTS MasteryObservation`, `TutorEvidence SUGGESTS Misconception`, `LearningIntervention REMEDIATES Misconception`, `LearningGoal TARGETS Concept/MLO/CLO/Skill/JobRole`.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
+
+**Implementation status (2026-08-09):** the mastery engine and mapping-stewardship pipeline
+sketched above are built and tested, not just specified — `TRACEABILITY.md`'s `EKG-W0-01`
+through `EKG-W5-05` rows are the sprint-by-sprint evidence trail (36 sprints, six waves).

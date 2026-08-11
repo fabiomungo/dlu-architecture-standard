@@ -55,7 +55,7 @@ what's actually built).
 |---|-------|----------------|--------|
 | [21](BOOK-21-Admissions-Qualification-Evaluation-and-Orientation-v0.2-draft.md) | Admissions, Qualification Evaluation & Orientation | full funnel: application→eligibility→orientation→offer→matriculation (G17) | IMPLEMENTED (SPRINT-06/NEW-18) |
 | [21A](BOOK-21A-Credit-Pre-Evaluation-Operations-and-Automation-v0.4-draft.md) | Credit Pre-Evaluation: Operations & Automation (annex) | CDS extraction/matching engine, rule packs, golden-set eval loop (G17) | IMPLEMENTED (SPRINT-02..04/07/22 — F1-F4 all real; C21A.6/C21A.7 corrected + closed for real SPRINT-22) |
-| [22](BOOK-22-Faculty-Lifecycle-Contracting-and-Workforce-v0.4-draft.md) | Faculty Lifecycle, Contracting & Human Workforce | onboarding, QES-signed authoring contracts, milestone/deliverable gates, HR/workload ledger (G18) | IMPLEMENTED (SPRINT-08/09/10 — G18 FULLY CLOSED) |
+| [22](BOOK-22-Faculty-Lifecycle-Contracting-and-Workforce-v0.5-draft.md) | Faculty Lifecycle, Contracting & Human Workforce | onboarding, QES-signed authoring contracts, milestone/deliverable gates, HR/workload ledger (G18) | IMPLEMENTED (SPRINT-08/09/10 — G18 FULLY CLOSED) |
 | [23](BOOK-23-Financial-Operations-and-Administrative-Backbone-v0.5-draft.md) | Financial Operations & Administrative Backbone | native AR/AP, holds, student dossier, financial planning & control (G19) | IMPLEMENTED (SPRINT-05/09/18 — G19 FULLY CLOSED) |
 | [24](BOOK-24-Executive-Command-and-Corporate-Governance-v0.1-draft.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED (SPRINT-14/15/16 — G20 FULLY CLOSED) |
 | [25](BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
@@ -105,3 +105,34 @@ sprints) → `dlu_builder_tk/CLAUDE.md` (binding engineering guardrails).
 5. **Compliance is proven, not asserted** (19) — RSI and DE/DI ledgers, the
    generated registro, the living self-study: the same events that teach also
    testify.
+
+
+---
+
+### Update 2026-08-08 — ATA 1.0 cross-cut + Course Format v2.0
+The Masterbook now integrates the DLU Architecture Suite **EKG v1.1** and **ATA 1.0 (Adaptive Tutor Architecture)**, and adopts the **DLU Course Exchange Format v2.0**. Start from `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` and `DAS_EKG_INTEGRATION_PLAN.md`. ATA is a cross-cutting slice touching BOOK-03/05/06/09/11/12/13/14/15/17/18/19; implementation sprints are in `../dlu_builder_tk/docs/ROOCODE_EKG_PROMPTS.md` (W3-ATA) and the Course Format sprint (EKG-W1-07).
+
+### BOOK-09A — Adaptive Tutor (ATA)
+Annex to BOOK-09 (ACE). Normative spec of the Adaptive Tutor: Student Learning Digital Twin, Pedagogical Strategy Ontology, Pedagogical Policy Engine (NBLA), evidence tiers & misconceptions, tutor memory, platform architecture, EKG extension (11 nodes/12 edges), evaluation framework and governed rollout. Binds ADR-0016/0018; adopts ADR-0017 (Course Format v2.0). See `architecture/adr/ADR-0016..0018`.
+
+### Update 2026-08-08 — EKG persona integration & RKG governance (RFC-0002)
+Closes the persona/UI gap the EKG v1.1 absorption left open: a 12-persona EKG-usage/RKG-maintenance
+RACI (BOOK-19 §1.2), an IW7 Dean Console + RKG Governance Console spec (BOOK-17 IW6), EKG/RKG columns
+on BOOK-08/24, and the Ontology Registry population (`architecture/ontology/dlu-core.yaml`) BOOK-05
+had called for but never received. **ADR-0021** defines RKG as the EKG's governance/maintenance
+plane, not a second graph. Start from `RFC-0002-ekg-persona-integration-and-rkg-governance.md`
+(`architecture/rfc/`). Turnkey-side console/frontend work is specced, not built, as `EKG-W6-07/08`
+in `../dlu_builder_tk/docs/ROOCODE_EKG_PROMPTS.md` (Wave 6).
+
+### Update 2026-08-09 — EKG-W0…W5 core platform implementation complete
+The EKG v1.1 absorption's own 36-sprint engineering catalog (`../dlu_builder_tk/docs/
+ROOCODE_EKG_PROMPTS.md`, Waves 0–5 incl. W3-ATA) is now fully implemented and tested against live
+Postgres/Neo4j: mastery engine + mapping stewardship (BOOK-13), a grounded GraphRAG tutor
+(BOOK-09A), career+credit recognition (BOOK-14/14A), and Wave 5 hardening — Postgres RLS,
+Neo4j per-tenant routing, full SRE observability, a proven DR drill, application-level evidence
+encryption, gateway cost governance, and an EKG-scoped production DoD assessment. **ADR-0016…0020**
+move from Proposed to **Accepted** accordingly. Full sprint-by-sprint narrative with evidence
+citations: `TRACEABILITY.md` (`EKG-W0-01`…`EKG-W5-05`) and `../dlu_builder_tk/docs/
+STUDENT_EXPERIENCE_ARCHITECTURE.md`. **Honest scope note**: this is the EKG-scoped
+implementation program only — it does not claim the platform-wide `DAS-Certified` tier
+(BOOK-20 §8.3's own unchanged verdict).

@@ -1,0 +1,18 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dlu: <https://dlu.example.org/ekg/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dlu:CourseShape a sh:NodeShape ;
+ sh:targetClass dlu:Course ;
+ sh:property [ sh:path dlu:hasModule ; sh:minCount 1 ] ;
+ sh:property [ sh:path dlu:definesCLO ; sh:minCount 1 ] .
+
+dlu:ModuleShape a sh:NodeShape ;
+ sh:targetClass dlu:Module ;
+ sh:property [ sh:path dlu:hasLesson ; sh:minCount 1 ] ;
+ sh:property [ sh:path dlu:definesMLO ; sh:minCount 1 ] .
+
+dlu:MLOShape a sh:NodeShape ;
+ sh:targetClass dlu:MLO ;
+ sh:property [ sh:path dlu:contributesTo ; sh:minCount 1 ] ;
+ sh:property [ sh:path dlu:assessedBy ; sh:minCount 1 ] .

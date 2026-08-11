@@ -1,0 +1,42 @@
+# Screen Catalogue Index
+
+- **STU-01** — Student Home · student · orient and act
+- **STU-02** — My Learning Path · student · progress toward outcomes
+- **STU-03** — Course Overview · student · understand course status
+- **STU-04** — Module Overview · student · plan module work
+- **STU-05** — Lesson Workspace · student · learn and practice
+- **STU-06** — Knowledge Explorer · student · inspect local knowledge dependencies
+- **STU-07** — Assessment Center · student · manage assessments
+- **STU-08** — Assessment Result · student · understand evidence and gaps
+- **STU-09** — Evidence Portfolio · student · review demonstrated competence
+- **STU-10** — Skills & Mastery · student · inspect mastery/confidence
+- **STU-11** — Career Readiness · student · compare skills to target role
+- **STU-12** — AI Tutor · student · get grounded adaptive support
+- **FAC-01** — Faculty Course Home · faculty · monitor course health
+- **FAC-02** — Outcome Health · faculty · monitor CLO/MLO attainment
+- **FAC-03** — Cohort Mastery · faculty · identify weak concepts
+- **FAC-04** — Student Detail · faculty · support an individual learner
+- **FAC-05** — Assessment Analytics · faculty · evaluate assessment quality
+- **FAC-06** — Rubric & Evidence · faculty · inspect scoring evidence
+- **FAC-07** — Content Coverage · faculty · find outcome/content gaps
+- **FAC-08** — Faculty AI Assistant · faculty · analyze and author with evidence
+- **DEA-01** — Program Dashboard · dean · monitor program health
+- **DEA-02** — Curriculum Map · dean · inspect course/outcome coverage
+- **DEA-03** — Coverage Matrix · dean · find overlap and gaps
+- **DEA-04** — Program Risk Queue · dean · prioritize interventions
+- **DEA-05** — Career Alignment · dean · compare curriculum to role skills
+- **DEA-06** — Accreditation Evidence · dean · trace outcomes to evidence
+- **PRO-01** — Academic Control Tower · provost · monitor institution health
+- **PRO-02** — Portfolio Comparison · provost · compare schools/programs
+- **PRO-03** — Institution Outcome Attainment · provost · monitor learning outcomes
+- **PRO-04** — Quality & Assurance · provost · monitor traceability and risk
+- **PRO-05** — Employability Alignment · provost · monitor workforce relevance
+- **XRO-01** — Universal Search · cross-role · find entities and actions
+- **XRO-02** — Notification Center · cross-role · act on relevant changes
+- **XRO-03** — Local Graph Explorer · cross-role · inspect bounded semantic context
+- **XRO-04** — Explainability Drawer · cross-role · understand recommendation provenance
+
+## Adaptive Tutor extensions
+- STU-13 — Adaptive Tutor Session
+- STU-14 — Learning Diagnosis
+- STU-15 — Personal Learning Plan

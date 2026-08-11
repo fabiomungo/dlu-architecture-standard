@@ -375,3 +375,12 @@ an external alignment never deletes DLU-side state; crosswalk changes are govern
 *BOOK-05 v1.0 — awaiting review. The Turnkey constitution §6.2 amendment (A8) is
 applied in the same change set. Next per dependency order: BOOK-06 (Student
 Digital Twin).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Register the **ATA EKG extension** (11 nodes / 12 edges) and the **pedagogical ontology** (LearningStrategy vocabulary) in `architecture/ontology/dlu-core.yaml`, versioned. Course Format v2.0 outcome/concept/skill URIs follow the identity/versioning policy.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

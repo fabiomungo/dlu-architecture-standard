@@ -288,3 +288,12 @@ Register now **G1–G16**.
 *BOOK-14A v1.0 — awaiting review. G16 resolved — NEW-17 delivered
 2026-08-03 (`dlu_builder_tk`, `docs/sprint_decisions_20260803_new17.md`).
 The Masterbook's standing G-register is now complete at G1–G16.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Credit recognition is unaffected by ATA; tutor evidence remains an informal signal and cannot alter recognition decisions.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

@@ -410,3 +410,17 @@ BOOK-01 P8 made visibility normative; this chapter makes it concrete:
 *BOOK-06 v1.0 — awaiting review. Next per dependency order: BOOK-07 (Faculty
 Digital Twin) — or, if preferred, BOOK-13/14 to complete the intelligence spine
 first.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+**Persona × EKG-usage/RKG-maintenance (RFC-0002, BOOK-19 §1.2):** Student's EKG usage is
+`STU-01…12` + tutor `STU-13…15`; its only RKG-maintenance touchpoint is the Open Learner Model's
+existing dispute/contest right over its own L3/L4/L7 data (Ch. 8) — never write access to the
+graph itself.
+
+The **Student Learning Digital Twin** is the tutor-facing twin projection: goals + mastery (mastery≠confidence) + misconceptions + working/episodic/preference memory. Built via projection services; the browser never computes mastery.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

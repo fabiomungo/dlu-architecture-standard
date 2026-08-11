@@ -470,3 +470,12 @@ Tinto, *Leaving College* · Mislevy, *Evidence-Centered Design* · SuperMemo SM-
 
 *BOOK-01 v1.0 — awaiting review. Next per dependency order: BOOK-02 (AI-Native
 University Theory) and BOOK-03 (Academic Operating System).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Bind CAT stages to tutor strategies (scaffold→worked-example→practice→reflect); **desirable difficulty** is realised by adaptive difficulty (AIP-14). Progression remains evidence-driven; a conversational turn is an informal signal, not qualified evidence.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

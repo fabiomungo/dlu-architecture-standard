@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: DLU Adaptive Tutor API
+  version: 1.0.0
+servers:
+  - url: /api/tutor/v1
+paths:
+  /sessions:
+    post:
+      summary: Start an adaptive tutor session
+      operationId: startTutorSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId]
+              properties:
+                studentId: {type: string}
+                goalId: {type: string}
+                targetUri: {type: string}
+      responses:
+        '201':
+          description: Session created
+  /sessions/{sessionId}/turns:
+    post:
+      summary: Submit a learner turn and receive an adaptive intervention
+      operationId: createTutorTurn
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: {type: string}
+                clientContext: {type: object, additionalProperties: true}
+      responses:
+        '200': {description: Tutor intervention}
+  /sessions/{sessionId}/explanation:
+    get:
+      summary: Explain current recommendation or intervention
+      operationId: explainTutorDecision
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Explainability view model}
+  /students/{studentId}/learning-plan:
+    get:
+      summary: Get current personalized learning plan
+      operationId: getLearningPlan
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Learning plan}
+  /students/{studentId}/goals:
+    post:
+      summary: Create or update an active learning goal
+      operationId: upsertLearningGoal
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Goal updated}
+  /policy/evaluate:
+    post:
+      summary: Evaluate candidate next-best actions (internal)
+      operationId: evaluateTutorPolicy
+      responses:
+        '200': {description: Ranked candidate interventions}

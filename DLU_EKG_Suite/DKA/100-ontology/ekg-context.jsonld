@@ -1,0 +1,76 @@
+{
+  "@context": {
+    "dlu": "https://dlu.example.org/ekg/",
+    "schema": "https://schema.org/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "id": "@id",
+    "type": "@type",
+    "prefLabel": "skos:prefLabel",
+    "definition": "skos:definition",
+    "sameAs": "owl:sameAs",
+    "hasCourse": {
+      "@id": "dlu:hasCourse",
+      "@type": "@id"
+    },
+    "hasModule": {
+      "@id": "dlu:hasModule",
+      "@type": "@id"
+    },
+    "hasLesson": {
+      "@id": "dlu:hasLesson",
+      "@type": "@id"
+    },
+    "definesCLO": {
+      "@id": "dlu:definesCLO",
+      "@type": "@id"
+    },
+    "definesMLO": {
+      "@id": "dlu:definesMLO",
+      "@type": "@id"
+    },
+    "contributesTo": {
+      "@id": "dlu:contributesTo",
+      "@type": "@id"
+    },
+    "addresses": {
+      "@id": "dlu:addresses",
+      "@type": "@id"
+    },
+    "teaches": {
+      "@id": "dlu:teaches",
+      "@type": "@id"
+    },
+    "prerequisiteOf": {
+      "@id": "dlu:prerequisiteOf",
+      "@type": "@id"
+    },
+    "develops": {
+      "@id": "dlu:develops",
+      "@type": "@id"
+    },
+    "assessedBy": {
+      "@id": "dlu:assessedBy",
+      "@type": "@id"
+    },
+    "requiresSkill": {
+      "@id": "dlu:requiresSkill",
+      "@type": "@id"
+    },
+    "bloomLevel": "dlu:bloomLevel",
+    "targetMastery": {
+      "@id": "dlu:targetMastery",
+      "@type": "xsd:decimal"
+    },
+    "ects": {
+      "@id": "dlu:ects",
+      "@type": "xsd:decimal"
+    },
+    "eqfLevel": {
+      "@id": "dlu:eqfLevel",
+      "@type": "xsd:integer"
+    }
+  }
+}

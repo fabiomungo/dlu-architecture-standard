@@ -1,0 +1,110 @@
+@prefix dlu: <https://dlu.example.org/ekg/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://dlu.example.org/ekg> a owl:Ontology ;
+  owl:versionInfo "1.0" ;
+  rdfs:label "DLU Educational Knowledge Graph Ontology"@en .
+
+dlu:Institution a owl:Class ; rdfs:label "Institution"@en .
+dlu:School a owl:Class ; rdfs:label "School"@en .
+dlu:Program a owl:Class ; rdfs:label "Program"@en .
+dlu:Course a owl:Class ; rdfs:label "Course"@en .
+dlu:Module a owl:Class ; rdfs:label "Module"@en .
+dlu:Lesson a owl:Class ; rdfs:label "Lesson"@en .
+dlu:LearningResource a owl:Class ; rdfs:label "LearningResource"@en .
+dlu:LearningOutcome a owl:Class ; rdfs:label "LearningOutcome"@en .
+dlu:CLO a owl:Class ; rdfs:label "CLO"@en .
+dlu:MLO a owl:Class ; rdfs:label "MLO"@en .
+dlu:Concept a owl:Class ; rdfs:label "Concept"@en .
+dlu:KnowledgeUnit a owl:Class ; rdfs:label "KnowledgeUnit"@en .
+dlu:ToolTechnology a owl:Class ; rdfs:label "ToolTechnology"@en .
+dlu:Dataset a owl:Class ; rdfs:label "Dataset"@en .
+dlu:Skill a owl:Class ; rdfs:label "Skill"@en .
+dlu:FrameworkConcept a owl:Class ; rdfs:label "FrameworkConcept"@en .
+dlu:QualificationLevel a owl:Class ; rdfs:label "QualificationLevel"@en .
+dlu:Assessment a owl:Class ; rdfs:label "Assessment"@en .
+dlu:AssessmentItem a owl:Class ; rdfs:label "AssessmentItem"@en .
+dlu:Rubric a owl:Class ; rdfs:label "Rubric"@en .
+dlu:RubricCriterion a owl:Class ; rdfs:label "RubricCriterion"@en .
+dlu:PerformanceLevel a owl:Class ; rdfs:label "PerformanceLevel"@en .
+dlu:Evidence a owl:Class ; rdfs:label "Evidence"@en .
+dlu:Credential a owl:Class ; rdfs:label "Credential"@en .
+dlu:Learner a owl:Class ; rdfs:label "Learner"@en .
+dlu:MasteryObservation a owl:Class ; rdfs:label "MasteryObservation"@en .
+dlu:LearningState a owl:Class ; rdfs:label "LearningState"@en .
+dlu:JobRole a owl:Class ; rdfs:label "JobRole"@en .
+dlu:CareerPath a owl:Class ; rdfs:label "CareerPath"@en .
+dlu:SkillRequirement a owl:Class ; rdfs:label "SkillRequirement"@en .
+dlu:GapObservation a owl:Class ; rdfs:label "GapObservation"@en .
+dlu:LearningPath a owl:Class ; rdfs:label "LearningPath"@en .
+dlu:LearningPathStep a owl:Class ; rdfs:label "LearningPathStep"@en .
+dlu:Recommendation a owl:Class ; rdfs:label "Recommendation"@en .
+dlu:Agent a owl:Class ; rdfs:label "Agent"@en .
+dlu:PolicyRule a owl:Class ; rdfs:label "PolicyRule"@en .
+dlu:MappingAssertion a owl:Class ; rdfs:label "MappingAssertion"@en .
+
+# Outcome specialisation
+dlu:CLO rdfs:subClassOf dlu:LearningOutcome .
+dlu:MLO rdfs:subClassOf dlu:LearningOutcome .
+
+dlu:hasSchool a owl:ObjectProperty ; rdfs:label "HAS_SCHOOL"@en ; rdfs:domain dlu:Institution ; rdfs:range dlu:School ; rdfs:comment "Ownership/composition"@en .
+dlu:offersProgram a owl:ObjectProperty ; rdfs:label "OFFERS_PROGRAM"@en ; rdfs:domain dlu:School ; rdfs:range dlu:Program ; rdfs:comment "Academic ownership"@en .
+dlu:hasCourse a owl:ObjectProperty ; rdfs:label "HAS_COURSE"@en ; rdfs:domain dlu:Program ; rdfs:range dlu:Course ; rdfs:comment "Curriculum composition"@en .
+dlu:hasModule a owl:ObjectProperty ; rdfs:label "HAS_MODULE"@en ; rdfs:domain dlu:Course ; rdfs:range dlu:Module ; rdfs:comment "Course composition"@en .
+dlu:hasLesson a owl:ObjectProperty ; rdfs:label "HAS_LESSON"@en ; rdfs:domain dlu:Module ; rdfs:range dlu:Lesson ; rdfs:comment "Module composition"@en .
+dlu:usesResource a owl:ObjectProperty ; rdfs:label "USES_RESOURCE"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:LearningResource ; rdfs:comment "Instructional resource alignment"@en .
+dlu:definesClo a owl:ObjectProperty ; rdfs:label "DEFINES_CLO"@en ; rdfs:domain dlu:Course ; rdfs:range dlu:CLO ; rdfs:comment "Outcome definition"@en .
+dlu:definesMlo a owl:ObjectProperty ; rdfs:label "DEFINES_MLO"@en ; rdfs:domain dlu:Module ; rdfs:range dlu:MLO ; rdfs:comment "Outcome definition"@en .
+dlu:contributesTo a owl:ObjectProperty ; rdfs:label "CONTRIBUTES_TO"@en ; rdfs:domain dlu:MLO ; rdfs:range dlu:CLO ; rdfs:comment "Outcome alignment"@en .
+dlu:addresses a owl:ObjectProperty ; rdfs:label "ADDRESSES"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:MLO ; rdfs:comment "Lesson-outcome coverage"@en .
+dlu:teaches a owl:ObjectProperty ; rdfs:label "TEACHES"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:Concept ; rdfs:comment "Content-concept coverage"@en .
+dlu:hasConcept a owl:ObjectProperty ; rdfs:label "HAS_CONCEPT"@en ; rdfs:domain dlu:KnowledgeUnit ; rdfs:range dlu:Concept ; rdfs:comment "Concept grouping"@en .
+dlu:prerequisiteOf a owl:ObjectProperty ; rdfs:label "PREREQUISITE_OF"@en ; rdfs:domain dlu:Concept ; rdfs:range dlu:Concept ; rdfs:comment "Directed acyclic prerequisite relation"@en .
+dlu:relatedTo a owl:ObjectProperty ; rdfs:label "RELATED_TO"@en ; rdfs:domain dlu:Concept ; rdfs:range dlu:Concept ; rdfs:comment "Symmetric semantic relation"@en .
+dlu:partOf a owl:ObjectProperty ; rdfs:label "PART_OF"@en ; rdfs:domain dlu:Concept ; rdfs:range dlu:Concept ; rdfs:comment "Mereological relation"@en .
+dlu:usesTechnology a owl:ObjectProperty ; rdfs:label "USES_TECHNOLOGY"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:ToolTechnology ; rdfs:comment "Technology usage"@en .
+dlu:usesDataset a owl:ObjectProperty ; rdfs:label "USES_DATASET"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:Dataset ; rdfs:comment "Dataset usage"@en .
+dlu:develops a owl:ObjectProperty ; rdfs:label "DEVELOPS"@en ; rdfs:domain dlu:LearningOutcome ; rdfs:range dlu:Skill ; rdfs:comment "Outcome-skill alignment"@en .
+dlu:mapsToFramework a owl:ObjectProperty ; rdfs:label "MAPS_TO_FRAMEWORK"@en ; rdfs:domain dlu:Skill ; rdfs:range dlu:FrameworkConcept ; rdfs:comment "External framework mapping via assertion preferred"@en .
+dlu:hasLevel a owl:ObjectProperty ; rdfs:label "HAS_LEVEL"@en ; rdfs:domain dlu:Program ; rdfs:range dlu:QualificationLevel ; rdfs:comment "Qualification level"@en .
+dlu:assessedBy a owl:ObjectProperty ; rdfs:label "ASSESSED_BY"@en ; rdfs:domain dlu:LearningOutcome ; rdfs:range dlu:Assessment ; rdfs:comment "Outcome assessment coverage"@en .
+dlu:hasItem a owl:ObjectProperty ; rdfs:label "HAS_ITEM"@en ; rdfs:domain dlu:Assessment ; rdfs:range dlu:AssessmentItem ; rdfs:comment "Assessment decomposition"@en .
+dlu:assesses a owl:ObjectProperty ; rdfs:label "ASSESSES"@en ; rdfs:domain dlu:AssessmentItem ; rdfs:range dlu:LearningOutcome ; rdfs:comment "Item-outcome alignment"@en .
+dlu:usesRubric a owl:ObjectProperty ; rdfs:label "USES_RUBRIC"@en ; rdfs:domain dlu:Assessment ; rdfs:range dlu:Rubric ; rdfs:comment "Scoring scheme"@en .
+dlu:hasCriterion a owl:ObjectProperty ; rdfs:label "HAS_CRITERION"@en ; rdfs:domain dlu:Rubric ; rdfs:range dlu:RubricCriterion ; rdfs:comment "Rubric decomposition"@en .
+dlu:hasPerformanceLevel a owl:ObjectProperty ; rdfs:label "HAS_PERFORMANCE_LEVEL"@en ; rdfs:domain dlu:RubricCriterion ; rdfs:range dlu:PerformanceLevel ; rdfs:comment "Criterion bands"@en .
+dlu:produces a owl:ObjectProperty ; rdfs:label "PRODUCES"@en ; rdfs:domain dlu:Learner ; rdfs:range dlu:Evidence ; rdfs:comment "Evidence ownership"@en .
+dlu:evidences a owl:ObjectProperty ; rdfs:label "EVIDENCES"@en ; rdfs:domain dlu:Evidence ; rdfs:range dlu:LearningOutcome ; rdfs:comment "Evidence-to-outcome claim"@en .
+dlu:evaluatedWith a owl:ObjectProperty ; rdfs:label "EVALUATED_WITH"@en ; rdfs:domain dlu:Evidence ; rdfs:range dlu:RubricCriterion ; rdfs:comment "Evidence scoring context"@en .
+dlu:earns a owl:ObjectProperty ; rdfs:label "EARNS"@en ; rdfs:domain dlu:Learner ; rdfs:range dlu:Credential ; rdfs:comment "Credential award"@en .
+dlu:observes a owl:ObjectProperty ; rdfs:label "OBSERVES"@en ; rdfs:domain dlu:MasteryObservation ; rdfs:range dlu:Learner ; rdfs:comment "Observation subject"@en .
+dlu:ofConcept a owl:ObjectProperty ; rdfs:label "OF_CONCEPT"@en ; rdfs:domain dlu:MasteryObservation ; rdfs:range dlu:Concept ; rdfs:comment "Observed concept"@en .
+dlu:ofSkill a owl:ObjectProperty ; rdfs:label "OF_SKILL"@en ; rdfs:domain dlu:MasteryObservation ; rdfs:range dlu:Skill ; rdfs:comment "Optional skill observation"@en .
+dlu:derivedFrom a owl:ObjectProperty ; rdfs:label "DERIVED_FROM"@en ; rdfs:domain dlu:MasteryObservation ; rdfs:range dlu:Evidence ; rdfs:comment "Provenance"@en .
+dlu:targetsRole a owl:ObjectProperty ; rdfs:label "TARGETS_ROLE"@en ; rdfs:domain dlu:LearningPath ; rdfs:range dlu:JobRole ; rdfs:comment "Career target"@en .
+dlu:hasStep a owl:ObjectProperty ; rdfs:label "HAS_STEP"@en ; rdfs:domain dlu:LearningPath ; rdfs:range dlu:LearningPathStep ; rdfs:comment "Path composition"@en .
+dlu:stepResource a owl:ObjectProperty ; rdfs:label "STEP_RESOURCE"@en ; rdfs:domain dlu:LearningPathStep ; rdfs:range dlu:LearningResource ; rdfs:comment "Recommended resource"@en .
+dlu:stepLesson a owl:ObjectProperty ; rdfs:label "STEP_LESSON"@en ; rdfs:domain dlu:LearningPathStep ; rdfs:range dlu:Lesson ; rdfs:comment "Recommended lesson"@en .
+dlu:stepAssessment a owl:ObjectProperty ; rdfs:label "STEP_ASSESSMENT"@en ; rdfs:domain dlu:LearningPathStep ; rdfs:range dlu:Assessment ; rdfs:comment "Recommended assessment"@en .
+dlu:requiresSkill a owl:ObjectProperty ; rdfs:label "REQUIRES_SKILL"@en ; rdfs:domain dlu:JobRole ; rdfs:range dlu:SkillRequirement ; rdfs:comment "Role requirement"@en .
+dlu:requirementFor a owl:ObjectProperty ; rdfs:label "REQUIREMENT_FOR"@en ; rdfs:domain dlu:SkillRequirement ; rdfs:range dlu:Skill ; rdfs:comment "Required skill"@en .
+dlu:hasGap a owl:ObjectProperty ; rdfs:label "HAS_GAP"@en ; rdfs:domain dlu:Learner ; rdfs:range dlu:GapObservation ; rdfs:comment "Computed gap"@en .
+dlu:gapFor a owl:ObjectProperty ; rdfs:label "GAP_FOR"@en ; rdfs:domain dlu:GapObservation ; rdfs:range dlu:SkillRequirement ; rdfs:comment "Gap target requirement"@en .
+dlu:generates a owl:ObjectProperty ; rdfs:label "GENERATES"@en ; rdfs:domain dlu:Agent ; rdfs:range dlu:Recommendation ; rdfs:comment "Recommendation provenance"@en .
+dlu:recommendsPath a owl:ObjectProperty ; rdfs:label "RECOMMENDS_PATH"@en ; rdfs:domain dlu:Recommendation ; rdfs:range dlu:LearningPath ; rdfs:comment "Recommended path"@en .
+dlu:recommendsResource a owl:ObjectProperty ; rdfs:label "RECOMMENDS_RESOURCE"@en ; rdfs:domain dlu:Recommendation ; rdfs:range dlu:LearningResource ; rdfs:comment "Recommended content"@en .
+dlu:recommendsAssessment a owl:ObjectProperty ; rdfs:label "RECOMMENDS_ASSESSMENT"@en ; rdfs:domain dlu:Recommendation ; rdfs:range dlu:Assessment ; rdfs:comment "Recommended assessment"@en .
+dlu:assertsMapping a owl:ObjectProperty ; rdfs:label "ASSERTS_MAPPING"@en ; rdfs:domain dlu:MappingAssertion ; rdfs:range dlu:Skill ; rdfs:comment "Internal concept side"@en .
+dlu:toFrameworkConcept a owl:ObjectProperty ; rdfs:label "TO_FRAMEWORK_CONCEPT"@en ; rdfs:domain dlu:MappingAssertion ; rdfs:range dlu:FrameworkConcept ; rdfs:comment "External concept side"@en .
+
+# Core datatype properties
+dlu:id a owl:DatatypeProperty ; rdfs:range xsd:string .
+dlu:uri a owl:DatatypeProperty ; rdfs:range xsd:anyURI .
+dlu:bloomLevel a owl:DatatypeProperty ; rdfs:domain dlu:LearningOutcome ; rdfs:range xsd:string .
+dlu:targetMastery a owl:DatatypeProperty ; rdfs:domain dlu:LearningOutcome ; rdfs:range xsd:decimal .
+dlu:score a owl:DatatypeProperty ; rdfs:domain dlu:MasteryObservation ; rdfs:range xsd:decimal .
+dlu:confidence a owl:DatatypeProperty ; rdfs:domain dlu:MasteryObservation ; rdfs:range xsd:decimal .

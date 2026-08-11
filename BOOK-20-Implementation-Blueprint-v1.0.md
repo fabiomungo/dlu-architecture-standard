@@ -612,3 +612,12 @@ itself.
 *BOOK-20 v1.0 — awaiting review. Upon approval: generate the K1 prompt pack
 (`implementation/roocode/K1/`) and begin with STX-01, in dependency order,
 under the execution rules.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add the **ATA waves/sprints** to the roadmap (see `../dlu_builder_tk/docs/ROOCODE_EKG_PROMPTS.md` W3-ATA) and the **Course Format v2.0** sprint (EKG-W1-07). Instrument tutor learning-gain/retention KPIs.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

@@ -1,0 +1,160 @@
+openapi: 3.1.0
+info:
+  title: DLU EKG Platform API
+  version: 1.1.0
+  description: Production API for Educational Knowledge Graph services.
+servers:
+  - url: https://api.dlu.example/ekg/v1
+security:
+  - oidc: [ekg.read]
+paths:
+  /programs/{programId}:
+    get:
+      operationId: getProgram
+      parameters:
+        - $ref: '#/components/parameters/ProgramId'
+      responses:
+        '200': {description: Program graph projection, content: {application/json: {schema: {$ref: '#/components/schemas/Program'}}}}
+  /courses/{courseId}/outcomes:
+    get:
+      operationId: getCourseOutcomes
+      parameters:
+        - {name: courseId, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: CLO/MLO alignment, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Outcome'}}}}}
+  /students/{studentId}/mastery:
+    get:
+      operationId: getStudentMastery
+      parameters:
+        - {name: studentId, in: path, required: true, schema: {type: string}}
+        - {name: asOf, in: query, schema: {type: string, format: date-time}}
+      responses:
+        '200': {description: Mastery state, content: {application/json: {schema: {$ref: '#/components/schemas/MasteryState'}}}}
+  /students/{studentId}/learning-paths:
+    post:
+      operationId: computeLearningPath
+      security: [{oidc: [ekg.read, learningpath.execute]}]
+      parameters:
+        - {name: studentId, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/LearningPathRequest'}
+      responses:
+        '202': {description: Computation accepted, content: {application/json: {schema: {$ref: '#/components/schemas/Job'}}}}
+  /students/{studentId}/skill-gap:
+    post:
+      operationId: computeSkillGap
+      parameters:
+        - {name: studentId, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/SkillGapRequest'}}}
+      responses:
+        '200': {description: Gap result, content: {application/json: {schema: {$ref: '#/components/schemas/SkillGapResult'}}}}
+  /assessments/{assessmentId}/evidence:
+    post:
+      operationId: registerEvidence
+      security: [{oidc: [assessment.write]}]
+      parameters:
+        - {name: assessmentId, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/Evidence'}}}
+      responses:
+        '201': {description: Evidence registered}
+  /credit-recognition/evaluate:
+    post:
+      operationId: evaluateCreditRecognition
+      security: [{oidc: [credit.evaluate]}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/CreditRecognitionRequest'}}}
+      responses:
+        '202': {description: Evaluation started, content: {application/json: {schema: {$ref: '#/components/schemas/Job'}}}}
+  /tutor/query:
+    post:
+      operationId: tutorQuery
+      security: [{oidc: [tutor.execute]}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TutorQuery'}}}
+      responses:
+        '200': {description: Grounded answer, content: {application/json: {schema: {$ref: '#/components/schemas/TutorAnswer'}}}}
+  /mappings/esco/suggest:
+    post:
+      operationId: suggestEscoMappings
+      security: [{oidc: [mapping.write]}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/MappingRequest'}}}
+      responses:
+        '200': {description: Candidate mappings}
+  /mappings/case/import:
+    post:
+      operationId: importCaseFramework
+      security: [{oidc: [mapping.admin]}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, required: [sourceUrl], properties: {sourceUrl: {type: string, format: uri}, dryRun: {type: boolean, default: true}}}}}
+      responses:
+        '202': {description: Import started}
+  /graph/query:
+    post:
+      operationId: graphQuery
+      security: [{oidc: [graph.query]}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/GraphQuery'}}}
+      responses:
+        '200': {description: Safe graph projection}
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://id.dlu.example/.well-known/openid-configuration
+  parameters:
+    ProgramId: {name: programId, in: path, required: true, schema: {type: string}}
+  schemas:
+    Program:
+      type: object
+      required: [id, tenantId, code, title]
+      properties: {id: {type: string}, tenantId: {type: string}, code: {type: string}, title: {type: string}, ects: {type: number}, eqfLevel: {type: integer}}
+    Outcome:
+      type: object
+      required: [id, type, statement]
+      properties: {id: {type: string}, type: {enum: [CLO, MLO]}, statement: {type: string}, bloomLevel: {type: string}, targetMastery: {type: number, minimum: 0, maximum: 1}}
+    MasteryState:
+      type: object
+      properties:
+        studentId: {type: string}
+        asOf: {type: string, format: date-time}
+        competencies: {type: array, items: {$ref: '#/components/schemas/MasteryItem'}}
+    MasteryItem:
+      type: object
+      properties: {targetId: {type: string}, targetType: {type: string}, mastery: {type: number}, confidence: {type: number}, evidenceCount: {type: integer}, modelVersion: {type: string}}
+    LearningPathRequest:
+      type: object
+      required: [target]
+      properties: {target: {type: object}, constraints: {type: object}, maxItems: {type: integer, default: 12}, explain: {type: boolean, default: true}}
+    SkillGapRequest: {type: object, required: [jobRoleId], properties: {jobRoleId: {type: string}, includePrerequisites: {type: boolean, default: true}}}
+    SkillGapResult: {type: object, properties: {studentId: {type: string}, jobRoleId: {type: string}, gaps: {type: array, items: {type: object}}}}
+    Evidence:
+      type: object
+      required: [studentId, evidenceType, artifactUri]
+      properties: {studentId: {type: string}, evidenceType: {type: string}, artifactUri: {type: string, format: uri}, rubricScores: {type: array, items: {type: object}}, provenance: {type: object}}
+    CreditRecognitionRequest:
+      type: object
+      required: [studentId, targetProgramId, sourceEvidence]
+      properties: {studentId: {type: string}, targetProgramId: {type: string}, sourceEvidence: {type: array, items: {type: object}}, policyVersion: {type: string}}
+    TutorQuery:
+      type: object
+      required: [studentId, message]
+      properties: {studentId: {type: string}, courseId: {type: string}, message: {type: string}, sessionId: {type: string}, retrievalPolicy: {type: string}}
+    TutorAnswer:
+      type: object
+      properties: {answer: {type: string}, citations: {type: array, items: {type: object}}, graphFacts: {type: array, items: {type: object}}, confidence: {type: number}, policyFlags: {type: array, items: {type: string}}}
+    MappingRequest: {type: object, required: [entityIds], properties: {entityIds: {type: array, items: {type: string}}, threshold: {type: number, default: 0.78}}}
+    GraphQuery: {type: object, required: [queryName], properties: {queryName: {type: string}, parameters: {type: object}, limit: {type: integer, maximum: 1000}}}
+    Job: {type: object, properties: {jobId: {type: string}, status: {enum: [queued, running, completed, failed]}}}

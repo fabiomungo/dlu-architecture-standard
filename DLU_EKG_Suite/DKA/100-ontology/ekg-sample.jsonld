@@ -1,0 +1,134 @@
+{
+  "@context": {
+    "dlu": "https://dlu.example.org/ekg/",
+    "schema": "https://schema.org/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "id": "@id",
+    "type": "@type",
+    "prefLabel": "skos:prefLabel",
+    "definition": "skos:definition",
+    "sameAs": "owl:sameAs",
+    "hasCourse": {
+      "@id": "dlu:hasCourse",
+      "@type": "@id"
+    },
+    "hasModule": {
+      "@id": "dlu:hasModule",
+      "@type": "@id"
+    },
+    "hasLesson": {
+      "@id": "dlu:hasLesson",
+      "@type": "@id"
+    },
+    "definesCLO": {
+      "@id": "dlu:definesCLO",
+      "@type": "@id"
+    },
+    "definesMLO": {
+      "@id": "dlu:definesMLO",
+      "@type": "@id"
+    },
+    "contributesTo": {
+      "@id": "dlu:contributesTo",
+      "@type": "@id"
+    },
+    "addresses": {
+      "@id": "dlu:addresses",
+      "@type": "@id"
+    },
+    "teaches": {
+      "@id": "dlu:teaches",
+      "@type": "@id"
+    },
+    "prerequisiteOf": {
+      "@id": "dlu:prerequisiteOf",
+      "@type": "@id"
+    },
+    "develops": {
+      "@id": "dlu:develops",
+      "@type": "@id"
+    },
+    "assessedBy": {
+      "@id": "dlu:assessedBy",
+      "@type": "@id"
+    },
+    "requiresSkill": {
+      "@id": "dlu:requiresSkill",
+      "@type": "@id"
+    },
+    "bloomLevel": "dlu:bloomLevel",
+    "targetMastery": {
+      "@id": "dlu:targetMastery",
+      "@type": "xsd:decimal"
+    },
+    "ects": {
+      "@id": "dlu:ects",
+      "@type": "xsd:decimal"
+    },
+    "eqfLevel": {
+      "@id": "dlu:eqfLevel",
+      "@type": "xsd:integer"
+    }
+  },
+  "@graph": [
+    {
+      "id": "dlu:program/mscai",
+      "type": "dlu:Program",
+      "schema:name": "MSc Artificial Intelligence",
+      "ects": 120,
+      "eqfLevel": 7,
+      "hasCourse": [
+        "dlu:course/ai504"
+      ]
+    },
+    {
+      "id": "dlu:course/ai504",
+      "type": "dlu:Course",
+      "schema:name": "Generative AI & LLM Engineering",
+      "ects": 10,
+      "definesCLO": [
+        "dlu:clo/ai504-clo3"
+      ],
+      "hasModule": [
+        "dlu:module/ai504-m2"
+      ]
+    },
+    {
+      "id": "dlu:clo/ai504-clo3",
+      "type": "dlu:CLO",
+      "schema:description": "Design and implement enterprise RAG architectures.",
+      "bloomLevel": "Create",
+      "targetMastery": 0.8,
+      "develops": [
+        "dlu:skill/retrieval-augmented-generation"
+      ]
+    },
+    {
+      "id": "dlu:module/ai504-m2",
+      "type": "dlu:Module",
+      "schema:name": "Embeddings & RAG",
+      "definesMLO": [
+        "dlu:mlo/ai504-m2-mlo2"
+      ]
+    },
+    {
+      "id": "dlu:mlo/ai504-m2-mlo2",
+      "type": "dlu:MLO",
+      "schema:description": "Implement an end-to-end retrieval-augmented generation pipeline.",
+      "bloomLevel": "Create",
+      "targetMastery": 0.8,
+      "contributesTo": [
+        "dlu:clo/ai504-clo3"
+      ]
+    },
+    {
+      "id": "dlu:concept/rag",
+      "type": "dlu:Concept",
+      "prefLabel": "Retrieval-Augmented Generation",
+      "definition": "Pattern combining retrieval of external knowledge with generative inference."
+    }
+  ]
+}

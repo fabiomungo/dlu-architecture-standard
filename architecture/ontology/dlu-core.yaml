@@ -5,6 +5,17 @@
 # require an RFC amending BOOK-05 FIRST, then this file.
 version: "2.0"
 source: "BOOK-05 v1.0 §3.2, §5.3; BOOK-13 Ch. 3"
+# EKG-W0-01 (RFC-0002 §7): the EKG classes/relationships below are also
+# registered as live, queryable rows in a versioned Postgres Ontology
+# Registry (`platform.ekg_ontology_versions/ekg_node_types/ekg_edge_types/
+# ekg_shacl_shapes`, `dlu_builder_tk/backend/database/models_ekg.py`) —
+# this YAML is the narrative/governance record (BOOK-05 Ch. 8: "this Book
+# is its narrative; the YAML is what CI reads"), the Postgres registry is
+# what projection/mastery/mapping/Lens services resolve against at
+# runtime. Current published registry version: 1.0.0 (37 node types, 49
+# edge types, 3 SHACL shapes — seeded verbatim from EKG-Ontology-1.0.md
+# §4-5 by `backend/scripts/seed_ekg_ontology_v1.py`; immutable once
+# approved, a new registry version is a new semver row, never a rewrite).
 
 classes:
   # Parties & structure
@@ -57,6 +68,125 @@ classes:
   # Graph bookkeeping (not a domain class)
   - {name: SchemaMeta, graph_label: SchemaMeta, engine: knowledge,
      notes: "migration version stamp node"}
+  # Faculty lifecycle & workforce (RFC-0001 §10, BOOK-22 v0.5, FW6-01..FW6-10)
+  # — relational-only aggregates, none graph-participating (graph_label: null,
+  # same posture as Tenant/Consent/DomainEvent/Proposal above).
+  - {name: SigningPolicy, graph_label: null, engine: institution,
+     notes: "versioned, immutable signing-order rule pack (FW6-01)"}
+  - {name: ConsentDefinition, graph_label: null, engine: institution,
+     notes: "versioned catalogue of the 10-item Course Developer Consent form (FW6-02)"}
+  - {name: ConsentRecord, graph_label: null, engine: institution,
+     notes: "FacultyConsentRecord (append-only, FW6-02) — distinct from the existing
+             student-facing Consent class above; distinct from backend.domains.marketing's
+             orphaned ConsentRecord (GDPR channel/status opt-in, unrelated concept),
+             see ER_MAP.md"}
+  - {name: FacultyQualificationDecision, graph_label: null, engine: institution,
+     notes: "immutable Gate 1 academic-qualification act (FW6-03)"}
+  - {name: CatalogCourseReservation, graph_label: null, engine: institution,
+     notes: "DDL-level (unique partial index) course double-booking prevention (FW6-04)"}
+  - {name: EngagementScope, graph_label: null, engine: institution,
+     notes: "Exhibit A as data — module list, deliverable taxonomy (FW6-06)"}
+  - {name: EngagementCompensationSchedule, graph_label: null, engine: institution,
+     notes: "Exhibit B as data — generalises the 30/70 milestone split (FW6-06)"}
+  - {name: DeadlineEvent, graph_label: null, engine: institution,
+     notes: "append-only review-window tolling ledger (FW6-06)"}
+  - {name: ContentStandardCheck, graph_label: null, engine: institution,
+     notes: "one named check within the STU Course Content Standard's computed
+             result (stu_content_standard_service.evaluate, FW6-05) — not a persisted
+             table, a shape within DeliverableReview.checklist"}
+  - {name: FederatedInstitution, graph_label: null, engine: institution,
+     notes: "a partner institution under a framework agreement (FW6-09); disambiguated
+             in ER_MAP.md from models_federation.py's InstanceRegistry (deployment
+             instances) AND backend/domains/federation's Institution (student mobility)
+             — three unrelated concepts sharing similar names"}
+  - {name: FederationAgreement, graph_label: null, engine: institution,
+     notes: "versioned, immutable institution-to-institution framework agreement (FW6-09)"}
+  - {name: AssignmentOrder, graph_label: null, engine: institution,
+     notes: "the light per-course instrument issued under a FederationAgreement (FW6-09)"}
+  # Enumerations (not classes — registered here per RFC-0001 §10 so the
+  # closed-vocabulary discipline extends to CHECK-constrained string columns,
+  # not only to graph labels)
+  - {name: EngagementType, graph_label: null, engine: institution,
+     notes: "AuthoringEngagement.engagement_type enum — independent_contractor
+             (default) | federated_faculty | internal_staff (reserved) — FW6-09"}
+  - {name: AffiliationType, graph_label: null, engine: institution,
+     notes: "FacultyProfile.affiliation_type enum — own (default) | federated |
+             visiting — FW6-10, DM 1154 accreditation guard"}
+  - {name: IpRegime, graph_label: null, engine: institution,
+     notes: "FederationAgreement/AssignmentOrder.ip_regime enum — sta_owns |
+             home_owns_stu_licensed | joint | per_assignment — FW6-09"}
+
+  # EKG v1.1 — Educational Knowledge Graph ontology (RFC-0002, ADR-0019/0021;
+  # source: DLU_EKG_Suite/DKA/100-ontology/EKG-Ontology-1.0.md §4). Only
+  # classes with no existing equivalent below are added; overlaps are noted
+  # in place rather than duplicated (this file's own header rule — RFC first).
+  # NOT duplicated here: Institution/School/Program/Course/Module/Lesson/
+  # Concept/Skill/CLO/MLO/Assessment/Credential/Agent/Recommendation already
+  # exist above; LearningOutcome == the existing Outcome class (already
+  # annotated "subsumed"); Evidence == the existing EvidenceRecord class.
+  - {name: LearningResource, graph_label: LearningResource, engine: learning,
+     notes: "EKG-native superclass; the existing CourseResource/MediaAsset
+             pair stays as-is (v1.0 legacy), not merged into this"}
+  - {name: KnowledgeUnit, graph_label: KnowledgeUnit, engine: knowledge}
+  - {name: ToolTechnology, graph_label: ToolTechnology, engine: knowledge}
+  - {name: Dataset, graph_label: Dataset, engine: knowledge}
+  - {name: FrameworkConcept, graph_label: FrameworkConcept, engine: competency,
+     notes: "external framework concept wrapper (CASE/ESCO/SFIA/DigComp/EQF/
+             Bloom), pinned version; linked only via MappingAssertion"}
+  - {name: QualificationLevel, graph_label: QualificationLevel, engine: competency}
+  - {name: AssessmentItem, graph_label: AssessmentItem, engine: assessment}
+  - {name: Rubric, graph_label: Rubric, engine: assessment}
+  - {name: RubricCriterion, graph_label: RubricCriterion, engine: assessment}
+  - {name: PerformanceLevel, graph_label: PerformanceLevel, engine: assessment}
+  - {name: MasteryObservation, graph_label: MasteryObservation, engine: knowledge,
+     notes: "immutable temporal observation (score, confidence, observedAt,
+             sourceType, algorithmVersion); replaces the collapsed
+             mastery_events single value — mastery != confidence, always
+             (EKG usage/RKG-maintenance plane: ADR-0021)"}
+  - {name: LearningState, graph_label: LearningState, engine: knowledge,
+     notes: "materialized snapshot over MasteryObservation; replaces
+             concept_mastery's single-value posture"}
+  - {name: JobRole, graph_label: JobRole, engine: gps}
+  - {name: CareerPath, graph_label: CareerPath, engine: gps}
+  - {name: SkillRequirement, graph_label: SkillRequirement, engine: gps,
+     notes: "reifies the role-skill relation so level/importance/validity/
+             source are auditable (EKG-Ontology-1.0.md §11)"}
+  - {name: GapObservation, graph_label: GapObservation, engine: gps}
+  - {name: LearningPath, graph_label: LearningPath, engine: gps,
+     notes: "GPS output artefact (DAS_EKG_INTEGRATION_PLAN.md engine-name
+             reconciliation: GPS is canonical, Learning Path is what it
+             emits); distinct from the existing PathScenario (a what-if
+             simulation, never committed) and LearningMission"}
+  - {name: LearningPathStep, graph_label: LearningPathStep, engine: gps}
+  - {name: PolicyRule, graph_label: PolicyRule, engine: platform,
+     notes: "machine-readable governance/validation rule (graph invariants,
+             mapping-review rules); distinct from ATA's PolicyVersion below
+             (a versioned pedagogical policy, not a graph-invariant rule) —
+             both are RKG-maintenance objects (ADR-0021)"}
+  - {name: MappingAssertion, graph_label: MappingAssertion, engine: competency,
+     notes: "governed mapping (type exact/close/broad/narrow/related,
+             confidence, reviewer, status); replaces uncontrolled sameAs —
+             the primary RKG-maintenance object stewards act on (ADR-0021,
+             BOOK-19 §1.1 persona RACI)"}
+
+  # ATA 1.0 — Adaptive Tutor graph extension (11 nodes/12 edges; RFC-0002,
+  # ADR-0016/0018; source: MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md §1,
+  # DLU_EKG_Suite/DKA/600-adaptive-tutor/ATA-EKG-Extension.md). Recommendation
+  # is reused, not re-added — the ATA doc's own "11 nodes" count includes it.
+  - {name: LearningGoal, graph_label: LearningGoal, engine: ace}
+  - {name: LearningIntervention, graph_label: LearningIntervention, engine: ace}
+  - {name: LearningStrategy, graph_label: LearningStrategy, engine: ace}
+  - {name: TutorSession, graph_label: TutorSession, engine: ace}
+  - {name: TutorTurn, graph_label: TutorTurn, engine: ace}
+  - {name: LearningEpisode, graph_label: LearningEpisode, engine: ace}
+  - {name: Misconception, graph_label: Misconception, engine: knowledge}
+  - {name: LearningPlan, graph_label: LearningPlan, engine: ace}
+  - {name: TutorEvidence, graph_label: TutorEvidence, engine: assessment,
+     notes: "informal signal (ADR-0018): may SUPPORTS a MasteryObservation
+             but cannot override authoritative grades"}
+  - {name: PolicyVersion, graph_label: PolicyVersion, engine: ace,
+     notes: "immutable, auditable Pedagogical Policy Engine version
+             (ADR-0016); distinct from PolicyRule above"}
 
 relationships:  # BOOK-05 §5.3 — closed set, RFC to extend
   - {name: OFFERS, domain: Institution, range: Program, properties: [], status: existing}
@@ -96,14 +226,105 @@ relationships:  # BOOK-05 §5.3 — closed set, RFC to extend
   - {name: SAME_AS, domain: Concept, range: Concept,
      properties: [confidence, source], status: existing}
   # v1.0 rels still on the graph, registered for lint completeness
-  - {name: HAS_CLO, domain: Course, range: CLO, properties: [], status: legacy-v1}
+  - {name: HAS_CLO, domain: Course, range: CLO, properties: [], status: legacy-v1,
+     notes: "superseded by DEFINES_CLO below (EKG-native name); see aliases:"}
   - {name: HAS_PLO, domain: Program, range: PLO, properties: [], status: legacy-v1}
   - {name: HAS_ILO, domain: Institution, range: ILO, properties: [], status: legacy-v1}
+
+  # EKG v1.1 relationships (RFC-0002; EKG-Ontology-1.0.md §5, 49 rows in the
+  # source table — corrected here from an earlier "48" miscount, found while
+  # transcribing the same table into the Postgres Ontology Registry seed,
+  # backend/scripts/seed_ekg_ontology_v1.py, EKG-W0-01, dlu_builder_tk).
+  # NOT re-added — already covered by an existing pair, same
+  # semantics under a different name: HAS_COURSE (Program->Course, ==
+  # INCLUDES_COURSE), HAS_MODULE (Course->Module, == CONTAINS), HAS_LESSON
+  # (Module->Lesson, == the existing HAS_LESSON row verbatim), TEACHES
+  # (Lesson->Concept, == COVERS), PREREQUISITE_OF (Concept->Concept, ==
+  # canonical PREREQUISITE_FOR), ASSESSED_BY (Outcome->Assessment, == the
+  # existing ASSESSES row's inverse direction). Everything below is a
+  # genuinely new pair — three of them (DEVELOPS, ASSESSES, EVIDENCES) are a
+  # SECOND domain/range pair under an already-used name: valid in a property
+  # graph (one relationship type, multiple label pairs), disambiguated below
+  # by domain/range rather than renamed, same pattern ASSESSES's own combined
+  # range string already uses.
+  - {name: HAS_SCHOOL, domain: Institution, range: School, properties: [], status: new}
+  - {name: OFFERS_PROGRAM, domain: School, range: Program, properties: [], status: new}
+  - {name: USES_RESOURCE, domain: Lesson, range: LearningResource, properties: [], status: new}
+  - {name: DEFINES_CLO, domain: Course, range: CLO, properties: [], status: new,
+     notes: "EKG-native canonical name for the legacy HAS_CLO pair above"}
+  - {name: DEFINES_MLO, domain: Module, range: MLO, properties: [], status: new}
+  - {name: CONTRIBUTES_TO, domain: MLO, range: CLO, properties: [], status: new}
+  - {name: ADDRESSES, domain: Lesson, range: MLO, properties: [], status: new}
+  - {name: HAS_CONCEPT, domain: KnowledgeUnit, range: Concept, properties: [], status: new}
+  - {name: RELATED_TO, domain: Concept, range: Concept, properties: [], status: new}
+  - {name: PART_OF, domain: Concept, range: Concept, properties: [], status: new}
+  - {name: USES_TECHNOLOGY, domain: Lesson, range: ToolTechnology, properties: [], status: new}
+  - {name: USES_DATASET, domain: Lesson, range: Dataset, properties: [], status: new}
+  - {name: DEVELOPS, domain: LearningOutcome, range: Skill, properties: [], status: new,
+     notes: "second DEVELOPS pair, alongside the existing Course/Outcome->Competency row"}
+  - {name: MAPS_TO_FRAMEWORK, domain: Skill, range: FrameworkConcept, properties: [], status: new}
+  - {name: HAS_LEVEL, domain: Program, range: QualificationLevel, properties: [], status: new}
+  - {name: HAS_ITEM, domain: Assessment, range: AssessmentItem, properties: [], status: new}
+  - {name: ASSESSES, domain: AssessmentItem, range: LearningOutcome, properties: [], status: new,
+     notes: "second ASSESSES pair (item-level), alongside the existing
+             Assessment->Outcome/Concept/Competency row"}
+  - {name: USES_RUBRIC, domain: Assessment, range: Rubric, properties: [], status: new}
+  - {name: HAS_CRITERION, domain: Rubric, range: RubricCriterion, properties: [], status: new}
+  - {name: HAS_PERFORMANCE_LEVEL, domain: RubricCriterion, range: PerformanceLevel, properties: [], status: new}
+  - {name: PRODUCES, domain: Learner, range: EvidenceRecord, properties: [], status: new}
+  - {name: EVIDENCES, domain: EvidenceRecord, range: Outcome, properties: [], status: new,
+     notes: "second EVIDENCES pair, alongside the existing Learner->Competency row"}
+  - {name: EVALUATED_WITH, domain: EvidenceRecord, range: RubricCriterion, properties: [], status: new}
+  - {name: EARNS, domain: Learner, range: Credential, properties: [], status: new}
+  - {name: OBSERVES, domain: MasteryObservation, range: Learner, properties: [], status: new}
+  - {name: OF_CONCEPT, domain: MasteryObservation, range: Concept, properties: [], status: new}
+  - {name: OF_SKILL, domain: MasteryObservation, range: Skill, properties: [], status: new}
+  - {name: DERIVED_FROM, domain: MasteryObservation, range: EvidenceRecord, properties: [], status: new}
+  - {name: TARGETS_ROLE, domain: LearningPath, range: JobRole, properties: [], status: new}
+  - {name: HAS_STEP, domain: LearningPath, range: LearningPathStep, properties: [], status: new}
+  - {name: STEP_RESOURCE, domain: LearningPathStep, range: LearningResource, properties: [], status: new}
+  - {name: STEP_LESSON, domain: LearningPathStep, range: Lesson, properties: [], status: new}
+  - {name: STEP_ASSESSMENT, domain: LearningPathStep, range: Assessment, properties: [], status: new}
+  - {name: REQUIRES_SKILL, domain: JobRole, range: SkillRequirement, properties: [], status: new}
+  - {name: REQUIREMENT_FOR, domain: SkillRequirement, range: Skill, properties: [], status: new}
+  - {name: HAS_GAP, domain: Learner, range: GapObservation, properties: [], status: new}
+  - {name: GAP_FOR, domain: GapObservation, range: SkillRequirement, properties: [], status: new}
+  - {name: GENERATES, domain: Agent, range: Recommendation, properties: [], status: new}
+  - {name: RECOMMENDS_PATH, domain: Recommendation, range: LearningPath, properties: [], status: new}
+  - {name: RECOMMENDS_RESOURCE, domain: Recommendation, range: LearningResource, properties: [], status: new}
+  - {name: RECOMMENDS_ASSESSMENT, domain: Recommendation, range: Assessment, properties: [], status: new}
+  - {name: ASSERTS_MAPPING, domain: MappingAssertion, range: Skill, properties: [], status: new}
+  - {name: TO_FRAMEWORK_CONCEPT, domain: MappingAssertion, range: FrameworkConcept, properties: [], status: new}
+
+  # ATA 1.0 relationships (12; MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md §1,
+  # ATA-EKG-Extension.md). SUPPORTS is a genuine second pair under an
+  # already-used name (see the EKG block above) — TutorEvidence->
+  # MasteryObservation, distinct from the existing MediaAsset->Outcome row.
+  - {name: HAS_GOAL, domain: Learner, range: LearningGoal, properties: [], status: new}
+  - {name: TARGETS, domain: LearningGoal, range: Concept, properties: [], status: new,
+     notes: "SHACL invariant (EKG-W3-06): exactly 1 knowledge node"}
+  - {name: HAS_SESSION, domain: Learner, range: TutorSession, properties: [], status: new}
+  - {name: CONTAINS_TURN, domain: TutorSession, range: TutorTurn, properties: [], status: new}
+  - {name: USES_STRATEGY, domain: LearningIntervention, range: LearningStrategy, properties: [], status: new}
+  - {name: TARGETS_KNOWLEDGE, domain: LearningIntervention, range: Concept, properties: [], status: new}
+  - {name: PRODUCES_SIGNAL, domain: TutorTurn, range: TutorEvidence, properties: [], status: new}
+  - {name: SUPPORTS, domain: TutorEvidence, range: MasteryObservation, properties: [], status: new,
+     notes: "second SUPPORTS pair, distinct from the existing MediaAsset->
+             Outcome row above; disambiguated by domain/range, not renamed"}
+  - {name: SUGGESTS, domain: TutorEvidence, range: Misconception, properties: [], status: new}
+  - {name: REMEDIATES, domain: LearningIntervention, range: Misconception, properties: [], status: new}
+  - {name: RECOMMENDS, domain: LearningPlan, range: LearningIntervention, properties: [], status: new}
+  - {name: GENERATED_BY_POLICY, domain: LearningIntervention, range: PolicyVersion, properties: [], status: new,
+     notes: "SHACL invariant (EKG-W3-06): exactly 1 PolicyVersion"}
 
 aliases:  # live exactly ONE minor release, instances flagged alias:true
   - {name: REQUIRES, canonical: NEEDS_ASSET, removed_in: "2.1"}
   - {name: ALIGNS_TO, canonical: ALIGNED_TO, removed_in: "2.1"}
   - {name: MAPS_TO, canonical: ALIGNED_TO, removed_in: "2.1"}
+  - {name: HAS_CLO, canonical: DEFINES_CLO, removed_in: "2.1",
+     notes: "RFC-0002 — EKG-native name adopted; legacy row above kept status:
+             legacy-v1 (still on the graph) until the removal window closes,
+             same 2.1 window as the three pre-existing aliases above"}
 
 deprecated_synonyms:
   - {name: "Academic Brain", canonical: ACE}
@@ -170,3 +391,67 @@ event_nouns:
   - research_output
   - grant
   - federated_query
+  # RFC-0001 (BOOK-22 v0.5, FW6-01..FW6-10) — new event-type noun prefixes.
+  # `faculty` was ALREADY an unregistered prefix before this program
+  # (FACULTY_REGISTERED/FACULTY_DOCUMENT_VERIFIED/FACULTY_ACTIVATED, SPRINT-08)
+  # — closed here since FW6-03 (FACULTY_QUALIFIED/FACULTY_QUALIFICATION_WAIVED)
+  # extends the same noun. Several OTHER pre-existing unregistered prefixes
+  # (offer, orientation, period, variance, workload, teaching_assignment,
+  # eligibility, board_resolution, ava, faculty_document, governance_action)
+  # were found in the same audit but are out of this program's scope — none
+  # of RFC-0001's own event types use them; left for a dedicated ontology
+  # sync pass.
+  - faculty
+  - catalog_course
+  - deliverable
+  - deadline
+  - federation_agreement
+  - federated_faculty
+  - assignment_order
+  - supplier_invoice
+  # EKG-W0-03 (event backbone foundation) — extends `backend/services/
+  # event_taxonomy.py` (dlu_builder_tk) with 5 new event types feeding the
+  # future Graph Projection consumer (EKG-W0-04). Two reuse the `career`/
+  # `mapping` nouns RFC-0002 already registered above (career.target_changed,
+  # mapping.assertion_reviewed); these three are genuinely new prefixes:
+  # outcome (CLO/MLO/ILO/PLO change signal — no outcome-level domain event
+  # existed before, only course.* did), resource (LearningResource alignment,
+  # EKG-Ontology-1.0.md §16's own suggested event list), mastery_observation
+  # (the new immutable raw-observation event, distinct from the existing
+  # `mastery` noun's computed-state `mastery.updated`).
+  - outcome
+  - resource
+  - mastery_observation
+  # RFC-0002 (EKG-W6, ATA 1.0 + EKG v1.1 persona/RKG-governance integration).
+  # `mastery`/`recommendation`/`path`/`policy` already registered above cover
+  # part of EKG-Ontology-1.0.md §16's event list (mastery.observation.created,
+  # recommendation.generated); these are the genuinely new prefixes: tutor
+  # (dlu.tutor.* — ADR-0018), goal/intervention (ATA), mapping (mapping.
+  # assertion.reviewed — RKG-maintenance stewardship, ADR-0021), career/gap
+  # (career.target.changed, EKG career layer), ontology (Ontology Registry
+  # version changes, the RKG-maintenance write path itself).
+  - tutor
+  - goal
+  - intervention
+  - mapping
+  - career
+  - gap
+  - ontology
+  # EKG-W1-02 (RFC-0002 §7, ADR-0022 — Institution/School/Program academic
+  # hierarchy projection). Course itself reuses the pre-existing `course`
+  # noun (COURSE_CREATED/COURSE_UPDATED, registered since before EKG but
+  # never actually emitted until this sprint) rather than minting a
+  # redundant fourth prefix.
+  - institution
+  - school
+  - program
+  # EKG-W1-03 (RFC-0002 §7 — Knowledge projection: Concept nodes +
+  # PREREQUISITE_OF/RELATED_TO/PART_OF edges). Note: the "Wave 3 Knowledge
+  # Graph" that actually sources these projections is a pre-existing,
+  # course-scoped, generic (non-EKG) Postgres system predating this
+  # program (`KnowledgeGraphNode`/`KnowledgeGraphEdge`, `models.py`) — only
+  # its `node_type == CONCEPT` rows and `RELATED_TO`/`PREREQUISITE`/
+  # `PART_OF` edge types map onto the EKG Ontology's `Concept` node type;
+  # its other node/edge types (Topic, Skill, Person, ... / EXAMPLE_OF,
+  # SIMILAR_TO, ...) have no EKG analog and are not projected.
+  - concept

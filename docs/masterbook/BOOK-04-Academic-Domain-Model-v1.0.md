@@ -366,3 +366,12 @@ declared, owned and scheduled — not hidden:
 
 *BOOK-04 v1.0 — awaiting review. Next per dependency order: BOOK-05 (Academic
 Ontology & Semantic Model).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+New aggregates/lifecycles: `LearningGoal`, `TutorSession`/`TutorTurn`, `LearningIntervention`, `Misconception`, `LearningPlan`, `PolicyVersion`, `TutorEvidence`. Course Format v2.0 makes CLO/MLO/Concept/Skill first-class with stable identity.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

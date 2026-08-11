@@ -302,3 +302,20 @@ Twin).*
 [CARRIERA STUDENTE — ESSE3 — CINECA Technical Portal](https://wiki.u-gov.it/confluence/display/ESSE3/CARRIERA+STUDENTE) ·
 [Sistema Informativo Esse3 — Docenti — UNISA](https://web.unisa.it/servizi-on-line/helpdesk/esse3/docenti) ·
 [Syllabus on-line — guida alla compilazione — UNISS](https://sdr.medicinachirurgia.uniss.it/sites/st03/files/2026-03/tutorial_syllabus.pdf)
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+**Persona × EKG-usage/RKG-maintenance (RFC-0002, BOOK-19 §1.2):** Faculty's EKG usage is
+`FAC-01…08`. Unlike Student, Faculty carries a real RKG-maintenance duty — not thin: Course
+Format v2.0 authoring writes directly into the ontology (fields bind to concept/outcome/skill
+ids at export), Faculty holds the academic-review sign-off step in the `PolicyVersion` rollout
+pipeline (ADR-0016), and course-scoped evidence review. This does not change the "Low-Med" Suite
+impact rating for the Faculty *Twin's own layers* — it is additive persona-RACI scope, not a Twin
+model change.
+
+Cross-cutting alignment only otherwise. See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

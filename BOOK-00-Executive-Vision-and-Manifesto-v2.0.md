@@ -698,3 +698,12 @@ and the starting point of the DLU Architecture Standard.
 
 *BOOK-00 v2.0 — awaiting review. Upon approval, BOOK-01 … BOOK-20 will be developed
 per the plan in Chapter 16.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add the Adaptive Tutor (ATA) platform to the AOS picture (Ch.6). Register ADR-0016 (pedagogy explicit & versioned), ADR-0017 (Course Format v2.0 as projection source), ADR-0018 (tutor state external / stateless runtime); promote ADR-0009/0010/0013 to Accepted. Ch.14 KPIs gain tutor **learning-gain** and **retention** SLOs. Glossary: NBLA, Pedagogical Policy, Student Learning Digital Twin, Misconception, PolicyVersion, Course Format v2.0.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

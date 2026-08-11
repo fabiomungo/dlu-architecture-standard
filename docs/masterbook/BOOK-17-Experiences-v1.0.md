@@ -170,12 +170,34 @@ instrument of the mentorship dividend in their own hands.
 
 | IW | Role | Canvas | Signature missions |
 |----|------|--------|--------------------|
-| IW1 Rector's Bridge | rector/provost/board | scorecard (BOOK-08 I2/I3/I6), three-economy balance, red posture items | review ACE briefs (propose); ratify teach-outs |
+| IW1 Rector's Bridge | rector/president/board | scorecard (BOOK-08 I2/I3/I6), three-economy balance, red posture items | review ACE briefs (propose); ratify teach-outs |
 | IW2 Registrar Desk | registrar / Evidence Registrar | clearance queue (G11), recognition adjudication, committees (G6), **G8 completeness monitor**, credential issuance (reserved tier) | adjudicate; convene; issue |
 | IW3 QA Console | QA officers | living self-study (BOOK-08 §6.1), coverage/Bloom audits, integrity metrics, item fairness flags | maintain dossier; trigger reviews |
 | IW4 Advisor Workspace | advisors | caseload twins, GPS hedges, risk stream | co-review plans; interventions |
 | IW5 Steward Console | AI Pedagogy Steward | agent scorecards (BOOK-10 Ch. 8), calibration drift, incident queue, release gates | approve releases; throttle; investigate |
-| IW6 Operator Plane | platform operator | cross-tenant anonymized I4, driver health, mesh lag | operate (BOOK-03 Ch. 5 rules) |
+| **IW7 Dean Console** (RFC-0002 §4.3) | dean | `DEA-01…06` (DXA screen catalog): program dashboard, curriculum map, coverage matrix, program risk queue, career alignment, accreditation evidence | escalate `MappingAssertion` reviews; sign curriculum design gates |
+| IW6 Operator Plane | platform operator | cross-tenant anonymized I4, driver health, mesh lag, **+ RKG Governance Console (below)** | operate (BOOK-03 Ch. 5 rules); **+ RKG maintenance (BOOK-19 §1.2)** |
+
+**IW1/Provost reconciliation (RFC-0002 §4.3):** IW1 is the President/Rector/Board canvas.
+Provost's own EKG usage is `PRO-01…05` (Academic Control Tower, Portfolio Comparison,
+Institution Outcome Attainment, Quality & Assurance, Employability Alignment) surfaced through
+**BOOK-24's Provost Command** surface, not folded into IW1 — the two roles have distinct RACI
+(BOOK-19 §1.2) and distinct command surfaces (BOOK-24 §3) even though both read institution-wide
+scorecards.
+
+**IW6 gains the RKG Governance Console** (RFC-0002 §4.4, ADR-0021) — the maintenance/governance
+half of the EKG has no screen anywhere in the DXA catalog (all 30 `STU/FAC/DEA/PRO/XRO` screens
+are read surfaces). Four screens are specified here, to be built as `EKG-W6-08` (Turnkey):
+
+| Screen | Canvas | Mission |
+|---|---|---|
+| Ontology Registry Admin | `ekg_ontology_versions`/`ekg_node_types`/`ekg_edge_types` versions, SHACL status | publish a new registry version (governed, additive-only) |
+| Mapping Review Queue | pending `mapping_assertions` by confidence band (≥0.92 / 0.78–0.92 / <0.78) | approve · reject · deprecate a mapping |
+| PolicyVersion Approval | `policy_versions` rollout stage (draft→simulation→shadow→A/B→academic review→approved→canary→production→monitor→rollback, ADR-0016) | approve stage advance; rollback |
+| Tenant Guardrail Config | `tenant_guardrail_policies` (egress/rate_limit/data_residency/pii/model_allowlist, BOOK-19 Ch. 2.7) | configure per-tenant policy; review `guardrail_audit_events` |
+
+No new relational table is implied — all four screens are UI over tables ADR-0019/ADR-0016/
+BOOK-19 already established (RFC-0002 §4.4, Rule RFC2.1).
 
 All staff views of learner data are purpose-tagged and audited (BOOK-06 §5.1);
 equity analytics render with n≥10 suppression (BOOK-08).
@@ -299,3 +321,12 @@ lands in BOOK-18 (drivers) and BOOK-20 (sprints).
 *BOOK-17 v1.0 — awaiting review. G-register complete (G1–G11). Next: BOOK-18
 (Technical Architecture & Turnkey Integration — the mapping and driver Book) and
 BOOK-19/20 to close the Masterbook.*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add tutor screens (**stu_13 tutor-session, stu_14 learning-diagnosis, stu_15 personal-learning-plan**) and AIP-11…16; all under the Lens rules (progressive disclosure, mastery≠confidence, bounded graph). Adopt Suite **Paper Design 3.0**, the DXA component library (200-components) and accessibility/i18n (900).
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

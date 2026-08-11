@@ -277,14 +277,19 @@ deployment (this Book's driver contract is a soft, not hard, dependency).
 
 # Chapter 8 — Consumers
 
-| Consumer | Reads | Via |
-|----------|-------|-----|
-| Rector/Board | scorecard (I2/I3/I6), red posture items (I5) | institution workspace (BOOK-17) + ACE briefing dossiers (propose-tier) |
-| Dean/Program director | their slice of I2/I4; revision proposals | same, college-scoped |
-| QA officer | I5 dossier, audit findings | dossier export |
-| Registrar | G8 completeness monitor, verification SLAs | operational views |
-| Platform operator | anonymized cross-tenant I4 | operator plane |
-| Accreditor (external) | exported dossier with evidence links | Track-A artifacts |
+| Consumer | Reads | Via | EKG usage / RKG maintenance (BOOK-19 §1.2) |
+|----------|-------|-----|---------------------------------------------|
+| Rector/Board | scorecard (I2/I3/I6), red posture items (I5) | institution workspace (BOOK-17 IW1) + ACE briefing dossiers (propose-tier) | thin BOOK-24 command surface; none new |
+| Dean/Program director | their slice of I2/I4; revision proposals | same, college-scoped; **+ IW7 Dean Console, `DEA-01…06`** | usage: `DEA-01…06`; maintenance: program-level `MappingAssertion` escalation, curriculum design-gate sign-off |
+| QA officer | I5 dossier, audit findings | dossier export | usage: coverage/traceability queries (feeds BOOK-26/AVA); maintenance: graph-invariant conformance verification |
+| Registrar | G8 completeness monitor, verification SLAs | operational views + IW2 | usage: `XRO` tools; maintenance: evidence supersession review, credential graph-object issuance |
+| Platform operator | anonymized cross-tenant I4 | operator plane (IW6) **+ RKG Governance Console** | **primary RKG maintainer**: Ontology Registry approval, tenant guardrails, Neo4j tenancy hardening, mapping-pipeline ops |
+| Accreditor (external) | exported dossier with evidence links | Track-A artifacts | usage: read-only evidence/coverage audit; maintenance: none (read-only by design, BOOK-26) |
+
+Provost is not a separate row here — its I2/I3/I5 reads are the same institution-wide slice as
+Rector/Board's, but its EKG usage (`PRO-01…05`) and RKG-maintenance duty (institution-wide
+`PolicyVersion` approval, Catalog/Ontology Certification) are distinct and carried on BOOK-24 §3's
+own Provost Command row, not duplicated here (RFC-0002 §4.3).
 
 ---
 
@@ -327,3 +332,12 @@ three twins as context.*
 [Blog ESSE3 ANS — Cos'è l'Anagrafe Nazionale Studenti](http://ans-esse3.cineca.it/ans) ·
 [Blog ESSE3 ANS — Le 7 Spedizioni](http://ans-esse3.cineca.it/ans/spedizioni) ·
 [CINECA Technical Portal — Anno Accademico di Regolamento e aderenza all'Offerta Formativa](https://wiki.u-gov.it/confluence/display/ESSE3/Anno+Accademico+di+Regolamento+e+l'aderenza+all'Offerta+Formativa)
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Cross-cutting alignment only. See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

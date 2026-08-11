@@ -1,0 +1,31 @@
+asyncapi: 3.0.0
+info:
+  title: DLU Adaptive Tutor Events
+  version: 1.0.0
+channels:
+  tutorSessionStarted: {address: tutor.session.started, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  tutorStudentMessage: {address: tutor.student.message, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  tutorInterventionGenerated: {address: tutor.intervention.generated, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  tutorStudentResponse: {address: tutor.student.response, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  tutorEvidenceGenerated: {address: tutor.evidence.generated, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  misconceptionDetected: {address: tutor.misconception.detected, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  learningGoalUpdated: {address: learning.goal.updated, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  learningPathUpdated: {address: learning.path.updated, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  recommendationGenerated: {address: tutor.recommendation.generated, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+  tutorSessionCompleted: {address: tutor.session.completed, messages: {event: {$ref: '#/components/messages/TutorEvent'}}}
+components:
+  messages:
+    TutorEvent:
+      payload:
+        type: object
+        required: [eventId, eventType, occurredAt, tenantId, correlationId]
+        properties:
+          eventId: {type: string}
+          eventType: {type: string}
+          occurredAt: {type: string, format: date-time}
+          tenantId: {type: string}
+          studentId: {type: string}
+          sessionId: {type: string}
+          policyVersion: {type: string}
+          correlationId: {type: string}
+          data: {type: object, additionalProperties: true}

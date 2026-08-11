@@ -1,0 +1,49 @@
+{
+  "workflows": [
+    {
+      "name": "CASE Framework Sync",
+      "trigger": "schedule 02:00 UTC weekly",
+      "steps": [
+        "Fetch source metadata",
+        "Conditional GET / checksum",
+        "Validate CASE payload",
+        "Publish mapping.case.import.requested",
+        "Wait job",
+        "Route validation exceptions to Academic Data Steward"
+      ]
+    },
+    {
+      "name": "ESCO Delta Sync",
+      "trigger": "monthly + manual",
+      "steps": [
+        "Read pinned ESCO version",
+        "Fetch/version catalog",
+        "Stage candidate concepts",
+        "Re-run mapping candidates only for changed local/external entities",
+        "Human approval queue",
+        "Publish mapping.external.updated"
+      ]
+    },
+    {
+      "name": "Assessment Evidence Bridge",
+      "trigger": "webhook from LMS",
+      "steps": [
+        "Verify signature",
+        "Resolve tenant/student/assessment",
+        "Write outbox",
+        "Publish assessment.evidence.recorded",
+        "Return 202"
+      ]
+    },
+    {
+      "name": "Credit Recognition Human Review",
+      "trigger": "credit.recognition.review.required",
+      "steps": [
+        "Create Frappe ToDo",
+        "Attach graph rationale",
+        "Notify reviewer",
+        "On decision publish credit.recognition.decided"
+      ]
+    }
+  ]
+}

@@ -311,3 +311,12 @@ System-1 moves p95 < 1 s; every cycle traced; every trace retrievable.
 *BOOK-09 v1.0 — awaiting review. Next per dependency order: BOOK-10 (AI
 Workforce — the agents as executors of moves) and BOOK-11 (reasoning and
 guardrail internals).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+ACE **hosts the Tutor Orchestrator**. The **Pedagogical Policy Engine** owns the Next-Best-Learning-Action (NBLA); ACE renders pedagogy, it never owns it. Retrieval scope is reduced before search; agents get short-lived delegated capability tokens.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

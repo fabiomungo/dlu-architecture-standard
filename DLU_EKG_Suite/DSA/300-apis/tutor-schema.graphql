@@ -1,0 +1,26 @@
+type Query {
+  tutorSession(id: ID!): TutorSession
+  studentLearningTwin(studentId: ID!): StudentLearningTwin!
+  learningPlan(studentId: ID!, goalId: ID): LearningPlan!
+  explainTutorDecision(sessionId: ID!, interventionId: ID): TutorExplanation!
+}
+
+type Mutation {
+  startTutorSession(input: StartTutorSessionInput!): TutorSession!
+  submitTutorTurn(input: TutorTurnInput!): TutorTurnResult!
+  setLearningGoal(input: LearningGoalInput!): LearningGoal!
+  requestHint(sessionId: ID!, level: Int): TutorTurnResult!
+}
+
+type StudentLearningTwin { studentId: ID!, goals: [LearningGoal!]!, mastery: [MasteryState!]!, misconceptions: [MisconceptionState!]! }
+type LearningGoal { id: ID!, type: String!, targetUri: String!, priority: Int!, status: String! }
+type MasteryState { subjectUri: String!, mastery: Float!, confidence: Float!, evidenceCount: Int! }
+type MisconceptionState { conceptUri: String!, type: String!, probability: Float!, status: String! }
+type TutorSession { id: ID!, studentId: ID!, activeGoal: LearningGoal, status: String!, policyVersion: String! }
+type TutorTurnResult { turnId: ID!, message: String!, strategy: String!, targetUri: String, explanationId: ID, masteryChanged: Boolean! }
+type LearningPlan { id: ID!, goal: LearningGoal!, actions: [LearningAction!]! }
+type LearningAction { id: ID!, strategy: String!, targetUri: String!, effortMinutes: Int, status: String!, rationale: String }
+type TutorExplanation { goal: String!, observations: [String!]!, rationale: [String!]!, alternatives: [String!]!, confidence: Float }
+input StartTutorSessionInput { studentId: ID!, goalId: ID, targetUri: String }
+input TutorTurnInput { sessionId: ID!, message: String! }
+input LearningGoalInput { studentId: ID!, goalId: ID, type: String!, targetUri: String!, priority: Int = 1 }

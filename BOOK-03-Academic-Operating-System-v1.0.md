@@ -444,3 +444,12 @@ kernel work, exactly as sequenced in the Student Experience constitution Phase 1
 
 *BOOK-03 v1.0 — awaiting review. Next per dependency order: BOOK-04 (Academic
 Domain Model).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add the **Tutor platform** as AOS processes: Tutor Orchestrator, Student Model Service, Goal Service, **Pedagogical Policy Engine**, GraphRAG Service, Memory Service, Tutor Evaluation Service. New event topics `dlu.tutor.session.*`, `dlu.tutor.intervention.*`, `dlu.tutor.policy.*` on the closed taxonomy. Tutor runtime is stateless; degraded-mode falls back to course-grounded non-adaptive assistance.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

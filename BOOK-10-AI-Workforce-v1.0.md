@@ -298,3 +298,12 @@ internal scope).
 *BOOK-10 v1.0 — awaiting review. Next per dependency order: BOOK-11 (AI
 Cognitive Architecture — reasoning patterns, guardrails, and the eval harness
 this Book's lifecycle gates depend on).*
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Tutor personas in the AI Workforce: **Adaptive / Diagnostic / Socratic / Practice Tutor** + **Learning Advisor**. New AI-interaction patterns AIP-11…16 (Socratic dialogue, hint ladder, remediation, adaptive difficulty, diagnostic, explain-why).
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

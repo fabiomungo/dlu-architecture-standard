@@ -1,16 +1,17 @@
 # BOOK-22 — Faculty Lifecycle, Contracting & Human Workforce
-### DAS v0.4-draft · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger — G18 fully closed) · **amendment pending: v0.5 proposed, RFC-0001**
+### DAS v0.5 · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger + FW6-01…FW6-10 — G18 and G18.1–G18.6 all fully closed)
 
-> **⚠ v0.5 amendment proposed (RFC-0001, 2026-08-07) — read §11 before implementing
-> anything in this Book.** A process reconciliation against STU's real contracting
-> practice (*STU Digital Faculty Onboarding, Contracting and Course-Creation Process
-> v2.1*) found this Book normatively correct in shape but wrong in four particulars and
-> incomplete in six others — including the assumption that every author is an external
-> independent contractor, which fails for faculty seconded from a federated university
-> (§11.5). G18 stays closed for what was delivered; six successor gaps **G18.1–G18.6**
-> carry the remainder. See
+> **✅ v0.5 amendment (RFC-0001, filed 2026-08-07) — implemented 2026-08-08.** A process
+> reconciliation against STU's real contracting practice (*STU Digital Faculty Onboarding,
+> Contracting and Course-Creation Process v2.1*) found this Book normatively correct in
+> shape but wrong in four particulars and incomplete in six others — including the
+> assumption that every author is an external independent contractor, which fails for
+> faculty seconded from a federated university (§11.5). G18 stayed closed for what was
+> already delivered; six successor gaps **G18.1–G18.6** were opened to carry the
+> remainder, and all six are now closed (TRACEABILITY.md). See
 > [`architecture/rfc/RFC-0001-course-lifecycle-console-integration.md`](architecture/rfc/RFC-0001-course-lifecycle-console-integration.md)
-> and [`architecture/adr/ADR-0015-gate-numbering-reconciliation.md`](architecture/adr/ADR-0015-gate-numbering-reconciliation.md).
+> and [`architecture/adr/ADR-0015-gate-numbering-reconciliation.md`](architecture/adr/ADR-0015-gate-numbering-reconciliation.md)
+> for the full design; §11 below records what was found, §11.7 records what shipped.
 
 > Closes **G18** (teacher onboarding, authoring contractualization with digital signature,
 > and the HR/workload backbone are absent from the Turnkey baseline). Normativizes the
@@ -38,6 +39,12 @@
 > implementation — see the inline note after §4 and Annex A below (schema placement,
 > field naming, no real duration data on any source event, append-only mechanism, and a
 > genuinely new Event Mesh consumer group rather than reusing `n8n-bridge`).
+>
+> **v0.5 (FW6-01…FW6-10, RFC-0001/ADR-0015, 2026-08-08):** every correction and omission
+> §11 records is now implemented, conformance-verified, real against Postgres —
+> **G18.1–G18.6 all closed** (TRACEABILITY.md). §11.7 is the sprint-by-sprint closing
+> record; Annex A's mapping table and §6's conformance list are both extended below
+> rather than left describing only the v0.4 state.
 
 ---
 
@@ -179,6 +186,42 @@ covers positions, contracts, the entry ledger, and the mentorship-dividend summa
 - C22.5 ✅ Audit: every `faculty_documents` read by staff is logged — reuses
   `platform.audit_logs` (SPRINT-08/NEW-20a), not a dedicated new table (`twin_access_audits`,
   the literal T5 precedent this line cites, doesn't exist yet either — SPRINT-13/NEW-24).
+- C22.6 ✅ Property: an engagement cannot reach `executed` unless every step of its
+  resolved `signing_policies` policy is satisfied in sequence order (FW6-01,
+  `tests/conformance/test_signing_policy.py`).
+- C22.7 ✅ Fixture: a genuinely compliant course passes the STU Course Content Standard;
+  the same course missing one input fails, naming the specific failing checks (FW6-05,
+  `tests/conformance/test_stu_content_standard.py`).
+- C22.8 ✅ Fixture: double-reservation of one catalogue course is rejected both by the
+  service layer and by a raw concurrent SQL insert (FW6-04, real unique partial index,
+  `tests/conformance/test_catalog_reservation.py`).
+- C22.9 ✅ Fixture: all nine mandatory consents present is a precondition of contract
+  generation; a withdrawn (later `no`) consent blocks it (FW6-02,
+  `tests/conformance/test_consent_registry.py`).
+- C22.10 ✅ Fixture: `dean`/`provost` receive HTTP 403 — not a filtered payload — on the
+  restricted fiscal/identity document endpoints (FW6-03, `tests/conformance/
+  test_qualification_gate.py`).
+- C22.11 Reproducibility: gate alias round-trip (ADR-0015) — not separately tested; the
+  one mapping proven to reflect live data (`CourseWorkflowState` ↔ institutional gate) is
+  exercised indirectly via `course_exchange_service`'s real export.
+- C22.12 ✅ Fixture: a `federated_faculty` engagement cannot be drafted without an active
+  `federation_agreement` covering the partner at the effective date; an expired agreement
+  fails (FW6-09, `tests/conformance/test_federated_faculty.py`).
+- C22.13 ✅ Property: no `faculty_documents` row of type `tax_form_*`, `personal_id` or
+  `contractor_classification` may exist for a `federated_faculty` onboarding route — the
+  vault stays empty by construction, asserted at the DB (FW6-09, same suite).
+- C22.14 ✅ Property: an approved milestone on a zero-consideration federated engagement
+  produces no `supplier_invoice` and emits `milestone.settlement_waived` exactly once on
+  replay (FW6-09, same suite).
+- C22.15 ✅ Property: `count_available_faculty` excludes every `FacultyProfile` whose
+  `affiliation_type != 'own'` — adding a federated author leaves a program's Dtot/Ttot
+  verdict unchanged (FW6-10, `tests/conformance/test_accreditation_guard.py`).
+- C22.16 ✅ Fixture: the contract renderer refuses to emit a work-for-hire clause when the
+  governing `ip_regime` is `home_owns_stu_licensed` (FW6-09, `test_federated_faculty.py`).
+- C22.17 ✅ Property: the seven personal consents are mandatory on both the
+  `independent_contractor` and `federated_faculty` routes; only items 2 and 3 may be
+  satisfied by a framework reference, and the reference is recorded, never a null
+  (FW6-09, same suite).
 
 ## Annex A — Turnkey mapping
 
@@ -189,18 +232,21 @@ covers positions, contracts, the entry ledger, and the mentorship-dividend summa
 | FEX packages | `course_fex.py` is an unrelated domain ("Final Course Examination", not exchange format — corrected TWICE now, SPRINT-08.md #5 and SPRINT-09.md #2, a recurring false-friend in this Book's own drafts) — the real exchange-format code is `course_exchange_service.py`, FEX v1.3 | `authoring_engagements.fex_format_version` + `engagement_deliverables.content_ref_type/_id` — both SOFT references only, never validated against that service |
 | Document credentials | `issued_document_credentials` (G9/G10 ✅) | **corrected, SPRINT-08/NEW-20a**: executed contracts are NOT archived here — see §2/§6 correction notes above; archived directly on `authoring_engagements` instead |
 | New tables | ✅ 9/9 real: `faculty_onboarding_journeys`, `faculty_documents`, `faculty_document_verifications`, `contract_templates`, `authoring_engagements`, `engagement_signatures` (SPRINT-08/NEW-20a); `engagement_milestones`, `engagement_deliverables`, `deliverable_reviews` (SPRINT-09/NEW-20b); ✅ `hr_positions`, `hr_contracts`, `faculty_workload_entries` (SPRINT-10/NEW-21) | T4 + T9 both 100% — nothing remains target in this Book |
-| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2); ✅ **SPRINT-09/NEW-20b** (milestone/deliverable/review, Step 3); ✅ **SPRINT-10/NEW-21** (T9 HR & workload ledger) | **FW6-01…FW6-08 proposed (RFC-0001)** |
-| Register | ✅ **G18** added to TRACEABILITY, now marked **fully closed** (T4 + T9 both complete, SPRINT-10/NEW-21) | **G18.1–G18.4 opened (RFC-0001) — successors, not a re-opening of G18** |
+| FW6 tables | — | ✅ all real: `signing_policies` (FW6-01); `consent_definitions`, `faculty_consent_records` (FW6-02); `faculty_qualification_decisions` (FW6-03); `catalog_course_reservations` (FW6-04); `engagement_scopes`, `engagement_compensation_schedules`, `deadline_events` (FW6-06); `federated_institutions`, `federation_agreements`, `assignment_orders` (FW6-09); additive columns `authoring_engagements.engagement_type`, `faculty_profiles.affiliation_type`, `faculty_onboarding_journeys.onboarding_route`, `engagement_milestones.status += 'settlement_waived'`, `engagement_signatures.signer_role += 'dean'` |
+| Sprint | ✅ **SPRINT-08/NEW-20a** (onboarding + contracting, Step 1-2); ✅ **SPRINT-09/NEW-20b** (milestone/deliverable/review, Step 3); ✅ **SPRINT-10/NEW-21** (T9 HR & workload ledger) | ✅ **FW6-01…FW6-10 all implemented (RFC-0001, 2026-08-08)** — FW6-01, FW6-02, FW6-03, FW6-04, FW6-05, FW6-06, FW6-08 (driver work, no own gap), FW6-10, FW6-09, FW6-07 (Engagement Desk UI) |
+| Register | ✅ **G18** added to TRACEABILITY, now marked **fully closed** (T4 + T9 both complete, SPRINT-10/NEW-21) | ✅ **G18.1–G18.6 opened (RFC-0001) then closed (2026-08-08)** — successors, never a re-opening of G18 |
 
 ---
 
-## 11. Amendment note — v0.5 proposed (RFC-0001, 2026-08-07)
+## 11. Amendment note — v0.5 (RFC-0001, filed 2026-08-07, implemented 2026-08-08)
 
 This section records what a reconciliation against STU's real contracting practice
 found. It is written here, in the Book's own correction idiom, so that no
 implementer reads §1–§10 without it. Nothing below retracts delivered work:
 SPRINT-08/09/10 built what this Book specified, and it works. What follows is
-where this Book *specified the wrong thing*, or specified nothing.
+where this Book *specified the wrong thing*, or specified nothing — **§11.1–§11.5
+are now historical**: every correction and omission they name is implemented,
+conformance-verified, and closed (§11.7).
 
 ### 11.1 Four corrections to this Book's own normative text
 
@@ -396,14 +442,66 @@ recorded in both.
 
 ### 11.6 Disposition
 
-| Successor gap | Covers | Sprint |
-|---|---|---|
-| G18.1 | corrections (1)(2) — signing policy, chairman/secretariat roles | FW6-01 |
-| G18.2 | omission (5) — consent registry | FW6-02 |
-| G18.3 | corrections (3)(4) + omission (6) — documents, qualification gate, reservation | FW6-03, FW6-04 |
-| G18.4 | omissions (7)(8) + retraction (11.3) — Exhibit A/B, content standard, review clock | FW6-05, FW6-06 |
-| G18.5 | omission (9) — engagement types, federation registry, framework agreement | FW6-09 |
-| G18.6 | omission (10) — affiliation marker + DM 1154 accreditation guard (**gates G18.5**) | FW6-10 |
+| Successor gap | Covers | Sprint | Status |
+|---|---|---|---|
+| G18.1 | corrections (1)(2) — signing policy, chairman/secretariat roles | FW6-01 | ✅ closed 2026-08-08 |
+| G18.2 | omission (5) — consent registry | FW6-02 | ✅ closed 2026-08-08 |
+| G18.3 | corrections (3)(4) + omission (6) — documents, qualification gate, reservation | FW6-03, FW6-04 | ✅ closed 2026-08-08 |
+| G18.4 | omissions (7)(8) + retraction (11.3) — Exhibit A/B, content standard, review clock | FW6-05, FW6-06 | ✅ closed 2026-08-08 |
+| G18.5 | omission (9) — engagement types, federation registry, framework agreement | FW6-09 | ✅ closed 2026-08-08 |
+| G18.6 | omission (10) — affiliation marker + DM 1154 accreditation guard (**gates G18.5**) | FW6-10 | ✅ closed 2026-08-08 (shipped before G18.5, per its own hard gate) |
 
-The UI that surfaces all of this is **FW6 — Engagement Desk**, a new faculty
-workspace in BOOK-17 Ch. 4. It owns no state.
+The UI that surfaces all of this is **FW6 — Engagement Desk**
+(`frontend/src/pages/institution/FacultyEngagementDesk.js`,
+`/organization/engagement-desk`), a new faculty workspace in BOOK-17 Ch. 4. It
+owns no state — see §11.7 for what it actually composes.
+
+### 11.7 Closing record (2026-08-08) — what actually shipped
+
+All ten RFC-0001 sprints landed, in the RFC's own dependency order, each verified
+against real Postgres before the next began (`alembic upgrade → downgrade →
+upgrade` clean; the full pre-existing SPRINT-08/09/10 + AVA-03 conformance suites
+reproduce unchanged throughout — 444 tests passing in `tests/conformance/` at
+close, up from 403 at the start of this pass). Five findings changed
+implementation details from what RFC-0001's own text assumed, without changing
+the design; each is disclosed in the relevant service module's docstring, not
+silently worked around:
+
+1. The pre-existing hardcoded signing roster lived in **three** places, not the
+   one RFC-0001 named (`VALID_SIGNER_ROLES`, `ENGAGEMENT_SIGNER_ROLES` — a
+   DIFFERENT, 2-element set — and `faculty_engagement_service.py`'s own
+   `_SIGNER_SEQUENCE` constant). All three replaced by FW6-01.
+2. `ap_service.generate_supplier_invoice_from_milestone` was confirmed 100% dead
+   code (zero callers anywhere) rather than partially wired — FW6-05's subscriber
+   is the first caller ever.
+3. ADR-0015's own FEX v1.3 `checkpoint_type` mapping (`gate1_blueprint` etc.)
+   never matches a real `ReviewCheckpoint.checkpoint_type` row — the exporter
+   passes a different, unrelated artefact-type vocabulary straight through.
+   `gate_vocabulary.py` discloses this and wires the ONE mapping proven to
+   reflect live data (`CourseWorkflowState` ↔ institutional gate) into the real
+   export instead.
+4. FW6-09's federation registry collides with name with TWO existing, unrelated
+   systems — not just the one RFC-0001 named (`models_federation.py`, a
+   deployment-instance registry) but ALSO `backend/domains/federation/models.py`
+   (an orphaned student-mobility/credit-transfer domain). Both documented in
+   `ER_MAP.md`; neither touched or extended.
+5. FW6-08's "mirror the five existing Frappe mapping tables" premise assumed
+   those tables were migrated — none of them (nor `frappe_configuration`/
+   `frappe_sync_jobs`) ever were, and the live `/frappe/*` routes built on them
+   would fail against a real Postgres today. `FrappeSupplierMapping` is instead
+   backed by its own, genuinely migrated tables, with the gap disclosed rather
+   than silently inherited.
+
+No RFC-0001 sprint required retracting or re-doing SPRINT-08/09/10 work; every
+addition was additive (new tables, widened CHECK constraints, new nullable/
+defaulted columns) — the version-history note at the top of this Book and
+TRACEABILITY.md's G18.1–G18.6 rows are the authoritative closing record.
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Cross-cutting alignment only. See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.

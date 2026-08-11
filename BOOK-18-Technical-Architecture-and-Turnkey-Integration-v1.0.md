@@ -256,3 +256,12 @@ Masterbook.*
 **Sources (ESSE3 integration surfaces):**
 [CINECA Technical Portal — Servizi REST su ESSE3](https://wiki.u-gov.it/confluence/display/ESSE3/Servizi+REST+su+ESSE3) ·
 [CINECA Technical Portal — GATEWAY: Repliche e Import](https://wiki.u-gov.it/confluence/display/ESSE3/GATEWAY+-+Repliche+e+Import)
+
+
+---
+
+## Addendum — EKG v1.1 / ATA 1.0 / Course Format v2.0 (2026-08-08)
+
+Add tutor microservices and contracts (`tutor-openapi.yaml`, `tutor-schema.graphql`, `tutor-asyncapi.yaml`, `tutor-event-envelope.schema.json`, `reference-tutor-queries.cypher`). Course Builder v2.0 imports v1.3 (adapter) and exports Course Exchange Format v2.0; Frappe DocTypes extended for tutor entities.
+
+See `MASTERBOOK-UPDATE-EKG-ATA-COURSEv2.md` for the full change-set; `../dlu_builder_tk/docs/DLU_Course_Exchange_Format_v2.0.md` and the Suite `DLU_EKG_Suite/ATA/` for detail.
