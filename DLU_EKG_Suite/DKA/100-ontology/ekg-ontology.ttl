@@ -57,8 +57,8 @@ dlu:hasCourse a owl:ObjectProperty ; rdfs:label "HAS_COURSE"@en ; rdfs:domain dl
 dlu:hasModule a owl:ObjectProperty ; rdfs:label "HAS_MODULE"@en ; rdfs:domain dlu:Course ; rdfs:range dlu:Module ; rdfs:comment "Course composition"@en .
 dlu:hasLesson a owl:ObjectProperty ; rdfs:label "HAS_LESSON"@en ; rdfs:domain dlu:Module ; rdfs:range dlu:Lesson ; rdfs:comment "Module composition"@en .
 dlu:usesResource a owl:ObjectProperty ; rdfs:label "USES_RESOURCE"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:LearningResource ; rdfs:comment "Instructional resource alignment"@en .
-dlu:definesClo a owl:ObjectProperty ; rdfs:label "DEFINES_CLO"@en ; rdfs:domain dlu:Course ; rdfs:range dlu:CLO ; rdfs:comment "Outcome definition"@en .
-dlu:definesMlo a owl:ObjectProperty ; rdfs:label "DEFINES_MLO"@en ; rdfs:domain dlu:Module ; rdfs:range dlu:MLO ; rdfs:comment "Outcome definition"@en .
+dlu:definesCLO a owl:ObjectProperty ; rdfs:label "DEFINES_CLO"@en ; rdfs:domain dlu:Course ; rdfs:range dlu:CLO ; rdfs:comment "Outcome definition"@en .
+dlu:definesMLO a owl:ObjectProperty ; rdfs:label "DEFINES_MLO"@en ; rdfs:domain dlu:Module ; rdfs:range dlu:MLO ; rdfs:comment "Outcome definition"@en .
 dlu:contributesTo a owl:ObjectProperty ; rdfs:label "CONTRIBUTES_TO"@en ; rdfs:domain dlu:MLO ; rdfs:range dlu:CLO ; rdfs:comment "Outcome alignment"@en .
 dlu:addresses a owl:ObjectProperty ; rdfs:label "ADDRESSES"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:MLO ; rdfs:comment "Lesson-outcome coverage"@en .
 dlu:teaches a owl:ObjectProperty ; rdfs:label "TEACHES"@en ; rdfs:domain dlu:Lesson ; rdfs:range dlu:Concept ; rdfs:comment "Content-concept coverage"@en .
