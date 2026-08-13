@@ -308,3 +308,7 @@ BOOK-20 §8.1/§8.2/§8.3 Annex for the honest per-criterion status.
 | CCV2-09 Concept Resolution & Merge Stewardship | 05, 19 | CCV2-09 | new `EkgOntologyVersion` 1.2.0 (`ConceptMergeAssertion` + 2 edge types); merge reversible via `merge_manifest` |
 | CCV2-10 Programme & Institution EKG union | 13, 17 | CCV2-10 | `deduplicationSaving == 5`, `crossCoursePrerequisiteCount == 4` against the real fixture; version bumps monotonically on publish |
 | CCV2-07 backfill scripts + docs/ADR/traceability closeout | 05, 13 | CCV2-07 | both backfill scripts idempotent + dry-run-tested against real Postgres; `mkdocs build --strict` clean |
+| ADR-0025 Course Invariant Enforcement | 05, 13, 15 | CIV-03, CIV-04, CIV-05, CIV-06 | server-authoritative at gates + projection + CI; rule set stays a versioned pack, no hardcoded levels |
+| CIV-03 gate guard (`civ_gate_check`) | 05, 15 | CIV-03 | Gate 2/3/publish blocked on open blocking invariants; Phase-1 waiver = reason string, audited, no approval workflow |
+| CIV-04 projection guard (`_sync_course_to_kg_async`) | 05, 13 | CIV-04 | EKG projection refused + `course.projection.rejected` emitted on a blocking result; found+fixed a dead `kg_worker.sync_course_to_kg` import that meant KG sync had never actually fired post-Factory-generation |
+| CIV-05 CI merge gate (`validate_course_exchange.py`) | 05, 15 | CIV-05 | packaged/canonical schema byte-identity + fixture corpus + Builder parity, wired into `course-invariants.yml` |

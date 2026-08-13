@@ -107,4 +107,5 @@ nav:
       - "ADR-0022 — PostgreSQL is the Interim Academic Source of Truth": architecture/adr/ADR-0022-postgres-is-the-interim-academic-source-of-truth.md
       - "ADR-0023 — Course Creation v2.0/2.1/2.2 Alignment": architecture/adr/ADR-0023-course-creation-v2-alignment.md
       - "ADR-0024 — Canonical Concept Identity": architecture/adr/ADR-0024-canonical-concept-identity.md
+      - "ADR-0025 — Course Invariant Enforcement": architecture/adr/ADR-0025-course-invariant-enforcement.md
   - RFC: architecture/rfc/index.md
