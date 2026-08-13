@@ -104,4 +104,7 @@ nav:
       - "ADR-0019 — EKG is a Platform Subsystem": architecture/adr/ADR-0019-ekg-platform-subsystem.md
       - "ADR-0020 — Lens Projection Contract": architecture/adr/ADR-0020-lens-projection-contract.md
       - "ADR-0021 — EKG Usage & RKG Governance Plane": architecture/adr/ADR-0021-ekg-usage-and-rkg-governance-plane.md
+      - "ADR-0022 — PostgreSQL is the Interim Academic Source of Truth": architecture/adr/ADR-0022-postgres-is-the-interim-academic-source-of-truth.md
+      - "ADR-0023 — Course Creation v2.0/2.1/2.2 Alignment": architecture/adr/ADR-0023-course-creation-v2-alignment.md
+      - "ADR-0024 — Canonical Concept Identity": architecture/adr/ADR-0024-canonical-concept-identity.md
   - RFC: architecture/rfc/index.md
