@@ -281,6 +281,7 @@ adds the consolidation duty for the remaining domains, currently scattered in
 | Thesis (C6/C8) — G5 | `thesis.milestone.completed`, `thesis.deposited`, `thesis.defended` |
 | Committee (C3) — G6 | `committee.formed`, `committee.verdict.recorded` |
 | Federation (C10) | `partner.registered`, `mobility.requested/approved` |
+| FSEP Obligation/Payment/Financing/Card/Reward (new context, **BOOK-27** — not yet one of C1–C10) | 24 proposed events (RFC-0003 §3) — **not yet implemented**; producers/consumers land in Phase 1, gated on the pilot per `dlu_builder_tk/docs/ops/TRACK_C_POST_PILOT_PLAN.md` |
 
 Rules: every aggregate-mutating service MUST emit its aggregate's events through
 the outbox; an aggregate with no events is either read-only or wrongly modeled.
