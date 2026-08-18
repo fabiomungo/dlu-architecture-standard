@@ -30,7 +30,14 @@ The university MUST own a native financial and administrative record, with exter
 confirm, they are never the system of record for academic-financial state.
 
 Out of scope: subscription billing of the platform tenant itself (existing `subscriptions`),
-payroll (ERP driver), treasury.
+payroll (ERP driver), treasury. Also out of scope, forward reference added 2026-08-18: the
+broader student-economy layer this Book's AR/AP/budgets/planning instruments feed into —
+obligation/allocation semantics, an append-only ledger, provider abstraction beyond PagoPA/Stripe,
+payer/sponsor/guarantor agreements, student wallet/card, loyalty/University Credits, and a
+marketplace — is **BOOK-27** (G24). BOOK-27's obligation/allocation core binds *downstream* to this
+Book's existing instruments (`student_invoices`, `administrative_holds`, `fee_schedules`,
+`period_closes`) rather than replacing them; this Book remains the owner of AR/AP/budgets/planning
+& control.
 
 ## 2. Receivables — the student side (AR)
 

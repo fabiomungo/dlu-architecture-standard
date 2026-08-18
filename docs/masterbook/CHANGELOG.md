@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+- **FSEP-00-04 — BOOK-27 registered as a skeleton, G24 opened (2026-08-18,
+  `dlu-architecture-standard` + `dlu_builder_tk`)** — DLU-FSEP (Financial Services & Student
+  Economy Platform) registered as a DAS program: G24 row in `TRACEABILITY.md` (no student-economy
+  layer — obligations, ledger, provider abstraction, wallet, loyalty/University Credits,
+  marketplace — existed anywhere in the platform; AR/AP/budgets/planning exist, BOOK-23/G19, but
+  stop at the collection instrument), `BOOK-27-Financial-Services-and-Student-Economy-Platform-
+  v0.1-draft.md` (skeleton — purpose/scope, R27.x placeholder pending pilot-dependent decisions,
+  C27.x transcribed from the already-written execution plan, ADR-FIN-001…015 transcribed verbatim
+  from the Masterbook's own Ch. 26), and a one-line forward reference added to BOOK-23. Unlike
+  every other target-state extension volume (BOOK-21–26), this one does **not** represent
+  completed engineering — `dlu_builder_tk`'s own `docs/ops/TRACK_C_POST_PILOT_PLAN.md` explains
+  why full FSEP engineering is deliberately suspended pending pilot evidence (four of the plan's
+  own open decisions — jurisdiction, merchant-of-record, platform-fee tolerance, ledger-vs-GL
+  boundary — are answerable only from a live pilot) and a staffing gap (the plan assumes 3-4
+  backend engineers; the team is two). What's real today: FSEP-00-01 (the one live defect — five
+  runtime paths querying migration-less tables) is done, per HRD-A-10. What's proceeding now, at
+  zero engineering cost, in parallel with the pilot: this registration, RFC-0003 (the 22 net-new
+  FSEP events, `architecture/rfc/`), a University Credits ledger-liability design note, and a
+  draft-only compliance-posture pass (gate G1, explicitly not closed — blocked on the still-fully-
+  undone P0-18 DPA). Full detail: `TRACEABILITY.md`'s `G24` row, BOOK-27 itself, and
+  `dlu_builder_tk/docs/fsep/FSEP_IMPLEMENTATION_PLAN.md`.
 - **EKG-UX-01 — Student UI/UX revision: Paper v3 Foundation + all 4 Student EKG
   pages (2026-08-10, `dlu_builder_tk`)** — first phase of a 4-persona UI/UX revision
   prompted by a dedicated UX audit finding the EKG program's backend had outpaced its UI
