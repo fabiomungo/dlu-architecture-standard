@@ -195,3 +195,11 @@
 | EKG Postgres/Neo4j tenancy policy | The explicit per-table (Postgres) and per-tenant-database (Neo4j) classification governing which tenant a row/graph belongs to and how RLS/database routing enforces it (`ekg_postgres_tenancy_policy.py`, `neo4j_tenancy_policy.py`). |
 | EKG Production DoD Assessment | The EKG-scoped (not platform-wide) Definition-of-Done verdict closing the EKG-W0…W5 program (`docs/EKG_PRODUCTION_DOD_ASSESSMENT.md`, `dlu_builder_tk`); deliberately distinct from, and never a substitute for, BOOK-20 §8.3's own platform-wide DAS-Certified verdict. |
 | Gateway cost report | Read-only aggregation over `platform.llm_usage_logs` giving EKG's per-engine and per-learner LLM spend (`ekg_gateway_cost_report.py`); discloses, rather than hides, that GraphRAG's embedding calls bypass the gateway (pre-existing debt). |
+
+## BOOK-27 / RFC-0003 additions (2026-08-18, G24 — skeleton only, not yet built)
+| Term | Definition |
+|------|------------|
+| DLU-FSEP | Financial Services & Student Economy Platform — the student-economy layer (obligations, ledger, provider abstraction, agreements, wallet, loyalty/University Credits, marketplace) BOOK-27 registers. Distinct from BOOK-23, which keeps AR/AP/budgets/planning. |
+| Obligation / Allocation | The canonical payable-amount pair FSEP introduces: an `Obligation` is a priced payable (always resolved from a fee schedule, never a second price catalogue); an `Allocation` is one settlement against it (cash, aid, sponsor, or University Credit) — never a direct invoice write. |
+| University Credits | Closed-loop, service-redeemable loyalty credits (Masterbook §13.2) — never described as cryptocurrency, never assumed convertible to cash. Ledger treatment designed in `docs/fsep/CREDIT_LIABILITY_DESIGN.md` (FSEP-04-04). |
+| FSEP ledger | The append-only, student-finance-domain ledger BOOK-27 introduces (`fsep_ledger_entries`) — explicitly not the institutional GL (ADR-FSEP-R008); ERP posts through the existing Frappe driver and is reconciled, never replaced. |
