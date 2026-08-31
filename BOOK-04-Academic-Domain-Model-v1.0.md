@@ -263,7 +263,7 @@ adds the consolidation duty for the remaining domains, currently scattered in
 
 | Aggregate (context) | Canonical events |
 |---------------------|------------------|
-| Tenant (C2) | `tenant.provisioned/suspended/deleted` |
+| Tenant (C2) | `tenant.provisioned/suspended/deleted`, `tenant.profile.applied` (RFC-0006, `dlu_builder_tk`) |
 | User/Consent (C1) | `student.created`, `profile.updated`, `consent.changed`, `identity.merged` |
 | Twin (C7) | `student.lifecycle.changed`, layer-update events, `persona.proposed/confirmed` (BOOK-06 Ch. 4.3 — proposed by Discovery Agent intake, confirmed by ACE only on learner acceptance) |
 | Course (C5) | `course.created/updated/published/archived`, QA-gate events |

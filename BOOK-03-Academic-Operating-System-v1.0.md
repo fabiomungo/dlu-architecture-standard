@@ -291,6 +291,32 @@ the reseller/consortium archetype (BOOK-02 Ch. 7) currently has no tenant
 hierarchy; until an RFC adds one, reseller relationships are policy objects
 (BOOK-02 Ch. 10), not structural links.
 
+## 5.5 Tenant configuration versioning (2026-08-31)
+
+The `config` policy bag (§5.1) carries a `tenant_profile` namespace — jurisdiction,
+regulatory profiles, credit system, currency/locale, SIS integrations — resolved
+by `tenant_profile_service.get_tenant_profile`, validated against
+`dlu_tenant_profile_v1.schema.json`. Two additive artefacts version this
+namespace, deliberately kept separate from each other and from tenant *data*:
+
+- **`dlu.tenant_profile_bundle.v1`** — a git-committed, personal-data-free export
+  of one tenant's configuration (`GET /admin/tenants/{id}/profile-bundle`). Git
+  is the versioning mechanism for the bundle **as intent**.
+- **`tenant_profile_editions`** (platform schema) — one immutable row per actual
+  application of a bundle (`POST /admin/tenants/{id}/profile-bundle`, self-FK
+  lineage, `CatalogEdition`-shaped). Versions the bundle **as applied fact** —
+  answerable "what configuration was this tenant running on 12 September, and
+  who changed it," which git alone cannot give.
+
+A regulated change (jurisdiction, or a `regulatoryProfiles` narrowing) is refused
+on a tenant with live student records — a regulatory event requires an explicit,
+authorised migration path, never a routine configuration import. A companion
+`dlu.tenant_template_pack.v1` format (synthetic data only, `syntheticData: true`
+schema-enforced) seeds a **new** tenant through the same bulk-import pipeline
+already used for real registrar data — never a second personal-data snapshot
+mechanism (`backup_worker.py` already owns that need). Full normative detail:
+`dlu_builder_tk/docs/DLU_Tenant_Configuration_Bundle_Format_v1.0.md`.
+
 ---
 
 # Chapter 6 — Drivers: the Integration Fabric
