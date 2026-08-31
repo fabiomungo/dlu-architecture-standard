@@ -1,9 +1,11 @@
 # DLU Architecture Standard — Masterbook Index
 ### The Master Document of the DLU AI-Native University · DAS v1.0-draft
 
-> 21 stabilized volumes (BOOK-00 through BOOK-20) + 7 target-state extension
-> volumes (BOOK-21 through BOOK-26, BOOK-21–25 added SPRINT-22 doc-sync,
-> 2026-08-01; BOOK-26 added AVA doc-sync, 2026-08-05) + apparatus. **BOOK-00
+> 21 stabilized volumes (BOOK-00 through BOOK-20) + 8 target-state extension
+> volumes (BOOK-21 through BOOK-27, BOOK-21–25 added SPRINT-22 doc-sync,
+> 2026-08-01; BOOK-26 added AVA doc-sync, 2026-08-05; **BOOK-27 added as a
+> skeleton only, 2026-08-18** — see its own Status, it breaks the
+> "sprint-implemented" pattern the other 7 follow) + apparatus. **BOOK-00
 > v2.0 is the root**: it defines conformance
 > (DAS-Core / DAS-Intelligent / DAS-Certified), the Seven Canonical Questions,
 > the normative language, and the lineage rules every other volume obeys.
@@ -41,15 +43,17 @@
 | [19](BOOK-19-Governance-Security-and-Compliance-v1.0.md) | Governance, Security & Compliance | RACI, security, AI Act mapping, Italian profile (incl. G14 DE/DI), US distance-ed profile (G12/G13) | Governance |
 | [20](BOOK-20-Implementation-Blueprint-v1.0.md) | Implementation Blueprint | sprint catalog with verification cards, conformance suites, KPI plan, execution rules for AI agents | Delivery |
 
-### Target-state extension volumes (BOOK-21–26)
+### Target-state extension volumes (BOOK-21–27)
 
 Added after BOOK-00's original 20-book plan, one per persona/gap the initial plan didn't cover
-(TRACEABILITY.md gaps G17/G19/G20/G21/G22 + T12 guardrails). BOOK-21–25 listed here since
-SPRINT-22 doc-sync (2026-08-01); **BOOK-26 added AVA doc-sync, 2026-08-05** — all 7 are real,
-sprint-implemented volumes, not placeholders. Version/status strings kept as each book's own file
-states (some still carry "-draft" in the filename as this sub-program's own maturity marker,
-independent of whether specific chapters are implemented — see each book's own Status line for
-what's actually built).
+(TRACEABILITY.md gaps G17/G19/G20/G21/G22/G24 + T12 guardrails). BOOK-21–25 listed here since
+SPRINT-22 doc-sync (2026-08-01); **BOOK-26 added AVA doc-sync, 2026-08-05** — those 7 are real,
+sprint-implemented volumes, not placeholders. **BOOK-27 (added 2026-08-18, G24) is the one
+exception** — it's a registered skeleton only; the engineering it describes is deliberately
+suspended pending pilot evidence, per its own Status line and `docs/ops/TRACK_C_POST_PILOT_PLAN.md`
+in `dlu_builder_tk`. Version/status strings kept as each book's own file states (some still carry
+"-draft" in the filename as this sub-program's own maturity marker, independent of whether specific
+chapters are implemented — see each book's own Status line for what's actually built).
 
 | # | Title | One-line scope | Status |
 |---|-------|----------------|--------|
@@ -60,6 +64,7 @@ what's actually built).
 | [24](BOOK-24-Executive-Command-and-Corporate-Governance-v1.0.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED, v1.0 (SPRINT-14/15/16 — G20 FULLY CLOSED; CFO Command's cash/AP-aging/planning views remain a disclosed gap, BOOK-23 Ch. 8's own territory) |
 | [25](BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
 | [26](BOOK-26-Accreditation-Quality-Assurance-and-DM1154-Compliance-v0.1-draft.md) | Accreditation, Quality Assurance & DM 1154/2021 Compliance | faculty-requirement engine, Art. 3/4 accreditation lifecycle, Allegato E indicators, SUA-CdS/SMA tracking, Auditor/CEV persona, evidence registry, alert engine, Allegato C judgment workflow (G22, 11th/12th personas) | IMPLEMENTED, stays v0.1-draft (AVA-01…12 — G22 FULLY CLOSED; Allegato E indicators D1/D3/D8 remain genuine, disclosed schema/infra gaps — see the book's own dated version-decision note) |
+| [27](BOOK-27-Financial-Services-and-Student-Economy-Platform-v0.1-draft.md) | Financial Services & Student Economy Platform (DLU-FSEP) | obligation/allocation/ledger core, provider abstraction, payer/sponsor/guarantor agreements, wallet/card, loyalty & University Credits, marketplace, Financial GPS (G24) | **SKELETON ONLY** — one live defect fixed (HRD-A-10); all other engineering suspended pending pilot evidence, see `dlu_builder_tk/docs/fsep/FSEP_IMPLEMENTATION_PLAN.md` |
 
 Guardrail tenant policies (T12, BOOK-19 §7 extension, SPRINT-22/NEW-29 — the program's final
 sprint) live inside **BOOK-19** itself (Governance, Security & Compliance), not a standalone book.
