@@ -1,6 +1,14 @@
 # BOOK-21A — Credit Pre-Evaluation: Operations & Automation (annex)
-### DAS v0.4-draft · Layer: Intelligence / Intake · Status: IMPLEMENTED (F1-F4 all real, G17/C21A.6/C21A.7 FULLY CLOSED — SPRINT-22 correction, see v0.4 note below)
+### DAS v1.0 · Layer: Intelligence / Intake · Status: IMPLEMENTED (F1-F4 all real, G17/C21A.6/C21A.7 FULLY CLOSED — SPRINT-22 correction, see v0.4 note below)
 
+> **v1.0 (2026-08-31, Pre-Test Stabilisation Checklist H2)** — version decision, not a content
+> change: every planned feature (F1-F4) is real, tested, and CI-gated (§7/§8), and the only
+> remaining caveat — the golden-set certification being "provisional" (bootstrap-sized, no real
+> historical corpus in this environment) — is a disclosed, permanent data-availability fact this
+> book's own F4 design already anticipated, not a missing feature blocking authoritative status.
+> Moved from v0.4-draft to v1.0 on that basis; the "provisional certification" caveat below is
+> carried forward unchanged, not hidden by the version bump.
+>
 > **v0.4 (2026-08-01, NEW-29/SPRINT-22) — IMPORTANT CORRECTION to the v0.3 note below**: the
 > v0.3 claim that C21A.6/C21A.7 were closed by "NEW-17d/SPRINT-07" was **never actually true**.
 > `git merge-base --is-ancestor sprint/NEW-17d-preval-eval-loop HEAD` (checked against this

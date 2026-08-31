@@ -1,5 +1,19 @@
 # BOOK-23 — Financial Operations & Administrative Backbone
-### DAS v0.5-draft · Layer: Institution / Delivery · Status: IMPLEMENTED (Ch. 2-4 and Ch. 8, T7 complete + T8) — remaining gaps disclosed inline (§2 R23.3 credential-issuance hold gate + GPS route-constraint read, §7 C23.4 certificate-from-dossier)
+### DAS v1.0 · Layer: Institution / Delivery · Status: IMPLEMENTED (Ch. 2-4 and Ch. 8, T7 complete + T8) — two remaining gaps disclosed inline (§2 R23.3's GPS route-constraint read, §7 C23.4 certificate-from-dossier)
+
+> **v1.0 (2026-08-31, Pre-Test Stabilisation Checklist H2)** — version decision, verified
+> directly against `dlu_builder_tk` before deciding, not assumed from this book's own text.
+> **Two of R23.3's own three named sub-gaps are now stale — corrected here, not silently
+> carried forward**: a later, separate pass (Pilot Readiness Plan PD-1/PE-1) built the reactive
+> "overdue invoice → hold raised automatically" sweep (`financial_hold_consumers.py` calling
+> `raise_native_financial_hold`) and gave `holds_service.check_credentials_allowed` its first
+> real caller (`clearance_service.py`) — both confirmed by direct grep. **Two gaps remain
+> genuinely open**, confirmed the same way: R23.3's third sub-gap, the GPS not reading
+> `administrative_holds` as a route constraint (zero references in `academic_gps_service.py`/
+> `gps_traffic_consumers.py`), and C23.4 (`document_credential_service.py::generate_transcript`
+> still has no dossier reference at all). Moved to v1.0 on the basis that the architecture and
+> the vast majority of R23.3 are now real and verified, with exactly these two narrow,
+> already-disclosed items carried forward, not hidden by the bump.
 *(v0.2: adds Ch. 8 — Financial Planning & Control, sprint NEW-30 — still target, not built.
 v0.3: SPRINT-05/NEW-19 implements the AR slice (Ch. 2, minus R23.1's automatic trigger) and
 the full student dossier (Ch. 5, T8) — see Annex A for exactly what is real vs. still target.
@@ -53,16 +67,18 @@ why) `+invoice_lines` are first-class: tuition, fees, stamps. Lifecycle:
   ERP receipts (`frappe_sync_jobs`); manual "mark as paid" requires role `cfo` (or `admin`/
   `super_admin`) and a non-empty reason (`finance_service.manual_mark_paid`). C23.1 verified
   (property test, `tests/conformance/test_finance_invoices.py`).
-- R23.3 ✅/⚠ `administrative_holds` (type `financial`) blocks career acts — but only
-  **enrollment in exam sessions** is wired this sprint (`assessment_session_service.enroll`,
-  C23.3, same transaction boundary); credential issuance does not yet call
-  `holds_service.check_credentials_allowed` (the function exists and is tested, just has no
-  caller yet — future sprint). The reactive link "`overdue` invoice → hold raised automatically"
-  is also **not yet wired**: `finance_service.mark_overdue` emits `InvoiceOverdue` and
-  `holds_service.raise_native_financial_hold` exists and works, but nothing calls the latter in
-  reaction to the former yet (both modules' own docstrings name this a future scheduled-sweep
-  job) — today a hold is raised only by direct/manual call. The GPS does **not** yet read
-  `administrative_holds` as a route constraint (BOOK-14 integration remains target).
+- R23.3 ✅ **(v1.0, corrected — verified directly against `dlu_builder_tk`, not assumed)**
+  `administrative_holds` (type `financial`) blocks career acts: enrollment in exam sessions
+  (`assessment_session_service.enroll`, C23.3) AND credential issuance — `clearance_service.py`
+  now calls `holds_service.check_credentials_allowed` for real (previously disclosed as "no
+  caller yet," now closed by a later pass, Pilot Readiness Plan PD-1). The reactive link
+  "`overdue` invoice → hold raised automatically" is likewise now wired for real:
+  `financial_hold_consumers.py` calls `holds_service.raise_native_financial_hold` in reaction to
+  `finance_service.mark_overdue`'s own `InvoiceOverdue` event (PE-1's scheduled sweep) — a hold
+  is no longer raised only by direct/manual call. **Still genuinely open**: the GPS does **not**
+  yet read `administrative_holds` as a route constraint (confirmed by direct grep across
+  `academic_gps_service.py`/`gps_traffic_consumers.py` — zero references); BOOK-14 integration
+  remains target.
   `administrative_holds` is also the unification point for 3 previously-incompatible
   "financial hold" concepts (native/Stripe/Frappe) — see `ER_MAP.md` "Finanza & Fascicolo" for
   the full finding.

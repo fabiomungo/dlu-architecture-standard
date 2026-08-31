@@ -183,6 +183,21 @@ career development is precisely the absence of terminal states. Transitions are
 `student.lifecycle.changed` events, triggered by P01 processes (application,
 admission, enrollment sync, graduation clearance, alumni transition).
 
+> **Scope amendment (ADR-0026, 2026-08-29):** these eight states describe the
+> **Twin** — the person's relationship with the institution over a lifetime —
+> and only the Twin. A **regulated academic career** (one specific program
+> relationship: a degree, a certificate, a microcredential) is a distinct,
+> separate entity, `StudentCareer`, layered *beneath* the Twin
+> (`DLU_Student_Lifecycle_Regulatory_State_Model_v1.0.md` §3.2–3.3, ADR-0026).
+> A `StudentCareer` **is** terminal — `WITHDRAWN`, `DISMISSED`, `FORFEITED`,
+> `TRANSFERRED_OUT`, `GRADUATED`, `DECEASED` close it, reopenable only via an
+> explicit authorized `REOPEN_CAREER` event — without contradicting this
+> section: one Student may hold several careers (one `GRADUATED`, one
+> `ACTIVE`, one still `APPLICATION_SUBMITTED`), and the Twin above them keeps
+> its own, independent non-terminal state regardless of how many careers
+> beneath it have closed. Nothing in this section changes as a result; it
+> continues to govern the Twin exclusively.
+
 | State | Layers active | Dominant pillar/agents | Notes |
 |-------|--------------|------------------------|-------|
 | Prospect | L1, L5 (declared), L7 (discovery memory) | Discovery Agent | CRM-driven (P01.1.01); no academic mirror yet |

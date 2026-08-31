@@ -1,5 +1,14 @@
 # BOOK-24 — Executive Command & Corporate Governance
-### DAS v0.1-draft · Layer: Institution / Governance · Status: IMPLEMENTED (SPRINT-14/25 policy+catalog-approval, SPRINT-15/26 KPI layer, SPRINT-16/27 board governance — G20 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01; Provost persona pass — SPRINT-23, 2026-08-07 — closed the "ILO coverage" gap and added Catalog Certification — see TRACEABILITY.md G20)
+### DAS v1.0 · Layer: Institution / Governance · Status: IMPLEMENTED (SPRINT-14/25 policy+catalog-approval, SPRINT-15/26 KPI layer, SPRINT-16/27 board governance — G20 FULLY CLOSED; corrected from stale "DRAFT" SPRINT-22 doc-sync, 2026-08-01; Provost persona pass — SPRINT-23, 2026-08-07 — closed the "ILO coverage" gap and added Catalog Certification — see TRACEABILITY.md G20)
+
+> **v1.0 (2026-08-31, Pre-Test Stabilisation Checklist H2)** — version decision, not a content
+> change: G20 (the gap this book closes) is fully closed at the architectural level — KPI layer,
+> role command surfaces, approval workflows, board governance, and governance actions are all
+> real, tested, and event-sourced. One narrower, already-disclosed completeness gap remains
+> inside an otherwise-closed surface, carried forward unchanged by this bump, not hidden by it:
+> §3's CFO Command dashboard has no cash-position, AP-aging, or BOOK-23 Ch. 8 planning-and-
+> control views — that's BOOK-23's own territory (see BOOK-23's own v0.5-draft status and its
+> Ch. 8 note), not a BOOK-24 architectural gap.
 
 > Closes **G20** (role-grade command dashboards for Provost / President / Chairman / CFO,
 > a historicized KPI layer, board governance, and the formal catalog/policy approval

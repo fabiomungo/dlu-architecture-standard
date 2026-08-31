@@ -10,6 +10,18 @@ hand-offs are honest, disclosed gaps, not implemented this sprint.)*
 > for people already inside; this Book decides *who may enter and where they should start*.
 > ER target domain: **T1** (`ER_MAP_TARGET.md`). Functionality area: **19** (target tree).
 
+> **Version decision (2026-08-31, Pre-Test Stabilisation Checklist H2)**: stays at v0.2-draft,
+> not v1.0. The funnel core (§3-5's 10 tables, the state machine, R21.1-R21.3, C21.1-C21.5) is
+> real and verified — but §4 R21.4 and §5 Orientation each name real, still-open gaps this book's
+> own text already discloses honestly: the onboarding-journey hand-off (`student_onboarding_
+> journeys` doesn't exist), the automatic `credit_pre_evaluations` hand-off (blocked on a
+> course-id-mapping gap), program cost/fee data (no field exists on `Program` yet), and the full
+> GPS Pareto-scenario orientation (needs a pre-matriculation `StudentTwin`, a genuine
+> architecture tension). Waiting on: a `student_onboarding_journeys` table + consumer (BOOK-06
+> extension), a `Program` fee/cost field, and a resolution to the pre-matriculation-twin
+> tension before Orientation's Pareto comparison can be built. None of these are scheduled work
+> as of this note — revisit when any lands, not on a fixed date.
+
 ---
 
 ## 1. Purpose and scope

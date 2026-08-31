@@ -1,5 +1,9 @@
 # BOOK-22 — Faculty Lifecycle, Contracting & Human Workforce
-### DAS v0.5 · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger + FW6-01…FW6-10 — G18 and G18.1–G18.6 all fully closed)
+### DAS v1.0 · Layer: Institution / Trust · Status: IMPLEMENTED (Steps 1-3 + T9 HR/workload ledger + FW6-01…FW6-10 — G18 and G18.1–G18.6 all fully closed)
+
+> **v1.0 (2026-08-31, Pre-Test Stabilisation Checklist H2)** — version decision, not a content
+> change: every step, RFC amendment, and FW6 sub-item below is marked closed, with zero ⚠ or
+> disclosed open items found on review. Moved from v0.5-draft to v1.0 on that basis.
 
 > **✅ v0.5 amendment (RFC-0001, filed 2026-08-07) — implemented 2026-08-08.** A process
 > reconciliation against STU's real contracting practice (*STU Digital Faculty Onboarding,

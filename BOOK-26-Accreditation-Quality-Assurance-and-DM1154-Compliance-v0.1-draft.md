@@ -17,6 +17,17 @@
 > fabricated join or a silently-assumed default; see each section's
 > own inline correction.
 
+> **Version decision (2026-08-31, H2 DAS-draft review):** stays at
+> **v0.1-draft**, not bumped to v1.0. One stale claim was found and
+> corrected this pass (D5/mobility-domain — see §5 and Annex A), but D1,
+> D3, and D8 of the Allegato E indicator catalog remain genuinely
+> unresolved schema/infra gaps (`Enrollment.program_id` Integer/GUID
+> mismatch; no SSD column anywhere), re-verified directly against
+> `dlu_builder_tk` as still open on this date. Waiting on: a real FK
+> between `Enrollment.program_id` and `programs.id` (D1/D3), and an SSD
+> column on `FacultyProfile`/`ProgramCourse` (D8) — both schema changes,
+> not something this review can fabricate sign-off for.
+
 > Adds the **eleventh and twelfth personas — Auditor MUR/ANVUR and CEV Expert**
 > (external, read-only-except-one-documented-exception) — plus extends four
 > existing internal roles (PQA/NUV/Coordinatore CdS/Direzione) onto the
@@ -148,17 +159,32 @@ audit found only **two** genuinely computable from real data:
   caller-supplied figure.
 
 The other four (**D1** laureati in corso, **D3** prosecuzione II anno, **D5**
-CFU estero, **D8** docenti su SSD) are NOT computable today — not query bugs,
-genuine schema/infra gaps: D1/D3 are blocked by `Enrollment.program_id` being
-`Integer` against a `GUID` `programs.id` with no FK at all (§3's same break);
-D5's `backend/domains/mobility/` has the right-shaped fields but is
-unmigrated (no Alembic migration ever creates its tables) and unwired
-(nothing outside its own package imports it); D8 has no SSD
+CFU estero, **D8** docenti su SSD) were NOT computable when this book was
+first written — three still are not: D1/D3 remain blocked by
+`Enrollment.program_id` being `Integer` against a `GUID` `programs.id` with
+no FK at all (§3's same break, re-verified 2026-08-31); D8 still has no SSD
 (settore-scientifico-disciplinare) column anywhere on `FacultyProfile`/
-`ProgramCourse`. Each raises a typed `AvaIndicatorInsufficientDataError`
-naming the exact gap, kept structurally distinct from a second
-`AvaIndicatorExternalSourceError` (AlmaLaurea's D6/D7, VQR's E1, the campus-mq
-B4) — a schema bug must never be misreported as "not our data to have."
+`ProgramCourse` (re-verified 2026-08-31). **D5 is corrected** — see the
+2026-08-31 note below; `backend/domains/mobility/` is no longer unmigrated
+or unwired. Each of the three still-open gaps raises a typed
+`AvaIndicatorInsufficientDataError` naming the exact gap, kept structurally
+distinct from a second `AvaIndicatorExternalSourceError` (AlmaLaurea's
+D6/D7, VQR's E1, the campus-mq B4) — a schema bug must never be misreported
+as "not our data to have."
+
+> **Corrected 2026-08-31:** D5's own blocker no longer holds. The Two-Tenant
+> Production Pilot work (WP-7, `dlu_builder_tk`) added
+> `migrations/versions/20261122_0900_mobility_domain_tables.py` (verified
+> upgrade→downgrade→upgrade), moving all 11 mobility ORM models into the
+> `platform` schema, and mounted `backend/api/routes/mobility.py` at
+> `/api/mobility` (`backend/api/main.py:557`) — confirmed directly against
+> the live tree, not assumed. The domain now covers the core
+> application→learning-agreement→approval→transcript-exchange→
+> credit-equivalency workflow end to end. D5 (CFU estero) itself still needs
+> its own indicator-computation query wired against this now-real table —
+> not attempted here, since that's this book's own scope, not the pilot
+> plan's — but the underlying schema/infra gap this section originally
+> disclosed is closed. D1/D3/D8 are unaffected by this fix and remain open.
 
 > ✅ **IMPLEMENTED (AVA-05/AVA-06):** append-only `ava_indicator_values`
 > (immutable — `before_update`/`before_delete` reject unconditionally); the
@@ -325,7 +351,7 @@ never on every beat tick a condition remains true).
 | Governed config | `ItemCalibrationParams` (BOOK-11), `RecognitionRulePack` (BOOK-14A) | Allegato A/D rule packs, indicator-C threshold packs | `FacultyRequirementRulePack`/`StudentNumerosityBand` (own governed tables, same shape); AVA-05's indicator thresholds deliberately left `NULL` — DM 1154 fixes no universal numeric threshold for most indicators |
 | Notification/audit | `AuditService.log_action`, `notification_service.create_notification` | Auditor access logging, alert digests | Both reused as-is, zero new logging infrastructure invented |
 | RBAC | `UserRole` enum, `User.roles` JSON array | Auditor/CEV/PQA/NUV/Coordinatore personas | 3 new role strings (`auditor_mur`/`auditor_anvur`/`cev_expert`); PQA/NUV/Coordinatore/direzione mapped onto `dean`/`provost`/`admin` — disclosed, no dedicated role built |
-| Mobility domain | `backend/domains/mobility/` | AVA-D5 CFU-estero numerator | Confirmed unmigrated + unwired dead code — NOT reused as a real data source, disclosed as `AvaIndicatorInsufficientDataError` |
+| Mobility domain | `backend/domains/mobility/` | AVA-D5 CFU-estero numerator | **Corrected 2026-08-31**: as of AVA-01…12 (2026-08-03→05) this was confirmed unmigrated + unwired dead code, NOT reused as a real data source, disclosed as `AvaIndicatorInsufficientDataError`. The Two-Tenant Production Pilot's WP-7 (`dlu_builder_tk`, migration `20261122_0900_mobility_domain_tables.py`) has since migrated and mounted it (`/api/mobility`) — the schema/infra blocker is closed; D5's own indicator-computation query against it is still not built (separate, this book's own future work) |
 | New tables | — | T14: ~19 tables | 19 delivered (see §2 aggregate list + `ER_MAP_TARGET.md` §T14) |
 | Sprints | — | **AVA-01…AVA-12** | DONE, 2026-08-03→2026-08-05 |
 | Register | — | add **G22** (no periodic-accreditation domain) to TRACEABILITY | done — G22 closed |

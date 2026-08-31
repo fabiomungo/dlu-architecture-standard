@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 DEST="docs/masterbook"
 mkdir -p "$DEST"
 cp -f BOOK-00-Executive-Vision-and-Manifesto-v2.0.md "$DEST/"
-for f in BOOK-0[1-9]-*-v1.0.md BOOK-1[0-9]-*-v1.0.md BOOK-20-*-v1.0.md; do
+for f in BOOK-0[1-9]-*-v1.0.md BOOK-1[0-9]-*-v1.0.md BOOK-20-*-v1.0.md BOOK-2[1-4]*-v1.0.md; do
   cp -f "$f" "$DEST/"
 done
 cp -f BOOK-10A-AI-Workforce-Skills-and-MCP-Catalog-v1.0.md "$DEST/"
