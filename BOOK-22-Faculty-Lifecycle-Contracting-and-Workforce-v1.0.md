@@ -13,8 +13,8 @@
 > faculty seconded from a federated university (§11.5). G18 stayed closed for what was
 > already delivered; six successor gaps **G18.1–G18.6** were opened to carry the
 > remainder, and all six are now closed (TRACEABILITY.md). See
-> [`architecture/rfc/RFC-0001-course-lifecycle-console-integration.md`](architecture/rfc/RFC-0001-course-lifecycle-console-integration.md)
-> and [`architecture/adr/ADR-0015-gate-numbering-reconciliation.md`](architecture/adr/ADR-0015-gate-numbering-reconciliation.md)
+> [`architecture/rfc/RFC-0001-course-lifecycle-console-integration.md`](OLD_DOCS/architecture/rfc/RFC-0001-course-lifecycle-console-integration.md)
+> and [`architecture/adr/ADR-0015-gate-numbering-reconciliation.md`](OLD_DOCS/architecture/adr/ADR-0015-gate-numbering-reconciliation.md)
 > for the full design; §11 below records what was found, §11.7 records what shipped.
 
 > Closes **G18** (teacher onboarding, authoring contractualization with digital signature,

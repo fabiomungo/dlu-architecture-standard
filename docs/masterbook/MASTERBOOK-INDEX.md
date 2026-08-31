@@ -17,29 +17,29 @@
 | # | Title | One-line scope | Layer |
 |---|-------|----------------|-------|
 | [00](BOOK-00-Executive-Vision-and-Manifesto-v2.0.md) | Executive Vision & Manifesto (v2.0) | conformance model, manifesto with tensions, ADRs, standards, 20-book plan, Turnkey baseline (Annex A) | Root |
-| [01](BOOK-01-Academic-Philosophy-and-Pedagogical-Model-v1.0.md) | Academic Philosophy & Pedagogical Model | CAT operationalized, 10 learning-science principles, constructive alignment, learner model, personalization doctrine | Philosophy |
-| [02](BOOK-02-AI-Native-University-Theory-v1.0.md) | AI-Native University Theory | P01–P08 process architecture, three economies, faculty transformation, archetypes, economics, accreditation strategy | Institution |
-| [03](BOOK-03-Academic-Operating-System-v1.0.md) | Academic Operating System | layer semantics, 10 engine contracts, Event Mesh spec, tenancy, drivers, NFRs, DAS-Core checklist | Architecture |
-| [04](BOOK-04-Academic-Domain-Model-v1.0.md) | Academic Domain Model | 10 bounded contexts, aggregate catalog from real code, state machines, identity & consent, anomaly register A1–A7 | Architecture |
-| [05](BOOK-05-Academic-Ontology-and-Semantic-Model-v1.0.md) | Academic Ontology & Semantic Model | DLU-Core ontology, semantic quadrangle, relationship registry, FEX binding, framework alignment, A8–A12 closures | Semantics |
-| [06](BOOK-06-Student-Digital-Twin-v1.0.md) | Student Digital Twin | seven layers, lifecycle & personas, context assembly, agent entitlements, open learner model, erasure | Twins |
-| [07](BOOK-07-Faculty-Digital-Twin-v1.0.md) | Faculty Digital Twin | F-layers, pedagogical envelopes, workload/mentorship dividend, ESSE3 faculty gap analysis (G1–G6) | Twins |
-| [08](BOOK-08-Institution-Digital-Twin-v1.0.md) | Institution Digital Twin | derived layers, three-economy instrumentation, program health, compliance posture, G7–G8 | Twins |
-| [09](BOOK-09-Academic-Cognitive-Engine-v1.0.md) | Academic Cognitive Engine (ACE) | PDDAEL cycle, pedagogical move catalog, dual-process execution, cognitive budget, calibrated humility | AI spine |
-| [10](BOOK-10-AI-Workforce-v1.0.md) | AI Workforce | ACP-native agent composition, the nine contract cards, lifecycle as governed releases, scorecards | AI spine |
+| [01](../../OLD_DOCS/docs/masterbook/BOOK-01-Academic-Philosophy-and-Pedagogical-Model-v1.0.md) | Academic Philosophy & Pedagogical Model | CAT operationalized, 10 learning-science principles, constructive alignment, learner model, personalization doctrine | Philosophy |
+| [02](../../OLD_DOCS/docs/masterbook/BOOK-02-AI-Native-University-Theory-v1.0.md) | AI-Native University Theory | P01–P08 process architecture, three economies, faculty transformation, archetypes, economics, accreditation strategy | Institution |
+| [03](../../OLD_DOCS/docs/masterbook/BOOK-03-Academic-Operating-System-v1.0.md) | Academic Operating System | layer semantics, 10 engine contracts, Event Mesh spec, tenancy, drivers, NFRs, DAS-Core checklist | Architecture |
+| [04](../../OLD_DOCS/docs/masterbook/BOOK-04-Academic-Domain-Model-v1.0.md) | Academic Domain Model | 10 bounded contexts, aggregate catalog from real code, state machines, identity & consent, anomaly register A1–A7 | Architecture |
+| [05](../../OLD_DOCS/docs/masterbook/BOOK-05-Academic-Ontology-and-Semantic-Model-v1.0.md) | Academic Ontology & Semantic Model | DLU-Core ontology, semantic quadrangle, relationship registry, FEX binding, framework alignment, A8–A12 closures | Semantics |
+| [06](../../OLD_DOCS/docs/masterbook/BOOK-06-Student-Digital-Twin-v1.0.md) | Student Digital Twin | seven layers, lifecycle & personas, context assembly, agent entitlements, open learner model, erasure | Twins |
+| [07](../../OLD_DOCS/docs/masterbook/BOOK-07-Faculty-Digital-Twin-v1.0.md) | Faculty Digital Twin | F-layers, pedagogical envelopes, workload/mentorship dividend, ESSE3 faculty gap analysis (G1–G6) | Twins |
+| [08](../../OLD_DOCS/docs/masterbook/BOOK-08-Institution-Digital-Twin-v1.0.md) | Institution Digital Twin | derived layers, three-economy instrumentation, program health, compliance posture, G7–G8 | Twins |
+| [09](../../OLD_DOCS/docs/masterbook/BOOK-09-Academic-Cognitive-Engine-v1.0.md) | Academic Cognitive Engine (ACE) | PDDAEL cycle, pedagogical move catalog, dual-process execution, cognitive budget, calibrated humility | AI spine |
+| [10](../../OLD_DOCS/docs/masterbook/BOOK-10-AI-Workforce-v1.0.md) | AI Workforce | ACP-native agent composition, the nine contract cards, lifecycle as governed releases, scorecards | AI spine |
 | [10A](BOOK-10A-AI-Workforce-Skills-and-MCP-Catalog-v1.0.md) | Workforce, Skills & MCP Catalog (annex) | exhaustive roster: 24 agents, 44 skills, 19 MCP servers, usage modes, phasing | AI spine |
 | [10B](BOOK-10B-AI-Execution-Framework-v1.0.md) | AI Execution Framework (annex) | resolution/ctx_hash, skill engine, MCP layer, missions, testing T1–T5, deployment, unified execution record | AI spine |
-| [11](BOOK-11-AI-Cognitive-Architecture-v1.0.md) | AI Cognitive Architecture | reasoning patterns R1–R8, grounding doctrine, education-specific guardrails, the eval harness (GA gate) | AI spine |
-| [12](BOOK-12-Memory-Architecture-v1.0.md) | Memory Architecture | four stores M1–M4, consolidation, forgetting by design, cross-learner isolation | AI spine |
-| [13](BOOK-13-Academic-Knowledge-Network-v1.0.md) | Academic Knowledge Network | one graph three planes, schema v2.0, supply chain, canonical queries, analytics, A1 sunset | Intelligence |
-| [14](BOOK-14-Academic-Intelligence-Navigator-v1.0.md) | Academic Intelligence Navigator (GPS) | recognition-aware routing, RouteGraph, examination-decoupled model, real-time reroute, fairness | Intelligence |
+| [11](../../OLD_DOCS/docs/masterbook/BOOK-11-AI-Cognitive-Architecture-v1.0.md) | AI Cognitive Architecture | reasoning patterns R1–R8, grounding doctrine, education-specific guardrails, the eval harness (GA gate) | AI spine |
+| [12](../../OLD_DOCS/docs/masterbook/BOOK-12-Memory-Architecture-v1.0.md) | Memory Architecture | four stores M1–M4, consolidation, forgetting by design, cross-learner isolation | AI spine |
+| [13](../../OLD_DOCS/docs/masterbook/BOOK-13-Academic-Knowledge-Network-v1.0.md) | Academic Knowledge Network | one graph three planes, schema v2.0, supply chain, canonical queries, analytics, A1 sunset | Intelligence |
+| [14](../../OLD_DOCS/docs/masterbook/BOOK-14-Academic-Intelligence-Navigator-v1.0.md) | Academic Intelligence Navigator (GPS) | recognition-aware routing, RouteGraph, examination-decoupled model, real-time reroute, fairness | Intelligence |
 | [14A](BOOK-14A-Credit-Recognition-and-Pre-Evaluation-v1.0.md) | Credit Recognition & Pre-Evaluation (annex) | IT/US jurisdiction rule packs, three-tier pre-evaluation (instant AI + HITL), badge-to-credit automation, equivalence precedents, historic syllabi | Intelligence |
-| [15](BOOK-15-Assessment-and-Evidence-Architecture-v1.0.md) | Assessment & Evidence Architecture | two-products pipeline, trust model, appelli (G2), thesis (G5), committees (G6), integrity | Trust |
-| [16](BOOK-16-Credential-and-Trust-Architecture-v1.0.md) | Credential & Trust Architecture | trust stack, signing (did:web), bidirectional wallet, document credentials (G9/G10/G11), G3 boundary | Trust |
-| [17](BOOK-17-Experiences-v1.0.md) | Experiences | Canvas·Companion·Missions triad, WS00–WS08 + faculty + institution workspaces, quality bars, G1/G4 | Experience |
-| [18](BOOK-18-Technical-Architecture-and-Turnkey-Integration-v1.0.md) | Technical Architecture & Turnkey Integration | engine→code mapping, driver catalog (ESSE3 keystone), refactoring map, phases K1–K5 | Delivery |
-| [19](BOOK-19-Governance-Security-and-Compliance-v1.0.md) | Governance, Security & Compliance | RACI, security, AI Act mapping, Italian profile (incl. G14 DE/DI), US distance-ed profile (G12/G13) | Governance |
-| [20](BOOK-20-Implementation-Blueprint-v1.0.md) | Implementation Blueprint | sprint catalog with verification cards, conformance suites, KPI plan, execution rules for AI agents | Delivery |
+| [15](../../OLD_DOCS/docs/masterbook/BOOK-15-Assessment-and-Evidence-Architecture-v1.0.md) | Assessment & Evidence Architecture | two-products pipeline, trust model, appelli (G2), thesis (G5), committees (G6), integrity | Trust |
+| [16](../../OLD_DOCS/docs/masterbook/BOOK-16-Credential-and-Trust-Architecture-v1.0.md) | Credential & Trust Architecture | trust stack, signing (did:web), bidirectional wallet, document credentials (G9/G10/G11), G3 boundary | Trust |
+| [17](../../OLD_DOCS/docs/masterbook/BOOK-17-Experiences-v1.0.md) | Experiences | Canvas·Companion·Missions triad, WS00–WS08 + faculty + institution workspaces, quality bars, G1/G4 | Experience |
+| [18](../../OLD_DOCS/docs/masterbook/BOOK-18-Technical-Architecture-and-Turnkey-Integration-v1.0.md) | Technical Architecture & Turnkey Integration | engine→code mapping, driver catalog (ESSE3 keystone), refactoring map, phases K1–K5 | Delivery |
+| [19](../../OLD_DOCS/docs/masterbook/BOOK-19-Governance-Security-and-Compliance-v1.0.md) | Governance, Security & Compliance | RACI, security, AI Act mapping, Italian profile (incl. G14 DE/DI), US distance-ed profile (G12/G13) | Governance |
+| [20](../../OLD_DOCS/docs/masterbook/BOOK-20-Implementation-Blueprint-v1.0.md) | Implementation Blueprint | sprint catalog with verification cards, conformance suites, KPI plan, execution rules for AI agents | Delivery |
 
 ### Target-state extension volumes (BOOK-21–26)
 
@@ -53,13 +53,13 @@ what's actually built).
 
 | # | Title | One-line scope | Status |
 |---|-------|----------------|--------|
-| [21](BOOK-21-Admissions-Qualification-Evaluation-and-Orientation-v0.2-draft.md) | Admissions, Qualification Evaluation & Orientation | full funnel: application→eligibility→orientation→offer→matriculation (G17) | IMPLEMENTED, stays v0.2-draft (SPRINT-06/NEW-18 — funnel core real/verified; R21.4/Orientation each name real, still-open gaps — see the book's own dated version-decision note) |
-| [21A](BOOK-21A-Credit-Pre-Evaluation-Operations-and-Automation-v1.0.md) | Credit Pre-Evaluation: Operations & Automation (annex) | CDS extraction/matching engine, rule packs, golden-set eval loop (G17) | IMPLEMENTED, v1.0 (SPRINT-02..04/07/22 — F1-F4 all real; C21A.6/C21A.7 corrected + closed for real SPRINT-22; golden-set certification remains disclosed-provisional, a data fact not a missing feature) |
-| [22](BOOK-22-Faculty-Lifecycle-Contracting-and-Workforce-v1.0.md) | Faculty Lifecycle, Contracting & Human Workforce | onboarding, QES-signed authoring contracts, milestone/deliverable gates, HR/workload ledger (G18) | IMPLEMENTED, v1.0 (SPRINT-08/09/10 — G18 FULLY CLOSED) |
-| [23](BOOK-23-Financial-Operations-and-Administrative-Backbone-v1.0.md) | Financial Operations & Administrative Backbone | native AR/AP, holds, student dossier, financial planning & control (G19) | IMPLEMENTED, v1.0 (SPRINT-05/09/18 — G19 FULLY CLOSED; two narrow, disclosed gaps remain — GPS route-constraint read, certificate-from-dossier) |
-| [24](BOOK-24-Executive-Command-and-Corporate-Governance-v1.0.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED, v1.0 (SPRINT-14/15/16 — G20 FULLY CLOSED; CFO Command's cash/AP-aging/planning views remain a disclosed gap, BOOK-23 Ch. 8's own territory) |
-| [25](BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
-| [26](BOOK-26-Accreditation-Quality-Assurance-and-DM1154-Compliance-v0.1-draft.md) | Accreditation, Quality Assurance & DM 1154/2021 Compliance | faculty-requirement engine, Art. 3/4 accreditation lifecycle, Allegato E indicators, SUA-CdS/SMA tracking, Auditor/CEV persona, evidence registry, alert engine, Allegato C judgment workflow (G22, 11th/12th personas) | IMPLEMENTED, stays v0.1-draft (AVA-01…12 — G22 FULLY CLOSED; Allegato E indicators D1/D3/D8 remain genuine, disclosed schema/infra gaps — see the book's own dated version-decision note) |
+| [21](../../OLD_DOCS/docs/masterbook/BOOK-21-Admissions-Qualification-Evaluation-and-Orientation-v0.2-draft.md) | Admissions, Qualification Evaluation & Orientation | full funnel: application→eligibility→orientation→offer→matriculation (G17) | IMPLEMENTED, stays v0.2-draft (SPRINT-06/NEW-18 — funnel core real/verified; R21.4/Orientation each name real, still-open gaps — see the book's own dated version-decision note) |
+| [21A](../../OLD_DOCS/docs/masterbook/BOOK-21A-Credit-Pre-Evaluation-Operations-and-Automation-v1.0.md) | Credit Pre-Evaluation: Operations & Automation (annex) | CDS extraction/matching engine, rule packs, golden-set eval loop (G17) | IMPLEMENTED, v1.0 (SPRINT-02..04/07/22 — F1-F4 all real; C21A.6/C21A.7 corrected + closed for real SPRINT-22; golden-set certification remains disclosed-provisional, a data fact not a missing feature) |
+| [22](../../OLD_DOCS/docs/masterbook/BOOK-22-Faculty-Lifecycle-Contracting-and-Workforce-v1.0.md) | Faculty Lifecycle, Contracting & Human Workforce | onboarding, QES-signed authoring contracts, milestone/deliverable gates, HR/workload ledger (G18) | IMPLEMENTED, v1.0 (SPRINT-08/09/10 — G18 FULLY CLOSED) |
+| [23](../../OLD_DOCS/docs/masterbook/BOOK-23-Financial-Operations-and-Administrative-Backbone-v1.0.md) | Financial Operations & Administrative Backbone | native AR/AP, holds, student dossier, financial planning & control (G19) | IMPLEMENTED, v1.0 (SPRINT-05/09/18 — G19 FULLY CLOSED; two narrow, disclosed gaps remain — GPS route-constraint read, certificate-from-dossier) |
+| [24](../../OLD_DOCS/docs/masterbook/BOOK-24-Executive-Command-and-Corporate-Governance-v1.0.md) | Executive Command & Corporate Governance | policy/catalog-approval workflow, historicized KPI layer, board governance (G20) | IMPLEMENTED, v1.0 (SPRINT-14/15/16 — G20 FULLY CLOSED; CFO Command's cash/AP-aging/planning views remain a disclosed gap, BOOK-23 Ch. 8's own territory) |
+| [25](../../OLD_DOCS/docs/masterbook/BOOK-25-Research-Workspace-and-Open-Science-v0.1-draft.md) | Research Workspace & Open Science | reproducibility/provenance, federated zero-trust RAG, grant→budget/workload links (G21, 10th persona) | IMPLEMENTED (SPRINT-21/NEW-33 — G21 FULLY CLOSED) |
+| [26](../../OLD_DOCS/docs/masterbook/BOOK-26-Accreditation-Quality-Assurance-and-DM1154-Compliance-v0.1-draft.md) | Accreditation, Quality Assurance & DM 1154/2021 Compliance | faculty-requirement engine, Art. 3/4 accreditation lifecycle, Allegato E indicators, SUA-CdS/SMA tracking, Auditor/CEV persona, evidence registry, alert engine, Allegato C judgment workflow (G22, 11th/12th personas) | IMPLEMENTED, stays v0.1-draft (AVA-01…12 — G22 FULLY CLOSED; Allegato E indicators D1/D3/D8 remain genuine, disclosed schema/infra gaps — see the book's own dated version-decision note) |
 
 Guardrail tenant policies (T12, BOOK-19 §7 extension, SPRINT-22/NEW-29 — the program's final
 sprint) live inside **BOOK-19** itself (Governance, Security & Compliance), not a standalone book.
@@ -67,7 +67,7 @@ sprint) live inside **BOOK-19** itself (Governance, Security & Compliance), not 
 **Apparatus:** [TRACEABILITY.md](TRACEABILITY.md) (registers → Books → sprints →
 checks) · [GLOSSARY.md](GLOSSARY.md) (unified normative glossary) ·
 [MASTERBOOK-REVIEW-v1.0.md](MASTERBOOK-REVIEW-v1.0.md) (independent review,
-R1/R2 applied) · [CHANGELOG.md](CHANGELOG.md)
+R1/R2 applied) · [CHANGELOG.md](../../OLD_DOCS/docs/masterbook/CHANGELOG.md)
 
 **Lineage (BOOK-00 Annex A.3):** DAS Books (normative) → `DLU_Foundation_v1.md`
 (superseded for principles; WS map input) → `dlu_builder_tk/docs/
