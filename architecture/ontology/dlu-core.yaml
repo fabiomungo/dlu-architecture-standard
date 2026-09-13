@@ -12,10 +12,16 @@ source: "BOOK-05 v1.0 §3.2, §5.3; BOOK-13 Ch. 3"
 # this YAML is the narrative/governance record (BOOK-05 Ch. 8: "this Book
 # is its narrative; the YAML is what CI reads"), the Postgres registry is
 # what projection/mastery/mapping/Lens services resolve against at
-# runtime. Current published registry version: 1.0.0 (37 node types, 49
-# edge types, 3 SHACL shapes — seeded verbatim from EKG-Ontology-1.0.md
-# §4-5 by `backend/scripts/seed_ekg_ontology_v1.py`; immutable once
-# approved, a new registry version is a new semver row, never a rewrite).
+# runtime. Base seed: 1.0.0 (37 node types, 49 edge types, 3 SHACL shapes —
+# seeded verbatim from EKG-Ontology-1.0.md §4-5 by `backend/scripts/
+# seed_ekg_ontology_v1.py`; immutable once approved, a new registry version
+# is a new semver row, never a rewrite). Current published registry
+# version: **1.3.0** (1.1.0 ATA extension, EKG-W3-06; 1.2.0 Concept Merge
+# Stewardship, CCV2-09; 1.3.0 Faculty Domain Ontology & Socratic Tutor,
+# RFC-0031/FOS-W7-01 — each seed clones the prior version's rows forward
+# and is additive-only; confirm the real current head at
+# `ekg_ontology_registry_service.get_current_version` before relying on
+# this comment, since it is not itself CI-enforced to stay in sync).
 
 classes:
   # Parties & structure
@@ -187,6 +193,32 @@ classes:
   - {name: PolicyVersion, graph_label: PolicyVersion, engine: ace,
      notes: "immutable, auditable Pedagogical Policy Engine version
              (ADR-0016); distinct from PolicyRule above"}
+
+  # Faculty Domain Ontology & Socratic Tutor (RFC-0031, FOS-W7-01;
+  # docs/DLU_Faculty_Ontology_Socratic_Tutor_Architecture_v1.0.md in
+  # dlu_builder_tk; docs/CLAUDE_CODE_PLAN_FOS_W7_ATA_W2.md §0.6). Registered
+  # as Postgres ekg_ontology_versions 1.3.0 — a separate axis from this
+  # file's own "2.0" document version (§0.6 explains why the two never
+  # move together). LearningActivity/PLO/ILO/Competency above already
+  # existed; the rest are new.
+  - {name: FacultyOntology, graph_label: FacultyOntology, engine: knowledge,
+     notes: "root of one School's domain ontology (RFC-0031)"}
+  - {name: Discipline, graph_label: Discipline, engine: knowledge}
+  - {name: KnowledgeArea, graph_label: KnowledgeArea, engine: knowledge}
+  - {name: ConceptMention, graph_label: ConceptMention, engine: knowledge,
+     notes: "COURSE scope — the raw extraction target before canonicalisation"}
+  - {name: AcademicRole, graph_label: AcademicRole, engine: institution,
+     notes: "GLOBAL scope"}
+  - {name: MisconceptionState, graph_label: MisconceptionState, engine: ace,
+     notes: "LEARNER scope — probabilistic hypothesis, distinct from the Misconception catalog above"}
+  - {name: PedagogicalInteractionMemory, graph_label: PedagogicalInteractionMemory, engine: ace,
+     notes: "LEARNER scope — anti-repetition rolling window"}
+  - {name: SocraticMove, graph_label: SocraticMove, engine: ace, notes: "GLOBAL scope"}
+  - {name: ScaffoldLevel, graph_label: ScaffoldLevel, engine: ace, notes: "GLOBAL scope"}
+  - {name: PedagogicalAsset, graph_label: PedagogicalAsset, engine: ace}
+  - {name: PedagogicalRule, graph_label: PedagogicalRule, engine: ace}
+  - {name: AcademicReviewTask, graph_label: AcademicReviewTask, engine: knowledge,
+     notes: "governance review task against any FACULTY-scope node/edge"}
 
 relationships:  # BOOK-05 §5.3 — closed set, RFC to extend
   - {name: OFFERS, domain: Institution, range: Program, properties: [], status: existing}
