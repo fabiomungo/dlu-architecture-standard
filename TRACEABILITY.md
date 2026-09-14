@@ -382,3 +382,73 @@ sprint landed — that entry was a retroactive catch-up, not a same-change-set s
 BOOK-00 duty), disclosed as such rather than presented as timely.
 FOS-ATA2 (Gate G2, `FOS-ATA2-01…07`) and FOS-W8 (`FOS-W8-01/02`) rows are a disclosed, separate
 follow-up — not added in this pass.
+
+
+## RFC-0031 — Faculty Domain Ontology & Socratic Tutor, Wave FOS-ATA2 (2026-09-15)
+Continuation of the `## RFC-0031 — ... Wave FOS-W7 (2026-09-14)` entry above — same
+plan (`docs/CLAUDE_CODE_PLAN_FOS_W7_ATA_W2.md`), same sprint-code convention
+(`FOS-ATA2-NN`), covering the 7-sprint ATA2 wave (Gate G2) plus that Gate's own closure
+work. **Book-number cross-references below are the same best-effort thematic match
+disclosed in the FOS-W7 entry above (05 = Academic Ontology/Semantic Model, 19 =
+governance/RACI) — not independently verified against the full 24-book taxonomy.**
+
+| Artefact | Books | Sprints | Checks |
+|----------|-------|---------|--------|
+| **FOS-ATA2-01 — Single mastery truth, per-Bloom posteriors, bands** (`dlu_builder_tk`, ✅ **implemented, with 1 large, disclosed scope cut**): `LearningState` widened with `bloom_mastery JSONB` (per-Bloom alpha/beta), `effective_mastery`, `mastery_band` (8 bands), `bloom_demonstrated`, `forgetting_risk`, `learning_velocity`; new `mastery_model_params` v2 row (prior, k, γ, caps, propagation factors, half-life); `ekg_mastery_service.py` per-Bloom update, ordinal propagation, decay-at-read, band derivation; PKG read API `/api/pkg/{learnerId}/states…`/`/readiness/{conceptId}`/`/timeline`. **Disclosed, not built**: task 3's full legacy-reader consolidation (11 independent call sites — `mastery_tracking_service`, `knowledge_mastery_service`, `competency_graph_service`, `recommendation_service_v2`, `spaced_repetition_service`, `quiz_feedback_service`, `personalization`, `diagnostic_service`, `analytics_dashboard_service`, `twin_context_service`, `KnowledgeMastery.js`) deferred in full as its own follow-up sprint — too large a blast radius for this sprint's own scope. Concept-level scalar `M`/`effectiveMastery` does not reproduce SPEC §23's own worked-example `E` column exactly (a genuine SPEC gap: no stated pooling formula), disclosed, not curve-fit. | 05, 19 | FOS-ATA2-01 | 37 tests (`test_fos_ata2_01_mastery_bloom.py`) |
+| **FOS-ATA2-02 — Misconception catalog, learner states, detector** (`dlu_builder_tk`, ✅ **implemented, with 1 disclosed live-wiring gap**): `misconception_catalog` (FACULTY-side, governed) split from renamed `misconception_states` (learner-side, `probability`/`confidence`/`status` state machine); `misconception_service.py` LR-update detector (distractor LR, pattern LR, correct-diagnostic/refutation LR), 4 real writer functions; evidence-pattern classifier (ACP gateway structured output); `scripts/fos_seed_misconceptions.py` (expert/analytics/LLM-elicitation seeding paths, no fabricated expert-library data shipped); PKG route `/api/pkg/{learnerId}/misconceptions`. SPEC §23/§24's trajectory reproduces the first 5 of 6 transitions exactly; the 6th could not be reproduced under any tested interpretation — a disclosed SPEC worked-example gap. **Disclosed, not built**: no live event/consumer wiring end-to-end (a real quiz-submission → `MisconceptionState` path) — investigated, not assumed: no live path creates `AssessmentItem` rows from a Component-quiz's own distractors yet, so there is nothing live to consume from. | 05 | FOS-ATA2-02 | 36 tests (`test_fos_ata2_02_misconceptions.py`) |
+| **FOS-ATA2-03 — Pedagogical ontology + interaction memory** (`dlu_builder_tk`, ✅ **implemented**): 5 new `tutor_learning_strategies` (19 total), 11 `socratic_moves`, 7 `scaffold_levels`, `pedagogical_rules` (9 GLOBAL SPEC §12.4 rules) seeded; `pedagogical_rules.py` rule matcher + 6 hard-rule candidate-set filters (all independently tested, incl. a per-turn scaffold-rise cap found and added while writing this sprint's own verification, not in the original task list); `PedagogicalInteractionMemory` (Redis, `tenant:{t}:twin:{id}:pim`, TTL) with `compute_redundancy`(λ/τ) and Beta-tracked `strategy_effectiveness`. Real ripple handled: widening 14→19 actions required updating 2 other modules' own `assert set(X) == set(VALID_NBLA_ACTIONS)` import-time checks. | 05, 19 | FOS-ATA2-03 | 57 tests (`test_fos_ata2_03_pedagogical_ontology.py`) |
+| **FOS-ATA2-04 — NBAA `ata-1.1.0`: objective selection, scoring, decision traces** (`dlu_builder_tk`, ✅ **implemented**): pure `objective()` function (10-value SPEC §14.1 priority order); `_score_action` extended to the full 11-term SPEC §16.1 formula (5 real per-action formulas in `backend/services/tutor/nbaa.py`, `Redundancy` reusing FOS-ATA2-03's `compute_redundancy`); candidate generation from `pedagogical_rules.match_rules` (not a fixed loop); immutable `TutorPolicyVersion` `ata-1.0.0`/`ata-1.1.0` seeded (migration `20261215_0900`); full `TutorDecisionTrace` (top-5 candidates + propensities) persisted per decision; `POST /api/policy/simulate` (offline replay) + `GET /api/policy/versions/{v}`. Real regressions found and fixed in this sprint's own full-regression run: a `JSON`-vs-`JSONB` Postgres operator failure, an `ExpectedLearningGain` near-zero-for-all-actions algebraic degeneracy at `difficulty=3`, `compute_feature_context` silently starving `/simulate` by excluding `bloom_state`, plus 2 pre-existing-caller signature breaks — all fixed same-sprint. | 05, 19 | FOS-ATA2-04 | 46 tests (`test_fos_ata2_04_nbaa.py`) |
+| **FOS-ATA2-05 — Socratic generator contract + Assessment Evidence Analyzer** (`dlu_builder_tk`, ✅ **implemented**): `socratic_generator.py` (per-strategy SPEC §13.3 request builder, structured-output rubric schema, validators — one question only, no answer leak, move consistency, opener-avoid-list, strategy-echo consistency — one regeneration then non-LLM fallback); `evidence_analyzer.py` (reply classification into 7 SPEC §9.4 evidence classes + confidence); red-team fixture `answer_leak_redteam.jsonl` (62 items). Evidence analyzer reproduces SPEC §25's turn classifications exactly. **Disclosed, not built**: a real, human-signed GA gate run — zero `ai_agent_configs` rows exist for ANY agent in this environment at the time this sprint ran (confirmed via direct query), no standing to fabricate that infrastructure. | 05, 19 | FOS-ATA2-05 | 34 tests (`test_fos_ata2_05_socratic_generator_evidence_analyzer.py`); red-team: 62/62 items caught, 0 misses |
+| **FOS-ATA2-06 — Orchestrator pipeline, engine merge, explainability (`/why`)** (`dlu_builder_tk`, ✅ **implemented, with 2 disclosed scope boundaries**): SPEC §14 turn pipeline refactored into typed stateless steps in `ekg_tutor_orchestrator_service.py`; `ace_service.py` (the real ACE, Companion/Practice) bridges to the orchestrator via `ace_nbaa_bridge.choose_move_via_nbaa` behind `TUTOR_SINGLE_ORCHESTRATOR` (default OFF, "not validated for production traffic" per its own docstring); `GET /turn/{turnId}/why` (deterministic template renderer, `FORBIDDEN_WHY_TOKENS` allow-list) + `/trace`; degraded mode (Policy/GraphRAG unavailable → grounded non-adaptive help, no PKG writes). A real cross-tenant security bug (`get_turn_trace` took an unused `twin_id` param with NO tenant check) was found and fixed before this was considered done. **Disclosed, not built**: SPEC §25's 6-turn dialogue is not literally replayed (depends on live-LLM phrasing); p95 latency load test not executed (no live full-stack server in this session). | 05, 19 | FOS-ATA2-06 | 23 tests (`test_fos_ata2_06_orchestrator_pipeline.py`); full regression at merge time: 679 tests, 648 passed, 2 skipped (flake, confirmed transient), 1 pre-existing unrelated failure (SHACL registry pollution) |
+| **FOS-ATA2-07 — Governance loop: runtime gaps → review tasks; PKG → ontology aggregation** (`dlu_builder_tk`, ✅ **implemented**): `classify_gaps` wired into the orchestrator, `ONTOLOGY_GAP`/`DOMAIN_KNOWLEDGE_GAP` filed via `academic_review_service` (`source='tutor_runtime'`, day-scoped dedup); usage-contract enforcement (`epistemicStatus`/`mayAssert` per statement, a `PROPOSED` misconception never named in a rendered message — new validator); nightly Celery job `fos_pkg_aggregation` (k≥15 k-anonymous `prevalenceObserved`/`confusionRate`/`difficulty_observed`, migration `20261217_0900`). A real, disclosed constraint gap found and fixed narrowly (not the shared `open_review_task` constraint): a genuinely-new occurrence one day after a RESOLVED same-`dedup_key` row would have hit a raw `IntegrityError` — fixed by folding the UTC calendar day into `gap_governance.py`'s own `payload_core` only. | 05, 19 | FOS-ATA2-07 | 23 tests (`test_fos_ata2_07_governance_loop.py`) |
+
+**Gate G2 (end of FOS-ATA2) status, honestly (2026-09-15)**: of its 5 literal criteria
+(`docs/CLAUDE_CODE_PLAN_FOS_W7_ATA_W2.md` line ~541), **2 closed for real, 1 real
+finding is a genuine, disclosed miss (not spun as a pass), and 2 are not closeable by
+automation at all**:
+- **`POST /api/policy/simulate` on ≥ 500 logged contexts shows `ata-1.1.0` ≥
+  `ata-1.0.0` on ExpectedLearningGain and lower Redundancy**: run for real
+  (`scripts/fos_close_gate_g2.py`, `dlu_builder_tk` sprint branch) — 540 real NBAA
+  decisions (target ≥500, ✅ met on volume) generated across a 30-twin demo cohort
+  (reusing Gate G1's own real 92-concept MSc-AI Faculty Ontology), replayed via
+  `/simulate`. A real, previously-undiscovered gap was found and fixed to make the
+  Redundancy half of this measurable at all: `/simulate` computed `redundancy_raw`
+  (FOS-W8-01) internally but never surfaced it in its own response — fixed
+  (`mean_redundancy_raw_delta`, additive), regression-tested. **Real result, disclosed
+  honestly, not rounded favourably**: mean raw-Redundancy delta = **-0.3325**
+  (ata-1.1.0 lower — ✅ MET) but mean ExpectedLearningGain delta = **-0.0009**
+  (ata-1.1.0 fractionally LOWER, not ≥ — ❌ **NOT MET**, though the magnitude is
+  small enough to plausibly be noise across a 540-decision synthetic sample, not a
+  claim that ata-1.1.0 is meaningfully worse). This criterion is therefore **NOT MET
+  as literally worded** — disclosed as a real finding, not silently passed.
+  `reports/fos/gate_g2_ata2_closure_report.md` has the full numbers.
+- ✅ **red-team answer-leak = 0**: re-verified for real this same pass (not assumed
+  green from FOS-ATA2-05's own original run) — the real validator against the real
+  62-item fixture, 0/62 misses.
+- ⏳ **repetition index (mean redundancy per turn) below the agreed target**: the REAL
+  metric is now computed from the same 540-decision cohort — mean **0.3325**, p50
+  **0.3633**, p90 **0.6214** — and a data-grounded target of **≤0.65** (p90, rounded
+  up) is PROPOSED, but "agreed" is a human stakeholder decision this script cannot
+  make on anyone's behalf. Not closed.
+- ⏳ **academic review of the rule set signed off**: a real, concrete review package
+  (9 real `pedagogical_rules` rows, current live data) was generated —
+  `reports/fos/ata2_pedagogical_rule_set_review_package.md` — but the sign-off itself
+  is an explicit human academic-reviewer action no automated process may substitute
+  for. Not closed.
+- ✅ **`TRACEABILITY.md` rows added**: this entry.
+
+Two real, previously-undiscovered bugs were found and fixed while closing this Gate
+(both disclosed in full in `reports/fos/gate_g2_ata2_closure_report.md`): the
+`/simulate` redundancy-surfacing gap above, and a real data-integrity gap in this
+dev DB — two `default-nbla` policy versions were simultaneously staged to
+`production` (`advance_policy_stage` has no cross-version "at most one production per
+code" invariant, never caught by any existing test or governed write path) — resolved
+for this dataset via a real governance rollback action; the missing invariant itself
+is disclosed, not fixed (touches 5 other test files' own governed write path, out of
+this task's scope).
+
+**Gate G2 is NOT closed.** Of its 5 criteria: 2 are met for real (volume + red-team),
+1 is genuinely NOT met as literally worded (the ELG half of the `/simulate`
+comparison — disclosed, not spun), and 2 are real human governance decisions this
+script cannot make on anyone's behalf (a target-setting agreement, an academic
+sign-off) — not further engineering work.
