@@ -346,15 +346,29 @@ familiar with every chapter; flagged here rather than asserted with false precis
 | **FOS-W7-05 — Academic Review Service + RKG console extension** (`dlu_builder_tk`, ✅ **implemented**): `AcademicReviewTask`/`AcademicRole`/`UserAcademicRole` (migration `20261209_0900_ekg_w7_05_academic_roles.py`), `backend/services/faculty_ontology/academic_review_service.py` (7-decision state machine: approve/reject/merge_as/split/retype/request_evidence/escalate; type→role→discipline→load routing; SLA computation) + `review_tasks.py` (idempotent `open_review_task`, `dedup_key = hash(targetUri, reviewType, payload.core)`); `backend/api/routes/academic_review.py` | 05, 19 | FOS-W7-05 | 27 tests (`test_fos_w7_05_academic_review.py`) |
 | **FOS-W7-06 — FDO snapshot, read API, Semantic Mapper, projection** (`dlu_builder_tk`, ✅ **implemented, with 2 real, disclosed gaps carried forward**): `snapshot_service.py` (versioned Faculty Ontology export/import, `POST /versions/{v}/promote` blocked on open `blocker` tasks, `dlu.ontology.version.published` emitted), `backend/schemas/faculty_ontology_snapshot_v1.json`, read API (`backend/api/routes/faculty_ontology.py`), `POST /resolve` Semantic Mapper (`semantic_mapper.py` — lexical shortlist + batched embedding, `AMBIGUITY` flag at margin < 0.15), `ontology_builder.py` route + `ontology_build_jobs` table (migration `20261211_0900_ekg_w7_06_ontology_build_jobs.py`) for a previously-uncallable Celery job (FOS-W7-02) to have a pollable status row. **Disclosed, not built**: no live Graph Projection consumer for FACULTY-scope MERGE/SUPERSEDES (Cypher-string generators only, unit-tested, never run against a live graph — same class of gap as every prior FOS-W7-0x sprint); T1 p95 latency not measured (no live demo graph/load-test harness run) | 05 | FOS-W7-06 | 30 tests (`test_fos_w7_06_snapshot_projection_resolve.py`) |
 
-**Gate G1 (end of FOS-W7) status, honestly**: canonicaliser calibration report archived
-(`reports/fos/canonicalizer_calibration.md`) ✅ — the only one of Gate G1's own 4 criteria closed
-without qualification. **"Full build on the MSc-AI demo (10 courses) completes; health report
-shows 0 unresolved blocker"**: NOT run — no live MSc-AI demo build exists in this environment;
-every FOS-W7-0x sprint's own verification section discloses this identically, not a gap specific
-to this row. **This TRACEABILITY.md sync itself** was the other open Gate G1 item — closed by this entry
-(2026-09-14): `dlu_builder_tk`'s FOS-W7 sprint branches were built and merged without this
-sibling repo ever attached to the same session, so no sync happened at the time each sprint
-landed — this entry is a retroactive catch-up, not a same-change-set sync (CLAUDE.md's own
+**Gate G1 (end of FOS-W7) status — UPDATE (2026-09-14, same day)**: all 4 criteria now closed.
+Canonicaliser calibration report archived (`reports/fos/canonicalizer_calibration.md`) ✅.
+**"Full build on the MSc-AI demo (10 courses) completes; health report shows 0 unresolved
+blocker"**: ✅ run for real this same day, on branch `sprint/fos-gate-g1-msc-ai-demo-build`
+(`dlu_builder_tk`, commit `ae8634a`) — `scripts/fos_build_msc_ai_demo.py` built a live Faculty
+Ontology over 10 real MSc-AI courses (2 pre-existing steward-approved fixtures + 8 newly
+authored) against a migrated dev Postgres, with real OpenAI calls for canonicalisation and
+relation typing; a deliberately-seeded prerequisite-cycle fixture was detected as a `blocker`
+review task and resolved via the real `academic_review_service.decide` state machine, closing
+at **0 open blocker tasks** (`reports/fos/msc_ai_demo_build_health_report.md`). Getting this to
+run also surfaced and fixed 3 real, previously-undiscovered bugs with zero prior real-DB test
+coverage (`LLMClientFactory._resolve_agent_config`'s inverted credential join — the most
+consequential, since it silently broke every real, non-mocked agent-based LLM call in the app;
+`run_faculty_ontology_build` never setting `CanonicalConcept.school_id`; a migration hardcoding
+a policy-version number that collided with pre-existing seed data) — full detail in that health
+report. Honestly disclosed, not chased down in this pass: `snapshot_service.build_snapshot`/
+`promote_version` could not be exercised end-to-end because this specific dev DB's
+`ekg_ontology_versions` registry was never advanced past `1.1.0` (a separate, pre-existing
+environment-seeding gap, not a `snapshot_service` defect, and not a Gate G1 criterion itself).
+**This TRACEABILITY.md sync itself** was the other open Gate G1 item — closed earlier the same day
+(commit `9e5b207`, this repo): `dlu_builder_tk`'s FOS-W7 sprint branches were built and merged
+without this sibling repo ever attached to the same session, so no sync happened at the time each
+sprint landed — that entry was a retroactive catch-up, not a same-change-set sync (CLAUDE.md's own
 BOOK-00 duty), disclosed as such rather than presented as timely.
 FOS-ATA2 (Gate G2, `FOS-ATA2-01…07`) and FOS-W8 (`FOS-W8-01/02`) rows are a disclosed, separate
 follow-up — not added in this pass.
