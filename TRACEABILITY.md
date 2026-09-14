@@ -361,10 +361,20 @@ coverage (`LLMClientFactory._resolve_agent_config`'s inverted credential join �
 consequential, since it silently broke every real, non-mocked agent-based LLM call in the app;
 `run_faculty_ontology_build` never setting `CanonicalConcept.school_id`; a migration hardcoding
 a policy-version number that collided with pre-existing seed data) — full detail in that health
-report. Honestly disclosed, not chased down in this pass: `snapshot_service.build_snapshot`/
-`promote_version` could not be exercised end-to-end because this specific dev DB's
-`ekg_ontology_versions` registry was never advanced past `1.1.0` (a separate, pre-existing
-environment-seeding gap, not a `snapshot_service` defect, and not a Gate G1 criterion itself).
+report. **UPDATE, same day**: the registry-seeding gap below was closed in a same-branch
+follow-up commit (`dlu_builder_tk` `1a5585c`) by running the two existing, idempotent, run-once
+registry seed scripts this program already ships (`seed_concept_merge_ontology_extension` →
+1.2.0, `seed_ekg_ontology_v1_3` → 1.3.0) — no code changes, this dev DB had simply never had
+them run against it. `build_snapshot`/`promote_version` were re-run for real and succeeded:
+`ontologyVersion 1.3.0`, 92 concepts, a persisted `approved` `faculty_ontologies` row. Precise,
+not overstated: `promote_version`'s own blocker-REFUSAL branch was never re-exercised against
+this real dataset (the blocker was already resolved earlier in the same session before the
+registry gap was fixed) — that branch remains covered only by FOS-W7-06's own pre-existing test
+suite; the successful, non-blocked promotion path is what is now real end-to-end. Originally
+disclosed, not chased down in the first pass: `snapshot_service.build_snapshot`/`promote_version`
+could not be exercised end-to-end because this specific dev DB's `ekg_ontology_versions` registry
+had never been advanced past `1.1.0` (a separate, pre-existing environment-seeding gap, not a
+`snapshot_service` defect, and not a Gate G1 criterion itself).
 **This TRACEABILITY.md sync itself** was the other open Gate G1 item — closed earlier the same day
 (commit `9e5b207`, this repo): `dlu_builder_tk`'s FOS-W7 sprint branches were built and merged
 without this sibling repo ever attached to the same session, so no sync happened at the time each
