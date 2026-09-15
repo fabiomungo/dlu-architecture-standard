@@ -452,3 +452,17 @@ this task's scope).
 comparison — disclosed, not spun), and 2 are real human governance decisions this
 script cannot make on anyone's behalf (a target-setting agreement, an academic
 sign-off) — not further engineering work.
+
+### FOS Critical Review Remediation — architecture decisions (2026-09-15)
+
+`docs/DLU_FOS_Critical_Review_2026-09-14.md` (`dlu_builder_tk`) is an independent
+20-finding audit of the FOS work above (Gate G1 + Gate G2). Sprints `FOS-FIX-01`
+through `FOS-FIX-10` remediate it; only the one architecture decision from that
+effort is recorded here (per `FOS-FIX-10`'s own task) — the other 9 sprints are
+engineering fixes with no kernel-contract impact and are traceable via their own
+commit messages/`docs/ops/` reports in `dlu_builder_tk`, not backfilled into this
+table.
+
+| Artefact | Books | Sprints | Checks |
+|----------|-------|---------|--------|
+| **FOS-FIX-10 — ACE / Adaptive Tutor separation, decided not merged** (`dlu_builder_tk`, ✅ **decision recorded, no code change**): FOS-ATA2-06 (above) built a first, additive connection between ACE (Companion/Practice, `ace_service.py`) and the Adaptive Tutor's NBAA (`ace_nbaa_bridge.py`, a move-name tie-break behind `TUTOR_SINGLE_ORCHESTRATOR`, default OFF) as a step toward the Critical Product Review's own P2 "merge tutor engines" item. **Decided 2026-09-15 (FOS critical review F-17): no further merge for this pilot** — wiring the Socratic generator/evidence analyzer/anti-repetition memory into ACE's own PDDAEL cycle and re-validating ACE's 28-test suite plus its envelope/capability-token/egress-check machinery was judged not worth the effort against finishing the rest of this remediation plan. `TUTOR_SINGLE_ORCHESTRATOR` stays OFF; `ace_nbaa_bridge.py` is not extended further; no runtime behavior changed. Documented in `docs/DLU_Faculty_Ontology_Socratic_Tutor_Architecture_v1.0.md` §0.1 and `docs/CLAUDE_CODE_PLAN_FOS_W7_ATA_W2.md` (status header + end of the FOS-ATA2-06 section). | 05, 09, 19 | FOS-FIX-10 | doc-only; no new tests (no behavior change) |
