@@ -281,6 +281,12 @@ adds the consolidation duty for the remaining domains, currently scattered in
 | Thesis (C6/C8) — G5 | `thesis.milestone.completed`, `thesis.deposited`, `thesis.defended` |
 | Committee (C3) — G6 | `committee.formed`, `committee.verdict.recorded` |
 | Federation (C10) | `partner.registered`, `mobility.requested/approved` |
+| StudentCareer (ADR-0026 — a layer beneath the Twin) | 28 `student_career.*` lifecycle events (RFC-0004/RFC-0005; constitution §7.6/§7.7) — noun registered RFC-0008 |
+| Admissions Application/Offer (T1, **BOOK-21** §6) | `eligibility.decided`, `orientation.recommended`, `offer.issued/accepted` (with the already-registered `application.*`, `qualification.*`, `applicant.matriculated`) — nouns registered RFC-0008 |
+| Faculty lifecycle & workload (T4/T9, **BOOK-22** §5) | `faculty_document.verified`, `teaching_assignment.confirmed`, `workload.posted` (with the already-registered `faculty.*`, `engagement.*`, `deliverable.*`, `milestone.*`) — nouns registered RFC-0008 |
+| Finance planning & control (T7, **BOOK-23** §8) | `period.closed`, `forecast.published`, `variance.flagged` — nouns registered RFC-0008 (rename to `fiscal_period`/`revenue_forecast`/`budget_variance` proposed there, not applied) |
+| Executive governance (T10, **BOOK-24** §6) | `governance_action.taken`, `board_resolution.passed` (with the already-registered `kpi.breached`, `policy.promulgated`, `catalog_edition.approved`) — nouns registered RFC-0008 |
+| AVA accreditation (**BOOK-26** §12, G22) | `ava.requirement.evaluated`, `ava.alert.fired` — noun registered RFC-0008 |
 | FSEP Obligation/Payment/Financing/Card/Reward (new context, **BOOK-27** — not yet one of C1–C10) | 24 proposed events (RFC-0003 §3) — **not yet implemented**; producers/consumers land in Phase 1, gated on the pilot per `dlu_builder_tk/docs/ops/TRACK_C_POST_PILOT_PLAN.md` |
 
 Rules: every aggregate-mutating service MUST emit its aggregate's events through
