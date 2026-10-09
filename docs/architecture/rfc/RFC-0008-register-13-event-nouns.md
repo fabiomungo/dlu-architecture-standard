@@ -45,7 +45,7 @@ Evidence comes from `dlu_builder_tk` at `6b277ba`. "Emitter" is the module that 
 | `faculty_document` | A document in a faculty member's onboarding journey (identity, fiscal, qualification) and its verification | BOOK-22 §5 — T4 Faculty lifecycle | `faculty_document.verified` | `backend/services/faculty_onboarding_service.py` | `faculty_document` | none | NEW-20a (`28af698`, 2026-07-30) |
 | `teaching_assignment` | Confirmation that a faculty member teaches a teaching section (instructor / primary instructor) | BOOK-22 §5 — T9 Workforce | `teaching_assignment.confirmed` | `backend/api/routes/teaching_sections.py` | `faculty_assignment` | `hr-workload` → `hr_workload_consumers:_on_teaching_assignment_confirmed` | NEW-21 (`db45335`, 2026-07-30) |
 | `workload` | An entry posted to the faculty workload ledger | BOOK-22 §5 — T9 | `workload.posted` | `backend/services/hr_workload_consumers.py` (emitted by the consumer that posts the ledger entry) | `faculty_workload_entry` | none | NEW-21 (`db45335`) |
-| `period` | Closing a **financial/accounting** period (locks invoice mutation in the period) | BOOK-23 §8 — T7 Finance | `period.closed` | `backend/services/period_close_service.py` | `period_close` | none | NEW-30 (`e8cafed`, 2026-08-01) |
+| `fiscal_period` (was `period`, renamed by decision 2026-10-09) | Closing a **financial/accounting** period (locks invoice mutation in the period) | BOOK-23 §8 — T7 Finance | `fiscal_period.closed` (was `period.closed`) | `backend/services/period_close_service.py` | `period_close` | none | NEW-30 (`e8cafed`, 2026-08-01) |
 | `forecast` | Publishing a **revenue** forecast | BOOK-23 §8 — T7 | `forecast.published` | `backend/services/revenue_forecast_service.py` | `revenue_forecast` | none | NEW-30 (`e8cafed`) |
 | `variance` | A thresholded **budget-vs-actual** variance breach, recorded and routed to governance | BOOK-23 §8 — T7 | `variance.flagged` | `backend/services/variance_analysis_service.py` | `variance_analysis` | none | NEW-30 (`e8cafed`) |
 | `governance_action` | An executive governance action taken (e.g. in response to a KPI or variance breach) | BOOK-24 §6 — T10 Executive | `governance_action.taken` | `backend/services/governance_action_service.py` | `governance_action` | none | NEW-27 (`b8539d8`, 2026-07-31) |
@@ -81,6 +81,17 @@ product owner agrees, open one follow-up RFC for the two High items (`period`, `
 optionally the two Medium ones, using the alias-window process. All four currently have
 **zero consumers**, so the migration cost is limited to the emitters and any external
 subscribers (n8n). This is the cheapest moment to rename them.
+
+## Decision (product owner, 2026-10-09)
+
+- **Register the nouns, with one rename:** `period` becomes **`fiscal_period`**; the event type
+  `period.closed` becomes `fiscal_period.closed`. It is renamed in `dlu_builder_tk` in the same
+  change (`event_taxonomy.FISCAL_PERIOD_CLOSED`, one emitter: `period_close_service.py`). No alias
+  window is needed (BOOK-05 Ch. 8.3): the event has zero consumers and no external subscriber,
+  and the outbox relay does not re-validate event types, so a `period.closed` row already queued
+  is still published (to no one).
+- **`offer`, `forecast`, `variance`: kept as registered.** The rename proposals below are
+  declined; they stay recorded for context.
 
 ## Alternatives
 
@@ -142,13 +153,14 @@ Follow-ups outside this repository (not done here):
 - `dlu_builder_tk/docs/STUDENT_EXPERIENCE_ARCHITECTURE.md` §7 — add a pointer section for
   RFC-0008. The 12 non-student families are owned by BOOK-04 Ch. 7, not the constitution, but
   the taxonomy header names both.
-- `dlu_builder_tk` `.github/workflows/kg-gates.yml` — fix the repository owner, add
-  `DAS_REPO_TOKEN`, then re-require the check (with a dated decision in CLAUDE.md §0.11).
+- `dlu_builder_tk` `.github/workflows/kg-gates.yml` — repository owner fixed (dlu_builder #547; the
+  repo is public, no `DAS_REPO_TOKEN` needed); checkout pinned to `das-k1-kernel-foundation`
+  (dlu_builder, same change as the `fiscal_period` rename); then re-require the check with a dated
+  decision in CLAUDE.md §0.11.
 - Refresh the vendored registry fallback in `dlu_builder_tk`, if one is kept.
 
 ## Open questions
 
 1. **Approval (product owner):** accept the 13 nouns verbatim?
-2. **Renames:** open the follow-up RFC for `period` → `fiscal_period` and `offer` →
-   `admission_offer` (High), and optionally `forecast` → `revenue_forecast` and `variance` →
-   `budget_variance` (Medium)? This is cheapest now, while each has zero consumers.
+2. ~~**Renames**~~ — decided 2026-10-09: `period` → `fiscal_period` in this RFC; the others are
+   kept (see "Decision").
