@@ -432,7 +432,8 @@ event_nouns:
   # eligibility, board_resolution, ava, faculty_document, governance_action)
   # were found in the same audit but are out of this program's scope — none
   # of RFC-0001's own event types use them; left for a dedicated ontology
-  # sync pass.
+  # sync pass. (That sync pass is RFC-0008, 2026-10-09 — see the block at
+  # the end of this list.)
   - faculty
   - catalog_course
   - deliverable
@@ -487,3 +488,33 @@ event_nouns:
   # its other node/edge types (Topic, Skill, Person, ... / EXAMPLE_OF,
   # SIMILAR_TO, ...) have no EKG analog and are not projected.
   - concept
+  # RFC-0008 (2026-10-09, PROPOSED — awaiting product-owner approval) —
+  # registry/taxonomy sync. These 13 prefixes were already live in
+  # `dlu_builder_tk/backend/services/event_taxonomy.py` (all with live
+  # producers; `student_career` alone has 28 types) without
+  # the RFC this list requires; `lint_ontology.py` was red on all 13 and
+  # `kg-gates` was dropped from required checks on 2026-09-16 because of it.
+  # Registered verbatim except one: PO decision 2026-10-09 renames `period`
+  # to `fiscal_period` (event `fiscal_period.closed`, was `period.closed`;
+  # zero consumers, renamed in dlu_builder in the same change). `offer`,
+  # `forecast`, `variance` stay as they are (rename proposals declined).
+  # T1 Admissions (BOOK-21 §6, NEW-18)
+  - eligibility
+  - orientation
+  - offer
+  # T4/T9 Faculty lifecycle & workload (BOOK-22 §5, NEW-20a / NEW-21)
+  - faculty_document
+  - teaching_assignment
+  - workload
+  # T7 Finance planning & control (BOOK-23 §8, NEW-30)
+  - fiscal_period
+  - forecast
+  - variance
+  # T10 Executive governance (BOOK-24 §6, NEW-27)
+  - governance_action
+  - board_resolution
+  # AVA / DM 1154 accreditation (BOOK-26 §12, AVA-03 / AVA-11)
+  - ava
+  # Canonical StudentCareer lifecycle (RFC-0004/RFC-0005, ADR-0026) — the
+  # RFCs registered the 27 event types but never added the noun here.
+  - student_career

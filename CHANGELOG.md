@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **RFC-0008 — register 13 event nouns already used by DLU_BUILDER (2026-10-09, proposed,
+  awaiting product-owner approval)**. A registry/taxonomy sync. `eligibility`, `orientation`,
+  `offer`, `faculty_document`, `teaching_assignment`, `workload`, `fiscal_period` (was `period`), `forecast`,
+  `variance`, `governance_action`, `board_resolution`, `ava` and `student_career` were shipped in
+  `dlu_builder_tk/backend/services/event_taxonomy.py` by NEW-18/20a/21/27/30, AVA-03/11 and
+  RFC-0004/0005 without the BOOK-05 Ch. 8 registry entry. Because of that, `lint_ontology.py` was
+  red (42 violations) and `kg-gates` was dropped from the required checks. They are now added
+  verbatim to `architecture/ontology/dlu-core.yaml`, with BOOK-04 Ch. 7 aggregate rows, BOOK-05
+  Annex A and TRACEABILITY (A6 + RFC-0008 section) synced in the same change set. Rename
+  proposals: `period` → `fiscal_period` applied (PO decision 2026-10-09); `offer`/`forecast`/`variance` declined; recorded in the RFC as a
+  separate decision. None is applied.
 - **FSEP-00-04 — BOOK-27 registered as a skeleton, G24 opened (2026-08-18,
   `dlu-architecture-standard` + `dlu_builder_tk`)** — DLU-FSEP (Financial Services & Student
   Economy Platform) registered as a DAS program: G24 row in `TRACEABILITY.md` (no student-economy
