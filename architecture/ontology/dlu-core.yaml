@@ -518,3 +518,7 @@ event_nouns:
   # Canonical StudentCareer lifecycle (RFC-0004/RFC-0005, ADR-0026) — the
   # RFCs registered the 27 event types but never added the noun here.
   - student_career
+  # RFC-0009 (proposed): DT-45, gap S6-08 -- the proposal of a new study programme.
+  # `program_proposal.submitted` / `program_proposal.decided` (producer: program_proposal_service,
+  # no consumer on purpose: a proposal is not yet a programme and `program.*` has the EKG projection).
+  - program_proposal

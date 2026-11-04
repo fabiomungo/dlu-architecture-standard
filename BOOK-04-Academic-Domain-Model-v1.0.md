@@ -287,6 +287,7 @@ adds the consolidation duty for the remaining domains, currently scattered in
 | Finance planning & control (T7, **BOOK-23** §8) | `fiscal_period.closed` (was `period.closed`), `forecast.published`, `variance.flagged` — nouns registered RFC-0008 (`period` renamed `fiscal_period` by PO decision 2026-10-09; the other renames declined) |
 | Executive governance (T10, **BOOK-24** §6) | `governance_action.taken`, `board_resolution.passed` (with the already-registered `kpi.breached`, `policy.promulgated`, `catalog_edition.approved`) — nouns registered RFC-0008 |
 | AVA accreditation (**BOOK-26** §12, G22) | `ava.requirement.evaluated`, `ava.alert.fired` — noun registered RFC-0008 |
+| Programme proposal (DT-45, gap S6-08; `ProgramProposal`: draft, submitted, endorsed, approved, activated, rejected, withdrawn) | `program_proposal.submitted`, `program_proposal.decided` (activation = action `activate`; no consumer) — noun registered RFC-0009 (proposed) |
 | FSEP Obligation/Payment/Financing/Card/Reward (new context, **BOOK-27** — not yet one of C1–C10) | 24 proposed events (RFC-0003 §3) — **not yet implemented**; producers/consumers land in Phase 1, gated on the pilot per `dlu_builder_tk/docs/ops/TRACK_C_POST_PILOT_PLAN.md` |
 
 Rules: every aggregate-mutating service MUST emit its aggregate's events through

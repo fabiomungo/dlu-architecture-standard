@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **RFC-0009 — register the event noun `program_proposal` (2026-11-04, proposed, awaiting
+  product-owner approval)**. DT-45 (gap S6-08, PO-approved design 2026-11-02) ships the proposal of
+  a new study programme (`ProgramProposal`: draft, submitted, endorsed, approved, activated,
+  rejected, withdrawn) in `dlu_builder_tk` with two events, `program_proposal.submitted` and
+  `program_proposal.decided`. The noun is new (not `program`: a proposal is not yet a programme and
+  `program.*` has the EKG projection consumer). Added to `architecture/ontology/dlu-core.yaml`
+  `event_nouns`, with the BOOK-04 Ch. 7 aggregate row, BOOK-05 Annex A and TRACEABILITY synced in the
+  same change set. Without it `dlu_builder_tk`'s `kg-governance` check (lint_ontology.py) is red.
 - **RFC-0008 — register 13 event nouns already used by DLU_BUILDER (2026-10-09, proposed,
   awaiting product-owner approval)**. A registry/taxonomy sync. `eligibility`, `orientation`,
   `offer`, `faculty_document`, `teaching_assignment`, `workload`, `fiscal_period` (was `period`), `forecast`,

@@ -494,3 +494,13 @@ product owner decided on 2026-10-09 to close the gap through an RFC in this repo
 | Artefact | Books | Sprints | Checks |
 |----------|-------|---------|--------|
 | **RFC-0008 — register 13 event nouns** (`dlu-architecture-standard`, 🟡 **proposed, awaiting PO approval**): `eligibility`, `orientation`, `offer` (BOOK-21, NEW-18); `faculty_document`, `teaching_assignment`, `workload` (BOOK-22, NEW-20a/NEW-21); `fiscal_period` (was `period`), `forecast`, `variance` (BOOK-23, NEW-30); `governance_action`, `board_resolution` (BOOK-24, NEW-27); `ava` (BOOK-26, AVA-03/AVA-11); `student_career` (RFC-0004/0005, ADR-0026). Registered verbatim except `period`, renamed `fiscal_period` (`fiscal_period.closed`) by PO decision 2026-10-09 in the same change in `dlu_builder_tk`; the other rename proposals were declined. | 04 Ch. 7 (6 aggregate rows added), 05 Ch. 8 + Annex A, 21 §6, 22 §5, 23 §8, 24 §6, 26 §12 | NEW-18, NEW-20a, NEW-21, NEW-27, NEW-30, AVA-03, AVA-11, RFC-0004/0005 | `dlu_builder_tk` `scripts/ci/lint_ontology.py` against this registry: FAIL (42) → OK (exit 0). `kg-gates` checkout fixed in `dlu_builder_tk` (#547 owner; pinned to `das-k1-kernel-foundation`; public repo, no token needed) — re-required once this RFC merges |
+
+## RFC-0009 — event noun `program_proposal` (2026-11-04, proposed)
+
+`dlu_builder_tk` DT-45 (gap S6-08, PO-approved design 2026-11-02) adds the proposal of a new study
+programme with two events whose noun was not in `dlu-core.yaml`. `lint_ontology.py` (BOOK-05 Ch. 8) fails
+`kg-governance` until the noun is registered here, so the change goes through this repository first.
+
+| Artefact | Books | Sprints | Checks |
+|----------|-------|---------|--------|
+| **RFC-0009 — register the event noun `program_proposal`** (`dlu-architecture-standard`, 🟡 **proposed, awaiting PO approval**): `program_proposal.submitted`, `program_proposal.decided` (producer `program_proposal_service`, no consumer); BOOK-04 Ch. 7 aggregate row `ProgramProposal`, BOOK-05 Annex A, CHANGELOG | 04 Ch. 7, 05 Annex A, 24 §6 | DT-45 (`dlu_builder_tk`) | `dlu_builder_tk` `tests/test_dt45_program_proposals_postgres.py`; `lint_ontology.py` OK against this registry |
